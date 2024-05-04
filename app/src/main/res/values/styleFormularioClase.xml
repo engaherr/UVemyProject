@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="styleTxtViewTitulo">
+        <item name="android:textSize">32dp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:fontFamily">@font/nunito_bolditalic</item>
+        <item name="android:textStyle">bold|italic</item>
+    </style>
+
+    <style name="styleTxtViewInfoFormulario">
+        <item name="android:textSize">16dp</item>
+        <item name="android:textColor">#5B5B5B</item>
+        <item name="android:fontFamily">@font/nunito_bolditalic</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:layout_marginStart">10dp</item>
+    </style>
+
+    <style name="styleEdtTextCamposFormulario">
+        <item name="android:background">@drawable/background_lightblue</item>
+        <item name="android:textSize">18dp</item>
+        <item name="android:fontFamily">@font/nunito_regular</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:paddingHorizontal">20dp</item>
+        <item name="android:paddingVertical">15dp</item>
+        <item name="android:scrollbars">vertical</item>
+        <item name="android:gravity">top</item>
+        <item name="android:inputType">textCapSentences|textMultiLine</item>
+    </style>
+
+    <style name="styleBtnDarkBlue">
+        <item name="android:textSize">18dp</item>
+        <item name="android:fontFamily">@font/nunito_italic</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:background">@drawable/background_darkerblue</item>
+        <item name="android:paddingHorizontal">25dp</item>
+    </style>
+
+    <style name="styleBtnLightBlue">
+        <item name="android:textSize">18dp</item>
+        <item name="android:fontFamily">@font/nunito_italic</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:textColor">#949494</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:background">@drawable/background_lighterblue</item>
+        <item name="android:paddingHorizontal">25dp</item>
+    </style>
+
+    <style name="styleBtnGreen">
+        <item name="android:textSize">26dp</item>
+        <item name="android:fontFamily">@font/nunito_italic</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:background">@drawable/background_green</item>
+        <item name="android:paddingHorizontal">25dp</item>
+    </style>
+</resources>
