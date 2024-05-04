@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/cursos"
+    <item android:id="@+id/cursos"
         android:title="Cursos"
         android:icon="@drawable/book"/>
-    <item
-        android:id="@+id/busqueda"
+    <item android:id="@+id/busqueda"
         android:title="Buscar"
         android:icon="@drawable/search"/>
-    <item
-        android:id="@+id/perfil"
+    <item android:id="@+id/perfil"
         android:title="Perfil"
         android:icon="@drawable/profile"/>
 </menu>
