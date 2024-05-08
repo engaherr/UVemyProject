@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".ConfirmacionCorreo" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_darkblue"
+            android:paddingHorizontal="0dp"
+            android:paddingVertical="10dp">
+
+            <TextView
+                style="@style/styleTxtViewTitulo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="Registro" />
+
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="15dp"
+                android:contentDescription="Regresar"
+                android:src="@drawable/previous" />
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="¡Confirma tu correo electrónico!"
+            style="@style/styleTxtViewInfoBoldFormularioUsuario"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingVertical="30dp"
+            android:text="Ingresa el código enviado al correo ingresado"
+            android:paddingHorizontal="10dp"
+            style="@style/styleTxtViewInfoFormularioUsuario"/>
+
+        <EditText
+            android:id="@+id/edtTextApellidos"
+            style="@style/styleEdtTextFormularioUsuario"
+            android:importantForAutofill="no"
+            android:textSize="32sp"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            tools:text="9106"
+            android:layout_marginHorizontal="10dp"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:minHeight="48dp"
+            android:maxLength="4"
+            android:maxWidth="488dp"
+            android:letterSpacing="1"
+            tools:ignore="LabelFor" />
+
+        <Button
+            android:id="@+id/btnConfirmar"
+            style="@style/styleBtnDarkBlueRounded"
+            android:layout_width="match_parent"
+            android:maxWidth="300dp"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="25dp"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginVertical="40dp"
+            android:text="Confirmar" />
+    </LinearLayout>
+</layout>
