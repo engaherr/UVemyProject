@@ -53,7 +53,7 @@
                     android:gravity="center"
                     android:layout_alignParentTop="true"
                     android:paddingHorizontal="40dp"
-                    android:paddingTop="5dp"
+                    android:paddingVertical="10dp"
                     android:text="¡Bienvenido a UVemy! ¡Crea tu cuenta para comenzar a aprender!"/>
                 <TextView android:id="@+id/txtViewImagen"
                     android:layout_width="match_parent"
@@ -62,7 +62,7 @@
                     android:text="Vista previa de imagen de perfil"
                     android:layout_below="@id/txtViewBienvenida"
                     android:paddingHorizontal="40dp"
-                    android:paddingBottom="10dp"
+                    android:paddingVertical="10dp"
                     style="@style/styleTxtViewInfoBoldFormularioUsuario"/>
                 <TextView android:id="@+id/txtViewInfoImagen"
                     android:layout_width="match_parent"
@@ -99,13 +99,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/btnSubirImagen"
-                    android:visibility="gone"
                     android:layout_centerHorizontal="true"
+                    android:visibility="gone"
                     android:orientation="horizontal">
 
-                    <ImageButton android:id="@+id/imgEliminarImagen"
+                    <ImageView android:id="@+id/imgEliminarImagen"
                         android:layout_width="48dp"
-                        android:background="?android:attr/selectableItemBackground"
                         android:layout_height="48dp"
                         android:layout_marginEnd="20dp"
                         android:src="@drawable/ic_trash" />
@@ -120,7 +119,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/linearLayoutFormularioUsuario"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_below="@id/linearLayoutImagenSubida"
@@ -135,14 +133,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Nombre/s"/>
-
                     <EditText
                         android:id="@+id/edtTextNombre"
                         style="@style/styleEdtTextFormularioUsuario"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
                         android:autofillHints="name"
                         android:hint="Ej. Diego Ernesto"
+                        android:layout_height="wrap_content"
                         android:inputType="textPersonName" />
 
                     <TextView
@@ -184,84 +181,30 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Contraseña"/>
-
-
-                    <RelativeLayout
-                        android:id="@+id/rltLayoutContrasena"
+                    <EditText
+                        android:id="@+id/edtTextContraseña"
+                        style="@style/styleEdtTextFormularioUsuario"
                         android:layout_width="match_parent"
+                        android:autofillHints="password"
+                        android:hint="Contraseña"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/background_lightblue"
-                        android:padding="10dp">
-
-                        <EditText
-                            android:id="@+id/edtTextContraseña"
-                            android:layout_width="match_parent"
-                            android:autofillHints="password"
-                            tools:text="123456789012351351249128317892367812367"
-                            android:hint="Contraseña"
-                            android:paddingEnd="26dp"
-                            android:fontFamily="@font/nunito_regular"
-                            android:layout_height="wrap_content"
-                            android:inputType="textPassword"
-                            android:background="@android:color/transparent"
-                            app:passwordToggleEnabled="true"
-                            tools:ignore="RtlSymmetry" />
-                        
-                        <ImageButton
-                            android:id="@+id/btn_toggle_password"
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
-                            android:layout_alignParentEnd="true"
-                            android:visibility="gone"
-                            android:background="?attr/selectableItemBackground"
-                            android:contentDescription="Ver Contraseña"
-                            android:padding="10dp"
-                            android:layout_centerVertical="true"
-                            android:src="@drawable/ic_opened_eye"/>
-                    </RelativeLayout>
+                        android:inputType="textPassword" />
 
                     <TextView
-                        android:id="@+id/txtViewContrasenaRepetida"
+                        android:id="@+id/txtViewContraseñaRepetida"
                         style="@style/styleTxtViewInfoBoldFormularioUsuario"
                         android:layout_marginTop="5dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Confirme contraseña"/>
-
-
-                    <RelativeLayout
-                        android:id="@+id/rltLayoutContrasenaRepetida"
+                    <EditText
+                        android:id="@+id/edtTextContraseñaRepetida"
+                        style="@style/styleEdtTextFormularioUsuario"
                         android:layout_width="match_parent"
+                        android:autofillHints="password"
+                        android:hint="Repite tu contraseña"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/background_lightblue"
-                        android:padding="10dp">
-
-                        <EditText
-                            android:id="@+id/edtTextContraseñaRepetida"
-                            android:layout_width="match_parent"
-                            android:autofillHints="password"
-                            tools:text="123456789012351351249128317892367812367"
-                            android:hint="Repite tu contraseña"
-                            android:paddingEnd="26dp"
-                            android:fontFamily="@font/nunito_regular"
-                            android:layout_height="wrap_content"
-                            android:inputType="textPassword"
-                            android:background="@android:color/transparent"
-                            app:passwordToggleEnabled="true"
-                            tools:ignore="RtlSymmetry" />
-
-                        <ImageButton
-                            android:id="@+id/btn_toggle_repeated_password"
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
-                            android:visibility="gone"
-                            android:layout_alignParentEnd="true"
-                            android:background="?attr/selectableItemBackground"
-                            android:contentDescription="Ver Contraseña"
-                            android:padding="10dp"
-                            android:layout_centerVertical="true"
-                            android:src="@drawable/ic_opened_eye"/>
-                    </RelativeLayout>
+                        android:inputType="textPassword" />
 
                     <Button
                         android:id="@+id/btnRegistrarse"
@@ -273,31 +216,25 @@
                         android:layout_marginVertical="10dp"
                         android:text="Regístrate" />
 
-                </LinearLayout>
-
-                <LinearLayout android:id="@+id/linearLayoutCuentaExistente"
-                    android:layout_width="wrap_content"
-                    android:layout_below="@id/linearLayoutFormularioUsuario"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:orientation="horizontal">
-
-                    <TextView
+                    <LinearLayout android:id="@+id/linearLayoutCuentaExistente"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        style="@style/styleTxtViewInfoFormularioUsuario"
-                        android:text="¿Ya tienes una cuenta? "/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Inicia sesión"
-                        android:textColor="#115E47"
-                        android:textStyle="bold"
-                        style="@style/styleTxtViewInfoFormularioUsuario"
-                        android:layout_marginBottom="20dp"
-                        />
+                        android:visibility="gone"
+                        android:orientation="horizontal">
+                        
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="¿Ya tienes una cuenta?"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Inicia sesión"/>
+
+                    </LinearLayout>
 
                 </LinearLayout>
+
 
             </RelativeLayout>
 
