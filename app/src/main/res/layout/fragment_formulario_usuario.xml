@@ -181,6 +181,29 @@
                         android:minHeight="48dp" />
 
                     <TextView
+                        android:id="@+id/txtViewDescripcion"
+                        style="@style/styleTxtViewInfoBoldFormularioUsuario"
+                        android:layout_marginTop="5dp"
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Descripción:"/>
+
+                    <EditText
+                        android:id="@+id/edtTextDescripcion"
+                        style="@style/styleEdtTextFormularioUsuario"
+                        android:layout_weight="1"
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="80dp"
+                        android:hint="Cuentáles a los demás sobre ti..."
+                        android:inputType="textMultiLine"
+                        android:gravity="start|top"
+                        android:maxLines="3"
+                        android:minHeight="48dp"
+                        android:importantForAutofill="no" />
+
+                    <TextView
                         android:id="@+id/txtViewContraseña"
                         style="@style/styleTxtViewInfoBoldFormularioUsuario"
                         android:layout_marginTop="5dp"
@@ -273,6 +296,51 @@
                         android:paddingHorizontal="25dp"
                         android:layout_marginVertical="10dp"
                         android:text="Regístrate" />
+
+                    <Button
+                        android:id="@+id/btnModificar"
+                        style="@style/styleBtnDarkBlueRounded"
+                        android:layout_width="match_parent"
+                        android:maxWidth="480dp"
+                        android:visibility="gone"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="25dp"
+                        android:layout_marginVertical="10dp"
+                        android:text="Modificar perfil" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/ctrLayoutEtiquetasActualizar"
+                        android:layout_width="match_parent"
+                        android:visibility="gone"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btnEtiquetas"
+                            style="@style/styleBtnDarkBlueRounded"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="10dp"
+                            android:maxWidth="480dp"
+                            android:paddingHorizontal="40dp"
+                            android:text="Etiquetas"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <Button
+                            android:id="@+id/btnActualizar"
+                            style="@style/styleBtnDarkBlueRounded"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="10dp"
+                            android:maxWidth="480dp"
+                            android:paddingHorizontal="40dp"
+                            android:text="Actualizar"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <LinearLayout android:id="@+id/lnrLayoutCuentaExistente"
                         android:layout_width="wrap_content"
