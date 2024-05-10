@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".InicioSesion">
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_darkblue"
+            android:paddingHorizontal="0dp"
+            android:paddingVertical="10dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                style="@style/styleTxtViewTitulo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="Inicio de sesión" />
+
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="15dp"
+                android:contentDescription="Regresar"
+                android:src="@drawable/previous" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Logo UVemy"
+            android:src="@drawable/ic_logo_big"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
+
+        <TextView
+            android:id="@+id/txtViewCorreoElectronico"
+            style="@style/styleTxtViewInfoBoldFormularioUsuario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:text="Correo electrónico"
+            app:layout_constraintTop_toBottomOf="@+id/imageView"
+            tools:layout_editor_absoluteX="15dp" />
+
+        <EditText
+            android:id="@+id/edtTextCorreoElectronico"
+            style="@style/styleEdtTextFormularioUsuario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="emailAddress"
+            android:hint="Ej. ejemplo@dominio.com"
+            android:inputType="textEmailAddress"
+            android:maxHeight="300dp"
+            android:layout_marginHorizontal="15dp"
+            android:minHeight="48dp"
+            app:layout_constraintTop_toBottomOf="@+id/txtViewCorreoElectronico" />
+
+        <TextView
+            android:id="@+id/txtViewContraseña"
+            style="@style/styleTxtViewInfoBoldFormularioUsuario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:text="Contraseña"
+            app:layout_constraintTop_toBottomOf="@+id/edtTextCorreoElectronico"
+            tools:layout_editor_absoluteX="15dp" />
+        <EditText
+            android:id="@+id/edtTextContrasena"
+            style="@style/styleEdtTextFormularioUsuario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="emailAddress"
+            android:hint="Al menos 8 caracteres"
+            android:inputType="textEmailAddress"
+            android:maxHeight="300dp"
+            android:maxLength="18"
+            android:layout_marginHorizontal="15dp"
+            android:minHeight="48dp"
+            app:layout_constraintTop_toBottomOf="@+id/txtViewContraseña" />
+
+        <Button
+            android:id="@+id/btnIniciarSesion"
+            style="@style/styleBtnDarkBlueRounded"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:maxWidth="480dp"
+            android:layout_marginVertical="20dp"
+            android:layout_marginHorizontal="15dp"
+            android:text="Iniciar sesión"
+            app:layout_constraintTop_toBottomOf="@+id/edtTextContrasena" />
+
+        <LinearLayout
+            android:id="@+id/lnrLayoutRegistro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnIniciarSesion">
+
+            <TextView
+                style="@style/styleTxtViewInfoFormularioUsuario"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="¿No tienes una cuenta? " />
+
+            <TextView
+                style="@style/styleTxtViewInfoFormularioUsuario"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nunito_bold"
+                android:text="Regístrate"
+                android:textColor="#115E47"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
