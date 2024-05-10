@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ListadoEstudiantesCurso">
+
+        <!-- TODO: Update blank fragment layout -->
+        <LinearLayout
+            android:id="@+id/main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FFFFFF"
+            android:orientation="vertical"
+            tools:context=".MainActivity">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_middleblue">
+
+                <TextView
+                    android:id="@+id/txtViewTitulo"
+                    style="@style/styleTxtViewTituloCurso"
+                    android:fontFamily="@font/nunito_italic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="Estudiantes"/>
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="15dp"
+                    android:src="@drawable/student" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:layout_marginVertical="10dp"
+                android:textAlignment="center"
+                android:fontFamily="@font/nunito_bolditalic"
+                android:textColor="#000000"
+                android:textSize="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Estudiantes registrados en el curso"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rcyViewListadoEstudiantes"
+                android:layout_width="match_parent"
+                android:layout_height="600dp"
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginBottom="10dp"
+                android:paddingTop="10dp"
+                android:background="@drawable/background_lightblue">
+
+            </androidx.recyclerview.widget.RecyclerView>
+        </LinearLayout>
+
+    </FrameLayout>
+</layout>

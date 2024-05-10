@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".EstadisticasCurso">
+
+        <!-- TODO: Update blank fragment layout -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/background_darkblue"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp">
+
+                <TextView
+                    style="@style/styleTxtViewTitulo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="Estadísticas" />
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="15dp"
+                    android:src="@drawable/previous" />
+
+            </RelativeLayout>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@android:color/transparent">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/background_middleblue" />
+
+                <TextView
+                    style="@style/styleTxtViewTituloCurso"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Curso de C# .NET desde cero hasta lo mas avanzado full stack" />
+
+            </androidx.cardview.widget.CardView>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#ffffff"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/btnListadoClases"
+                        android:layout_width="350dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/background_middlerblue"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="35dp"
+                        android:paddingVertical="15dp">
+
+                        <ImageView
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:src="@drawable/ic_document" />
+
+                        <TextView
+                            style="@style/styleTxtViewBotonesCurso"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Generar un documento con las estadísticas" />
+
+                    </LinearLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="30dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/background_middlerblue"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:id="@+id/txtViewCalificacionCampo"
+                            style="@style/styleTxtViewCampoDetallesCurso"
+                            android:layout_width="0dp"
+                            android:layout_height="55dp"
+                            android:gravity="center_vertical"
+                            android:paddingVertical="5dp"
+                            android:text="Calificación del curso"
+                            android:textColor="#FFFFFF"
+                            android:textSize="16dp"
+                            android:textStyle="italic"
+                            app:layout_constraintEnd_toStartOf="@+id/txtViewCalificacion"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintHorizontal_weight="1"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/txtViewCalificacion"
+                            style="@style/styleTxtViewCampoDetallesCurso"
+                            android:layout_width="0dp"
+                            android:layout_height="55dp"
+                            android:background="@drawable/background_whitegrade"
+                            android:gravity="center_vertical"
+                            android:text="10"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_weight=".6"
+                            app:layout_constraintStart_toEndOf="@+id/txtViewCalificacionCampo"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="30dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/background_middlerblue"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:id="@+id/txtViewComentariosCampo"
+                            style="@style/styleTxtViewCampoDetallesCurso"
+                            android:layout_width="0dp"
+                            android:layout_height="55dp"
+                            android:paddingHorizontal="25dp"
+                            android:paddingVertical="5dp"
+                            android:text="Promedio de comentarios por clase"
+                            android:textColor="#FFFFFF"
+                            android:textSize="16dp"
+                            android:textStyle="italic"
+                            app:layout_constraintEnd_toStartOf="@+id/txtViewComentarios"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintHorizontal_weight="1"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/txtViewComentarios"
+                            style="@style/styleTxtViewCampoDetallesCurso"
+                            android:layout_width="0dp"
+                            android:layout_height="55dp"
+                            android:background="@drawable/background_whitegrade"
+                            android:gravity="center_vertical"
+                            android:text="10"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_weight=".6"
+                            app:layout_constraintStart_toEndOf="@+id/txtViewComentariosCampo"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="30dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/background_middlerblue"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:id="@+id/txtViewEstudiantesCampo"
+                            style="@style/styleTxtViewCampoDetallesCurso"
+                            android:layout_width="0dp"
+                            android:layout_height="55dp"
+                            android:paddingHorizontal="25dp"
+                            android:paddingVertical="5dp"
+                            android:text="Estudiantes inscritos en el curso"
+                            android:textColor="#FFFFFF"
+                            android:textSize="16dp"
+                            android:textStyle="italic"
+                            app:layout_constraintEnd_toStartOf="@+id/txtViewEstudiantes"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintHorizontal_weight="1"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/txtViewEstudiantes"
+                            style="@style/styleTxtViewCampoDetallesCurso"
+                            android:layout_width="0dp"
+                            android:layout_height="55dp"
+                            android:background="@drawable/background_whitegrade"
+                            android:gravity="center_vertical"
+                            android:text="10"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_weight=".6"
+                            app:layout_constraintStart_toEndOf="@+id/txtViewEstudiantesCampo"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <TextView
+                        style="@style/styleTxtViewInfoDetallesCurso"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="20dp"
+                        android:text="Profesor:" />
+
+                    <LinearLayout
+                        style="@style/styleLnrLayoutCampoDetallesCurso"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:layout_marginHorizontal="20dp">
+
+                        <androidx.core.widget.NestedScrollView
+                            style="@style/styleScrViewCampoDetallesCurso"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                style="@style/styleEdtTextCamposDetallesCurso"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Programación, POO" />
+
+                        </androidx.core.widget.NestedScrollView>
+                    </LinearLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:id="@+id/btnModificarCurso"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="30dp"
+                            android:layout_marginTop="10dp"
+                            android:background="@drawable/background_darkerblue"
+                            android:orientation="vertical"
+                            android:padding="15dp">
+
+                            <ImageView
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="center_horizontal"
+                                android:src="@drawable/message" />
+
+                            <TextView
+                                style="@style/styleTxtViewBotonesCurso"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="0dp"
+                                android:text="Comentarios de clase" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginEnd="30dp"
+                            android:background="@drawable/background_lightergreen"
+                            android:orientation="vertical"
+                            android:padding="15dp">
+
+                            <ImageView
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="center_horizontal"
+                                android:src="@drawable/student" />
+
+                            <TextView
+                                style="@style/styleTxtViewBotonesCurso"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Listado de Estudiantes " />
+
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/frgDetalles"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                    
+
+                </LinearLayout>
+
+
+            </ScrollView>
+
+        </LinearLayout>
+
+    </FrameLayout>
+</layout>

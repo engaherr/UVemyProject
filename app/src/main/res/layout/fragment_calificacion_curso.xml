@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".CalificacionCurso">
+
+        <!-- TODO: Update blank fragment layout -->
+        <LinearLayout
+            android:id="@+id/main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/background_darkblue"
+            android:orientation="vertical"
+            tools:context=".MainActivity">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp">
+
+                <TextView
+                    style="@style/styleTxtViewTitulo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="Curso" />
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="15dp"
+                    android:src="@drawable/previous" />
+
+            </RelativeLayout>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@android:color/transparent">
+
+                <ImageView
+                    android:src="@drawable/background_middleblue"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY"/>
+
+                <TextView
+                    style="@style/styleTxtViewTituloCurso"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Curso de C# .NET desde cero hasta lo mas avanzado full stack"/>
+
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#ffffff"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtViewMensaje"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="50dp"
+                    android:layout_marginStart="49dp"
+                    android:layout_marginEnd="49dp"
+                    android:fontFamily="@font/nunito_regular"
+                    android:text="Califique el curso del 1 al 10, siendo 10 la calificación más alta"
+                    android:textAlignment="center"
+                    android:textColor="#000000"
+                    android:textSize="18dp"
+                    app:layout_constraintBottom_toTopOf="@+id/lnrLayoutCalificacion"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <LinearLayout
+                    android:id="@+id/lnrLayoutCalificacion"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/background_white_blackborder"
+                    app:layout_constraintBottom_toTopOf="@+id/cnsLayoutBotones"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txtViewMensaje">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="10dp"
+                        android:fontFamily="@font/nunito_regular"
+                        android:text="10"
+                        android:textAlignment="center"
+                        android:textColor="#000000"
+                        android:textSize="36dp" />
+                </LinearLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cnsLayoutBotones"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toTopOf="@+id/btnGuardarCalificacion"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/lnrLayoutCalificacion">
+
+
+                    <Button
+                        android:id="@+id/btnRestarCalificacion"
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/background_red"
+                        android:fontFamily="@font/nunito_regular"
+                        android:text="-"
+                        android:textAlignment="center"
+                        android:textColor="#ffffff"
+                        android:textSize="36dp"
+                        app:layout_constraintEnd_toStartOf="@+id/btnAgregarCalificacion"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <Button
+                        android:id="@+id/btnAgregarCalificacion"
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/background_green"
+                        android:fontFamily="@font/nunito_regular"
+                        android:text="+"
+                        android:textAlignment="center"
+                        android:textColor="#ffffff"
+                        android:textSize="36dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/btnRestarCalificacion"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <Button
+                    android:id="@+id/btnGuardarCalificacion"
+                    style="@style/styleBtnGreen"
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:paddingHorizontal="50dp"
+                    android:paddingVertical="10dp"
+                    android:text="Guardar calificación"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cnsLayoutBotones"
+                    app:layout_constraintHorizontal_bias="0.5" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+    </FrameLayout>
+</layout>

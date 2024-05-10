@@ -190,7 +190,7 @@
                                 app:layout_constraintTop_toBottomOf="@+id/comment"
                                 tools:layout_editor_absoluteX="3dp"
                                 android:background="@drawable/background_whitegradend"
-                                tools:listitem="@layout/item_commentary"
+                                tools:listitem="@layout/commentary_item"
                                 tools:itemCount="2"/>
 
 

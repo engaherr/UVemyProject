@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/background_lightblue"
+            android:paddingHorizontal="18dp"
+            android:paddingVertical="10dp">
+
+            <TextView
+                android:id="@+id/txtViewNumeroClase"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:fontFamily="@font/nunito_bolditalic"
+                android:text="Clase 1"
+                android:textColor="#000000"
+                android:textSize="18dp" />
+
+            <TextView
+                android:id="@+id/txtViewNombreClase"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtViewNumeroClase"
+                android:layout_alignParentStart="true"
+                android:layout_marginEnd="10dp"
+                android:layout_toLeftOf="@id/txtViewComentariosTotales"
+                android:fontFamily="@font/nunito_regular"
+                android:text="Aplicaciones que se pueden crear con el lenguaje de programación c#"
+                android:textColor="#000000"
+                android:textSize="16dp" />
+
+
+
+            <TextView
+                android:id="@+id/txtViewComentariosTotales"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/background_darkerblue"
+                android:fontFamily="@font/nunito_bold"
+                android:text="1000"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="10dp"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="16dp" />
+
+        </RelativeLayout>
+    </LinearLayout>
+</layout>
