@@ -50,7 +50,7 @@ public class ClaseComentarioAdapter extends ListAdapter<ClaseEstadisticaDTO, Cla
 
         public void bindClaseComentario(ClaseEstadisticaDTO clase, int posicion){
             binding.txtViewNombreClase.setText(clase.getNombre());
-            binding.txtViewComentariosTotales.setText(clase.getCantidadComentarios());
+            binding.txtViewComentariosTotales.setText(String.valueOf(clase.getCantidadComentarios()));
             binding.txtViewNumeroClase.setText("Clase " + (posicion + 1));
         }
     }

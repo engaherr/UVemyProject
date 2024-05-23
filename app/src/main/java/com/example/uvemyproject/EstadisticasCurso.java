@@ -130,6 +130,7 @@ public class EstadisticasCurso extends Fragment {
             ClaseEstadisticaDTO claseNueva = new ClaseEstadisticaDTO();
             claseNueva.setNombre(clases.get(i).getNombre());
             claseNueva.setCantidadComentarios(clases.get(i).getCantidadComentarios());
+            claseEstadisticaDTOS.add(claseNueva);
         }
         return claseEstadisticaDTOS;
     }
