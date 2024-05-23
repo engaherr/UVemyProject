@@ -9,7 +9,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ListadoEstudiantesCurso">
+        tools:context=".ClasesComentarios">
 
         <!-- TODO: Update blank fragment layout -->
         <LinearLayout
@@ -33,29 +33,45 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:text="Estudiantes"/>
+                    android:text="Clases"/>
 
                 <ImageView
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="15dp"
-                    android:src="@drawable/student" />
+                    android:src="@drawable/message" />
 
             </RelativeLayout>
 
-            <TextView
-                android:layout_marginVertical="10dp"
-                android:textAlignment="center"
-                android:fontFamily="@font/nunito_bolditalic"
-                android:textColor="#000000"
-                android:textSize="16dp"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Estudiantes registrados en el curso"/>
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_marginVertical="10dp"
+                    android:fontFamily="@font/nunito_bolditalic"
+                    android:textColor="#000000"
+                    android:textSize="16dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Clases"/>
+
+                <TextView
+                    android:layout_marginVertical="10dp"
+                    android:fontFamily="@font/nunito_bolditalic"
+                    android:textColor="#000000"
+                    android:textSize="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Comentarios"
+                    android:layout_marginEnd="25dp"
+                    android:gravity="end"/>
+            </RelativeLayout>
+
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rcyViewListadoEstudiantes"
+                android:id="@+id/rcyViewListadoClases"
                 android:layout_width="match_parent"
                 android:layout_height="580dp"
                 android:layout_marginHorizontal="15dp"
@@ -64,6 +80,5 @@
 
             </androidx.recyclerview.widget.RecyclerView>
         </LinearLayout>
-
     </FrameLayout>
 </layout>

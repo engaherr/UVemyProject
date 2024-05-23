@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
 
-    FormularioUsuario formularioUsuario = new FormularioUsuario();
+    EstadisticasCurso formularioUsuario = new EstadisticasCurso();
     FormularioCurso formularioCurso = new FormularioCurso();
     CursoDetallesInformacion cursoDetallesInformacion = new CursoDetallesInformacion();
 

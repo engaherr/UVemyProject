@@ -1,7 +1,6 @@
 package com.example.uvemyproject;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -10,17 +9,18 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.uvemyproject.databinding.ClaseItemBinding;
+import com.example.uvemyproject.dto.ClaseDTO;
 
-public class ClaseAdapter extends ListAdapter<Clase, ClaseAdapter.ClaseViewHolder> {
+public class ClaseAdapter extends ListAdapter<ClaseDTO, ClaseAdapter.ClaseViewHolder> {
 
-    private static final DiffUtil.ItemCallback<Clase> DIFF_CALLBACK = new DiffUtil.ItemCallback<Clase>() {
+    private static final DiffUtil.ItemCallback<ClaseDTO> DIFF_CALLBACK = new DiffUtil.ItemCallback<ClaseDTO>() {
         @Override
-        public boolean areItemsTheSame(@NonNull Clase oldItem, @NonNull Clase newItem) {
+        public boolean areItemsTheSame(@NonNull ClaseDTO oldItem, @NonNull ClaseDTO newItem) {
             return (oldItem.getIdClase() == newItem.getIdClase());
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull Clase oldItem, @NonNull Clase newItem) {
+        public boolean areContentsTheSame(@NonNull ClaseDTO oldItem, @NonNull ClaseDTO newItem) {
             return (oldItem.equals(newItem));
         }
     };
@@ -37,7 +37,7 @@ public class ClaseAdapter extends ListAdapter<Clase, ClaseAdapter.ClaseViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull ClaseViewHolder holder, int position) {
-        Clase clase = getItem(position);
+        ClaseDTO clase = getItem(position);
         holder.bindClase(clase, position);
     }
 
@@ -48,7 +48,7 @@ public class ClaseAdapter extends ListAdapter<Clase, ClaseAdapter.ClaseViewHolde
             binding = itemView;
         }
 
-        public void bindClase(Clase clase, int posicion){
+        public void bindClase(ClaseDTO clase, int posicion){
             binding.txtViewNumeroClase.setText("Clase " + (posicion + 1));
             binding.txtViewNombreClase.setText(clase.getNombre());
         }

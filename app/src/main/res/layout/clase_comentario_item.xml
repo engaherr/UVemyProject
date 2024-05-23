@@ -25,7 +25,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:fontFamily="@font/nunito_bolditalic"
-                android:text="Clase 1"
                 android:textColor="#000000"
                 android:textSize="18dp" />
 
@@ -38,7 +37,6 @@
                 android:layout_marginEnd="10dp"
                 android:layout_toLeftOf="@id/txtViewComentariosTotales"
                 android:fontFamily="@font/nunito_regular"
-                android:text="Aplicaciones que se pueden crear con el lenguaje de programación c#"
                 android:textColor="#000000"
                 android:textSize="16dp" />
 
@@ -52,7 +50,6 @@
                 android:layout_centerVertical="true"
                 android:background="@drawable/background_darkerblue"
                 android:fontFamily="@font/nunito_bold"
-                android:text="1000"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="10dp"
                 android:textAllCaps="false"

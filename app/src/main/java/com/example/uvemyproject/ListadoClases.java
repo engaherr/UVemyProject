@@ -9,9 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.uvemyproject.databinding.FragmentListadoClasesBinding;
+import com.example.uvemyproject.dto.ClaseDTO;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -72,9 +72,9 @@ public class ListadoClases extends Fragment {
         ClaseAdapter adapter = new ClaseAdapter();
         binding.rcyViewListadoClases.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.rcyViewListadoClases.setAdapter(adapter);
-        ArrayList<Clase> clases = new ArrayList<Clase>();
-        clases.add(new Clase(1, "Es una clase donde ponemos ciertas cosas", "Figuras como hacer figuras"));
-        clases.add(new Clase(2, "Es una clase", "Fromas para mejorar objetcos"));
+        ArrayList<ClaseDTO> clases = new ArrayList<ClaseDTO>();
+        clases.add(new ClaseDTO(1, "Es una clase donde ponemos ciertas cosas", "Figuras como hacer figuras"));
+        clases.add(new ClaseDTO(2, "Es una clase", "Fromas para mejorar objetcos"));
         adapter.submitList(clases);
         return binding.getRoot();
     }

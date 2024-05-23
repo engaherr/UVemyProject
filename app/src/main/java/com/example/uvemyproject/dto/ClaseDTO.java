@@ -1,13 +1,13 @@
-package com.example.uvemyproject;
+package com.example.uvemyproject.dto;
 
 import java.util.Objects;
 
-public class Clase {
+public class ClaseDTO {
     private int idClase;
     private String descripcion;
     private String nombre;
 
-    public Clase(int idClase, String descripcion, String nombre) {
+    public ClaseDTO(int idClase, String descripcion, String nombre) {
         this.idClase = idClase;
         this.descripcion = descripcion;
         this.nombre = nombre;
@@ -41,7 +41,7 @@ public class Clase {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Clase clase = (Clase) o;
+        ClaseDTO clase = (ClaseDTO) o;
         return idClase == clase.idClase && Objects.equals(descripcion, clase.descripcion) && Objects.equals(nombre, clase.nombre);
     }
 

@@ -5,6 +5,7 @@
 
     <data>
 
+        <variable name="estadisticasCurso" type="com.example.uvemyproject.dto.EstadisticasCursoDTO" />
     </data>
 
     <FrameLayout
@@ -55,7 +56,7 @@
                     style="@style/styleTxtViewTituloCurso"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Curso de C# .NET desde cero hasta lo mas avanzado full stack" />
+                    android:text="@{estadisticasCurso.nombreCurso}" />
 
             </androidx.cardview.widget.CardView>
 
@@ -127,7 +128,7 @@
                             android:layout_height="55dp"
                             android:background="@drawable/background_whitegrade"
                             android:gravity="center_vertical"
-                            android:text="10"
+                            android:text="@{estadisticasCurso.calificacionString}"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_weight=".6"
                             app:layout_constraintStart_toEndOf="@+id/txtViewCalificacionCampo"
@@ -166,7 +167,7 @@
                             android:layout_height="55dp"
                             android:background="@drawable/background_whitegrade"
                             android:gravity="center_vertical"
-                            android:text="10"
+                            android:text="@{estadisticasCurso.promedioComentariosString}"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_weight=".6"
                             app:layout_constraintStart_toEndOf="@+id/txtViewComentariosCampo"
@@ -205,7 +206,7 @@
                             android:layout_height="55dp"
                             android:background="@drawable/background_whitegrade"
                             android:gravity="center_vertical"
-                            android:text="10"
+                            android:text="@{estadisticasCurso.estudiantesInscritosString}"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_weight=".6"
                             app:layout_constraintStart_toEndOf="@+id/txtViewEstudiantesCampo"
@@ -217,7 +218,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="20dp"
-                        android:text="Profesor:" />
+                        android:text="Etiquetas que coinciden:" />
 
                     <LinearLayout
                         style="@style/styleLnrLayoutCampoDetallesCurso"
@@ -234,17 +235,18 @@
                                 style="@style/styleEdtTextCamposDetallesCurso"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Programación, POO" />
+                                android:text="@{estadisticasCurso.etiquetasString}" />
 
                         </androidx.core.widget.NestedScrollView>
                     </LinearLayout>
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp">
 
                         <LinearLayout
-                            android:id="@+id/btnModificarCurso"
+                            android:id="@+id/lnrLayoutComentariosClase"
                             android:layout_width="150dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="30dp"
@@ -269,6 +271,7 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/lnrLayoutListadoEstudiantes"
                             android:layout_width="150dp"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
