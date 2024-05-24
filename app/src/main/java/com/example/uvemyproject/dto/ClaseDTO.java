@@ -3,9 +3,22 @@ package com.example.uvemyproject.dto;
 import java.util.Objects;
 
 public class ClaseDTO {
+
     private int idClase;
     private String descripcion;
     private String nombre;
+    private int idCurso;
+
+    public int getIdCurso() {
+        return idCurso;
+    }
+
+    public void setIdCurso(int idCurso) {
+        this.idCurso = idCurso;
+    }
+
+    public ClaseDTO() {
+    }
 
     public ClaseDTO(int idClase, String descripcion, String nombre) {
         this.idClase = idClase;

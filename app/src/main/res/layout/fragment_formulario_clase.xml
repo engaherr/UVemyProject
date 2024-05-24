@@ -10,7 +10,8 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".FormularioClase">
+        tools:context=".FormularioClase"
+        android:layout_marginBottom="30dp">
 
         <!-- TODO: Update blank fragment layout -->
         <LinearLayout
@@ -75,7 +76,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="140dp"
                             android:layout_marginBottom="15dp"
-                            android:text="Hola como estas, yo estoy buen, bueno, no tan bien:c" />
+                            android:text="" />
 
                         <TextView
                             style="@style/styleTxtViewInfoFormulario"
@@ -88,7 +89,7 @@
                             style="@style/styleEdtTextCamposFormulario"
                             android:layout_width="match_parent"
                             android:layout_height="260dp"
-                            android:text="Hola como estas, yo estoy buen, bueno, no tan bien:c" />
+                            android:text="" />
 
                         <TextView
                             style="@style/styleTxtViewInfoFormulario"
@@ -97,6 +98,7 @@
                             android:text="Documentos" />
 
                         <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rcyViewListadoDocumentos"
                             android:background="@drawable/background_lightblue"
                             android:layout_width="match_parent"
                             android:layout_height="260dp"
@@ -109,7 +111,8 @@
                             android:layout_width="280dp"
                             android:layout_height="wrap_content"
                             android:text="Agregar documento"
-                            android:layout_gravity="center_horizontal"/>
+                            android:layout_gravity="center_horizontal"
+                            android:id="@+id/btnAgregarDocumento"/>
 
                         <TextView
                             style="@style/styleTxtViewInfoFormulario"
@@ -117,13 +120,24 @@
                             android:layout_height="wrap_content"
                             android:text="Video de clase" />
 
-                        <VideoView
-                            android:layout_marginBottom="10dp"
-                            android:id="@+id/videoView"
+                        <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="220dp"/>
+                            android:layout_height="220dp"
+                            android:background="#000000"
+                            android:layout_marginBottom="10dp"
+                            >
+
+                            <VideoView
+                                android:id="@+id/videoView"
+                                android:layout_width="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:layout_height="220dp" />
+
+                        </RelativeLayout>
+
 
                         <Button
+                            android:id="@+id/btnAgregarVideo"
                             android:layout_marginBottom="5dp"
                             style="@style/styleBtnDarkBlue"
                             android:layout_width="280dp"
@@ -133,14 +147,17 @@
                             />
 
                         <Button
+                            android:id="@+id/btnEliminarVideo"
                             android:layout_marginBottom="15dp"
                             style="@style/styleBtnLightBlue"
                             android:layout_width="280dp"
                             android:layout_height="wrap_content"
                             android:text="Eliminar video"
+                            android:enabled="false"
                             android:layout_gravity="center_horizontal"/>
 
                         <Button
+                            android:id="@+id/btnGuardarClase"
                             android:layout_marginBottom="15dp"
                             style="@style/styleBtnGreen"
                             android:layout_width="280dp"

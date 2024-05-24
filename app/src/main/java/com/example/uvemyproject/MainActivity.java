@@ -22,10 +22,8 @@ public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
 
     EstadisticasCurso formularioUsuario = new EstadisticasCurso();
-    FormularioCurso formularioCurso = new FormularioCurso();
+    FormularioClase formularioCurso = new FormularioClase();
     CursoDetallesInformacion cursoDetallesInformacion = new CursoDetallesInformacion();
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

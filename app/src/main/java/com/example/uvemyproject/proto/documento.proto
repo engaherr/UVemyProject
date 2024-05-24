@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+option java_package = "com.example.uvemyproject";
+
+message EnvioVideoRespuesta {
+    int32 respuesta = 1;
+}
+
+message VideoPartesEnvio{
+    oneof envio {
+        bytes chunks = 1;
+        DocumentoVideo datosVideo = 2;
+    }
+}
+
+message DocumentoVideo{
+    string nombre = 1;
+    int32 idClase = 2;
+    string jwt = 3;
+    int32 idVideo = 4;
+}
+
+
+service VideoService {
+    rpc EnviarVideoClase (stream VideoPartesEnvio) returns (EnvioVideoRespuesta);
+    rpc ActualizarVideoClase (stream VideoPartesEnvio) returns (EnvioVideoRespuesta);
+
+}
