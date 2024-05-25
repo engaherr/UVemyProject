@@ -63,6 +63,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void cambiarFragmentoPrincipal(Fragment fragmentoMostrar){
         getSupportFragmentManager().beginTransaction().replace(
-                R.id.container, fragmentoMostrar).commit();
+                R.id.container, fragmentoMostrar).addToBackStack(null).commit();
     }
 }

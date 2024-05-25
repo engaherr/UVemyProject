@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.provider.OpenableColumns;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +57,12 @@ public class FormularioClase extends Fragment {
             @Override
             public void run() {
                 binding.scrViewPrincipal.fullScroll(View.FOCUS_UP);
+            }
+        });
+
+        binding.imgViewRegresar.setOnClickListener( v -> {
+            if (getActivity() != null) {
+                getActivity().getSupportFragmentManager().popBackStack();
             }
         });
 
