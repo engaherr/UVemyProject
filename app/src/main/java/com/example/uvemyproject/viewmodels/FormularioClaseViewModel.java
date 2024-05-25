@@ -14,6 +14,10 @@ import com.example.uvemyproject.interfaces.INotificacionEnvioVideo;
 import com.example.uvemyproject.servicio.VideoGrpc;
 import com.example.uvemyproject.utils.SingletonUsuario;
 import com.example.uvemyproject.utils.StatusRequest;
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.Moshi;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -49,7 +53,7 @@ public class FormularioClaseViewModel extends ViewModel implements INotificacion
     public void guardarClaseNueva(ClaseDTO clase){
         ClaseServices service = ApiClient.getInstance().getClaseServices();
         String auth = "Bearer " + SingletonUsuario.getJwt();
-        service.guardarClase(auth, clase).enqueue(new Callback<ClaseDTO>() {
+        service.guardarClase(auth, convertirRequestBody(clase)).enqueue(new Callback<ClaseDTO>() {
             @Override
             public void onResponse(Call<ClaseDTO> call, Response<ClaseDTO> response) {
                 if (response.isSuccessful()) {
@@ -68,6 +72,27 @@ public class FormularioClaseViewModel extends ViewModel implements INotificacion
             }
         });
 
+    }
+
+    private RequestBody convertirRequestBody(ClaseDTO clase){
+        Moshi moshi = new Moshi.Builder().build();
+        JsonAdapter<ClaseDTO> jsonAdapter = moshi.adapter(ClaseDTO.class);
+
+        String jsonEnviado = "";
+        try {
+            String json = jsonAdapter.toJson(clase);
+            JSONObject jsonObject = new JSONObject(json);
+            jsonObject.remove("documentosId");
+            jsonObject.remove("videoId");
+
+            jsonEnviado = jsonObject.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return RequestBody.create(
+                MediaType.parse("application/json; charset=utf-8"),
+                jsonEnviado);
     }
 
     private void guardarDocumentosClase(int idClase){

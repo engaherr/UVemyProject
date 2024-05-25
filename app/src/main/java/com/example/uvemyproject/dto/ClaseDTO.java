@@ -1,6 +1,11 @@
 package com.example.uvemyproject.dto;
 
+import com.squareup.moshi.Json;
+
+import java.util.ArrayList;
 import java.util.Objects;
+
+import kotlin.jvm.Transient;
 
 public class ClaseDTO {
 
@@ -8,14 +13,10 @@ public class ClaseDTO {
     private String descripcion;
     private String nombre;
     private int idCurso;
-
-    public int getIdCurso() {
-        return idCurso;
-    }
-
-    public void setIdCurso(int idCurso) {
-        this.idCurso = idCurso;
-    }
+    @Json(name = "documentosId")
+    private int[] documentosId;
+    @Json(name = "videoId")
+    private int videoId;
 
     public ClaseDTO() {
     }
@@ -48,6 +49,28 @@ public class ClaseDTO {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+    public int getIdCurso() {
+        return idCurso;
+    }
+
+    public void setIdCurso(int idCurso) {
+        this.idCurso = idCurso;
+    }
+    public int[] getDocumentosId() {
+        return documentosId;
+    }
+
+    public void setDocumentosId(int[] documentosId) {
+        this.documentosId = documentosId;
+    }
+
+    public int getVideoId() {
+        return videoId;
+    }
+
+    public void setVideoId(int videoId) {
+        this.videoId = videoId;
     }
 
     @Override
