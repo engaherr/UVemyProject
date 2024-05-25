@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.example.uvemyproject.databinding.FragmentCursoDetallesPrincipalBinding;
 import com.example.uvemyproject.dto.ClaseDTO;
+import com.example.uvemyproject.dto.EstadisticasCursoDTO;
 import com.example.uvemyproject.interfaces.INotificacionFragmentoClase;
 
 public class CursoDetallesPrincipal extends Fragment implements INotificacionFragmentoClase {
@@ -43,6 +44,7 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
         fragmento = 2;
 
         binding.btnCambiarFragmento.setOnClickListener(v -> cambiarFragmento());
+        binding.lnrLayoutEstadisticas.setOnClickListener(v -> cambiarEstadisticas());
 
         return binding.getRoot();
     }
@@ -74,5 +76,10 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
     public void cambiarFormularioClase() {
         FormularioClase formularioClase = new FormularioClase();
         ((MainActivity) getActivity()).cambiarFragmentoPrincipal(formularioClase);
+    }
+
+    private void cambiarEstadisticas(){
+        EstadisticasCurso estadisticasCurso = new EstadisticasCurso();
+        ((MainActivity) getActivity()).cambiarFragmentoPrincipal(estadisticasCurso);
     }
 }

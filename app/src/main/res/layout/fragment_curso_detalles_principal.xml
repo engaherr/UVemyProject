@@ -153,6 +153,7 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/lnrLayoutEstadisticas"
                             android:layout_marginTop="10dp"
                             android:layout_alignParentEnd="true"
                             android:layout_width="150dp"

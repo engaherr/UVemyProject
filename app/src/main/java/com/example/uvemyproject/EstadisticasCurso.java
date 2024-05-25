@@ -48,6 +48,12 @@ public class EstadisticasCurso extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentEstadisticasCursoBinding.inflate(inflater, container, false);
+        binding.imgViewRegresar.setOnClickListener( v -> {
+            if (getActivity() != null) {
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
+
         viewModel = new ViewModelProvider(this).get(EstadisticasCursoViewModel.class);
 
         viewModel.getStatus().observe(getViewLifecycleOwner(), status ->{
