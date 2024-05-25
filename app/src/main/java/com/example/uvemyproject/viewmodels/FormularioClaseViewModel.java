@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.uvemyproject.api.ApiClient;
+import com.example.uvemyproject.api.services.ClaseServices;
 import com.example.uvemyproject.dto.ClaseDTO;
 import com.example.uvemyproject.dto.DocumentoDTO;
 import com.example.uvemyproject.interfaces.INotificacionEnvioVideo;
@@ -46,7 +47,7 @@ public class FormularioClaseViewModel extends ViewModel implements INotificacion
 
 
     public void guardarClaseNueva(ClaseDTO clase){
-        ApiClient.Services service = ApiClient.getInstance().getService();
+        ClaseServices service = ApiClient.getInstance().getClaseServices();
         String auth = "Bearer " + SingletonUsuario.getJwt();
         service.guardarClase(auth, clase).enqueue(new Callback<ClaseDTO>() {
             @Override
@@ -71,7 +72,7 @@ public class FormularioClaseViewModel extends ViewModel implements INotificacion
 
     private void guardarDocumentosClase(int idClase){
         String auth = "Bearer " + SingletonUsuario.getJwt();
-        ApiClient.Services service = ApiClient.getInstance().getService();
+        ClaseServices service = ApiClient.getInstance().getClaseServices();
 
         List<DocumentoDTO> listaDocumentos = documentosClase.getValue();
         final boolean[] haHabidoError = {false};

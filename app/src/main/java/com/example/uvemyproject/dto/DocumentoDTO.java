@@ -11,7 +11,6 @@ public class DocumentoDTO {
     private int idClase;
     private int idTipoArchivo;
     private transient File file;
-
     public File getFile() {
         return file;
     }

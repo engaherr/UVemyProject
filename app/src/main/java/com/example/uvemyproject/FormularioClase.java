@@ -118,6 +118,7 @@ public class FormularioClase extends Fragment implements INotificacionDocumento 
                     Toast.makeText(getContext(),"Ocurrió un error de conexión con el servidor", Toast.LENGTH_SHORT).show();
                     break;
             }
+            quitarEspera();
         });
 
         binding.btnGuardarClase.setOnClickListener(v -> {
@@ -181,6 +182,7 @@ public class FormularioClase extends Fragment implements INotificacionDocumento 
         claseNueva.setDescripcion(String.valueOf(binding.dtTextDescripcion.getText()).trim());
         claseNueva.setIdCurso(1);
 
+        ponerEspera();
         viewModel.guardarClaseNueva(claseNueva);
     }
 
@@ -316,5 +318,13 @@ public class FormularioClase extends Fragment implements INotificacionDocumento 
     private void setLightBlueStyle(Button button){
         button.setBackgroundResource(R.drawable.background_lighterblue);
         button.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
+    }
+
+    private void ponerEspera(){
+        binding.progressOverlay.setVisibility(View.VISIBLE);
+    }
+
+    private void quitarEspera(){
+        binding.progressOverlay.setVisibility(View.GONE);
     }
 }
