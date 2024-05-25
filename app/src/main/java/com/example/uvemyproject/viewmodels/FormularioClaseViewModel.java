@@ -9,6 +9,8 @@ import androidx.lifecycle.ViewModel;
 import com.example.uvemyproject.api.ApiClient;
 import com.example.uvemyproject.dto.ClaseDTO;
 import com.example.uvemyproject.dto.DocumentoDTO;
+import com.example.uvemyproject.interfaces.INotificacionEnvioVideo;
+import com.example.uvemyproject.servicio.VideoGrpc;
 import com.example.uvemyproject.utils.SingletonUsuario;
 import com.example.uvemyproject.utils.StatusRequest;
 
@@ -23,7 +25,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class FormularioClaseViewModel extends ViewModel {
+public class FormularioClaseViewModel extends ViewModel implements INotificacionEnvioVideo {
     private final MutableLiveData<StatusRequest> status = new MutableLiveData<>();
     private final MutableLiveData<ClaseDTO> claseNueva = new MutableLiveData<>();
     private MutableLiveData<List<DocumentoDTO>> documentosClase = new MutableLiveData<>();
@@ -91,7 +93,7 @@ public class FormularioClaseViewModel extends ViewModel {
                             haHabidoError[0] = true;
                         }else{
                             if((listaDocumentos.size() - 1) == finalI){
-                                guardarVideo();
+                                guardarVideo(idClase);
                             }
                         }
                     }
@@ -110,7 +112,8 @@ public class FormularioClaseViewModel extends ViewModel {
         }
     }
 
-    private void guardarVideo(){
+    private void guardarVideo(int idClase){
+        VideoGrpc.enviarVideo(videoClase.getValue(), idClase, this);
         Log.i("Video", "guardando");
     }
 
@@ -153,5 +156,15 @@ public class FormularioClaseViewModel extends ViewModel {
             fileName = fileName.substring(0, pos);
         }
         return fileName;
+    }
+
+    @Override
+    public void envioExitosoVideo() {
+        status.postValue(StatusRequest.DONE);
+    }
+
+    @Override
+    public void envioErroneoVideo() {
+        status.postValue(StatusRequest.ERROR);
     }
 }
