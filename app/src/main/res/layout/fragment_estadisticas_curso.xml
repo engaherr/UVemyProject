@@ -78,7 +78,7 @@
                         android:orientation="vertical">
 
                         <LinearLayout
-                            android:id="@+id/btnListadoClases"
+                            android:id="@+id/lnrLayoutEstadisticas"
                             android:layout_width="350dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
@@ -95,7 +95,7 @@
                                 android:src="@drawable/ic_document" />
 
                             <TextView
-                                android:id="@+id/btnGenerarReporte"
+                                android:id="@+id/txtViewNombreGenerarDocumento"
                                 style="@style/styleTxtViewBotonesCurso"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"

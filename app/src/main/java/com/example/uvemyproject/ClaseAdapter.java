@@ -41,7 +41,15 @@ public class ClaseAdapter extends ListAdapter<ClaseDTO, ClaseAdapter.ClaseViewHo
         holder.bindClase(clase, position);
     }
 
-    public static class ClaseViewHolder extends RecyclerView.ViewHolder {
+    private OnItemClickListener onItemClickListener;
+    public interface OnItemClickListener {
+        void onItemClickListener(ClaseDTO clase, int position);
+    }
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener){
+        this.onItemClickListener = onItemClickListener;
+    }
+
+    public class ClaseViewHolder extends RecyclerView.ViewHolder {
         private ClaseItemBinding binding;
         public ClaseViewHolder(@NonNull ClaseItemBinding itemView) {
             super(itemView.getRoot());
@@ -51,6 +59,10 @@ public class ClaseAdapter extends ListAdapter<ClaseDTO, ClaseAdapter.ClaseViewHo
         public void bindClase(ClaseDTO clase, int posicion){
             binding.txtViewNumeroClase.setText("Clase " + (posicion + 1));
             binding.txtViewNombreClase.setText(clase.getNombre());
+
+            binding.btnVerMas.setOnClickListener( v ->{
+                onItemClickListener.onItemClickListener(clase, posicion);
+            });
         }
     }
 

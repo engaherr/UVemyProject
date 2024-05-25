@@ -13,9 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.provider.MediaStore;
 import android.provider.OpenableColumns;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +24,6 @@ import android.widget.Toast;
 import com.example.uvemyproject.databinding.FragmentFormularioClaseBinding;
 import com.example.uvemyproject.dto.ClaseDTO;
 import com.example.uvemyproject.dto.DocumentoDTO;
-import com.example.uvemyproject.interfaces.INotificacionDocumento;
 import com.example.uvemyproject.utils.FileUtil;
 import com.example.uvemyproject.utils.TamanioDocumentos;
 import com.example.uvemyproject.viewmodels.FormularioClaseViewModel;
@@ -34,56 +31,23 @@ import com.example.uvemyproject.viewmodels.FormularioClaseViewModel;
 import java.io.File;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FormularioClase#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class FormularioClase extends Fragment implements INotificacionDocumento {
+public class FormularioClase extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private FragmentFormularioClaseBinding binding;
+    private FormularioClaseViewModel viewModel;
+    private static final int PICK_PDF_FILE = 2;
+    private static final int PICK_VIDEO_FILE = 1;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     public FormularioClase() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FormularioClase.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static FormularioClase newInstance(String param1, String param2) {
-        FormularioClase fragment = new FormularioClase();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
-    private FragmentFormularioClaseBinding binding;
-    private FormularioClaseViewModel viewModel;
-    private int idCurso;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -97,9 +61,10 @@ public class FormularioClase extends Fragment implements INotificacionDocumento 
 
         viewModel = new ViewModelProvider(this).get(FormularioClaseViewModel.class);
 
-        DocumentoAdapter adapter = new DocumentoAdapter(this);
+        DocumentoAdapter adapter = new DocumentoAdapter();
         binding.rcyViewListadoDocumentos.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.rcyViewListadoDocumentos.setAdapter(adapter);
+        adapter.setOnItemClickListener( position -> eliminarDocumento(position));
 
         viewModel.getDocumentosClase().observe(getViewLifecycleOwner(), documentoDTOS -> {
             adapter.submitList(documentoDTOS);
@@ -186,8 +151,6 @@ public class FormularioClase extends Fragment implements INotificacionDocumento 
         viewModel.guardarClaseNueva(claseNueva);
     }
 
-    private static final int PICK_PDF_FILE = 2;
-
     private void mostrarFileChooserPDF() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("application/pdf");
@@ -203,7 +166,6 @@ public class FormularioClase extends Fragment implements INotificacionDocumento 
                     Toast.LENGTH_SHORT).show();
         }
     }
-    private static final int PICK_VIDEO_FILE = 1;
     private void mostrarFileChooserVideo() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -269,7 +231,6 @@ public class FormularioClase extends Fragment implements INotificacionDocumento 
         return nombre;
     }
 
-    @Override
     public void eliminarDocumento(int posicionDocumento) {
         viewModel.eliminarDocumento(posicionDocumento);
     }

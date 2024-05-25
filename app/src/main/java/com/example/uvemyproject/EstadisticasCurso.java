@@ -119,8 +119,8 @@ public class EstadisticasCurso extends Fragment {
             if(reporte == null){
                 Toast.makeText(getContext(),"Ocurrió un error y no se pudo recuperar el reporte correctamente", Toast.LENGTH_SHORT).show();
             }else{
-                binding.btnGenerarReporte.setText("Descargar reporte de las estadísticas del curso");
-                binding.btnGenerarReporte.setOnClickListener( v -> descargarReporte());
+                binding.txtViewNombreGenerarDocumento.setText("Descargar reporte de las estadísticas del curso");
+                binding.lnrLayoutEstadisticas.setOnClickListener( v -> descargarReporte());
             }
             quitarEspera();
         });
@@ -131,7 +131,7 @@ public class EstadisticasCurso extends Fragment {
         binding.lnrLayoutListadoEstudiantes.setOnClickListener(v -> cambiarListadoEstudiantes());
         binding.lnrLayoutComentariosClase.setOnClickListener(v -> cambiarListadoClases());
 
-        binding.btnGenerarReporte.setOnClickListener( v -> recuperarReporte());
+        binding.lnrLayoutEstadisticas.setOnClickListener( v -> recuperarReporte());
 
         return binding.getRoot();
     }

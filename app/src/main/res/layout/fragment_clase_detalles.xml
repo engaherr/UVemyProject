@@ -13,6 +13,7 @@
         android:layout_height="match_parent"
         android:background="@drawable/background_darkblue"
         android:orientation="vertical"
+        android:layout_marginBottom="60dp"
         tools:context=".MainActivity">
 
         <RelativeLayout

@@ -2,6 +2,7 @@ package com.example.uvemyproject;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -21,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
 
-    EstadisticasCurso formularioUsuario = new EstadisticasCurso();
+    CursoDetallesPrincipal formularioUsuario = new CursoDetallesPrincipal();
     FormularioClase formularioCurso = new FormularioClase();
     CursoDetallesInformacion cursoDetallesInformacion = new CursoDetallesInformacion();
 
@@ -58,5 +59,10 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    public void cambiarFragmentoPrincipal(Fragment fragmentoMostrar){
+        getSupportFragmentManager().beginTransaction().replace(
+                R.id.container, fragmentoMostrar).commit();
     }
 }

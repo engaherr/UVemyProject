@@ -12,7 +12,6 @@
         android:layout_height="match_parent"
         tools:context=".CursoDetallesInformacion">
 
-        <!-- TODO: Update blank fragment layout -->
         <LinearLayout
             android:id="@+id/main"
             android:layout_width="match_parent"
@@ -179,7 +178,7 @@
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/btnListadoClases"
+                            android:id="@+id/btnCambiarFragmento"
                             android:layout_below="@+id/btnModificarCurso"
                             android:layout_width="280dp"
                             android:layout_height="wrap_content"
@@ -198,15 +197,16 @@
                                 android:src="@drawable/info"/>
 
                             <TextView
+                                android:id="@+id/txtViewNombreBtnInformacion"
                                 style="@style/styleTxtViewBotonesCurso"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Información del curso"/>
+                                android:text="Listado de clases del curso"/>
 
                         </LinearLayout>
 
                         <ImageView
-                            android:layout_below="@id/btnListadoClases"
+                            android:layout_below="@id/btnCambiarFragmento"
                             android:layout_width="300dp"
                             android:layout_height="190dp"
                             android:background="#5c5c5c"
