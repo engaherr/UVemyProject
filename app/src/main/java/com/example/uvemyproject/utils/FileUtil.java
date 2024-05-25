@@ -42,4 +42,13 @@ public class FileUtil {
             }
         }
     }
+
+    public static String eliminarExtensionNombre(String filename) {
+        if (filename == null || filename.isEmpty()) {
+            return filename;
+        }
+
+        String extPattern = "(?<!^)[.]" + ".*";
+        return filename.replaceAll(extPattern, "");
+    }
 }

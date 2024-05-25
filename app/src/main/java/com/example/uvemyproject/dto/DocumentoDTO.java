@@ -11,6 +11,7 @@ public class DocumentoDTO {
     private int idClase;
     private int idTipoArchivo;
     private transient File file;
+    private transient byte[] documento;
     public File getFile() {
         return file;
     }
@@ -65,5 +66,13 @@ public class DocumentoDTO {
 
     public void setIdTipoArchivo(int idTipoArchivo) {
         this.idTipoArchivo = idTipoArchivo;
+    }
+
+    public byte[] getDocumento() {
+        return documento;
+    }
+
+    public void setDocumento(byte[] documento) {
+        this.documento = documento;
     }
 }

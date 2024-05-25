@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.uvemyproject.api.ApiClient;
 import com.example.uvemyproject.api.services.ClaseServices;
+import com.example.uvemyproject.api.services.DocumentoServices;
 import com.example.uvemyproject.dto.ClaseDTO;
 import com.example.uvemyproject.dto.DocumentoDTO;
 import com.example.uvemyproject.interfaces.INotificacionEnvioVideo;
@@ -97,7 +98,7 @@ public class FormularioClaseViewModel extends ViewModel implements INotificacion
 
     private void guardarDocumentosClase(int idClase){
         String auth = "Bearer " + SingletonUsuario.getJwt();
-        ClaseServices service = ApiClient.getInstance().getClaseServices();
+        DocumentoServices service = ApiClient.getInstance().getDocumentoServices();
 
         List<DocumentoDTO> listaDocumentos = documentosClase.getValue();
         final boolean[] haHabidoError = {false};
@@ -123,7 +124,6 @@ public class FormularioClaseViewModel extends ViewModel implements INotificacion
                             }
                         }
                     }
-
                     @Override
                     public void onFailure(Call<DocumentoDTO> call, Throwable t) {
                         Log.e("RetrofitError", "Error de red o excepción: " + t.getMessage(), t);

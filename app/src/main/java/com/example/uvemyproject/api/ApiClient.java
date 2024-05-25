@@ -1,6 +1,7 @@
 package com.example.uvemyproject.api;
 
 import com.example.uvemyproject.api.services.ClaseServices;
+import com.example.uvemyproject.api.services.DocumentoServices;
 import com.example.uvemyproject.api.services.EstadisticaServices;
 
 import okhttp3.OkHttpClient;
@@ -12,6 +13,7 @@ public class ApiClient {
     private static Retrofit retrofit;
     private ClaseServices claseServices;
     private EstadisticaServices estadisticaServices;
+    private DocumentoServices documentoServices;
     private static final ApiClient apiClient = new ApiClient();
     public static ApiClient getInstance(){
         return apiClient;
@@ -46,6 +48,13 @@ public class ApiClient {
             estadisticaServices = getRetrofit().create(EstadisticaServices.class);
         }
         return estadisticaServices;
+    }
+
+    public DocumentoServices getDocumentoServices(){
+        if(documentoServices==null) {
+            documentoServices = getRetrofit().create(DocumentoServices.class);
+        }
+        return documentoServices;
     }
 
 }

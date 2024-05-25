@@ -1,6 +1,8 @@
 package com.example.uvemyproject;
 
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -13,6 +15,7 @@ import com.example.uvemyproject.dto.DocumentoDTO;
 
 public class DocumentoAdapter extends ListAdapter<DocumentoDTO, DocumentoAdapter.DocumentoViewHolder> {
 
+    private boolean puedeEliminar = true;
     private static final DiffUtil.ItemCallback<DocumentoDTO> DIFF_CALLBACK = new DiffUtil.ItemCallback<DocumentoDTO>() {
         @Override
         public boolean areItemsTheSame(@NonNull DocumentoDTO oldItem, @NonNull DocumentoDTO newItem) {
@@ -25,15 +28,17 @@ public class DocumentoAdapter extends ListAdapter<DocumentoDTO, DocumentoAdapter
         }
     };
 
-    protected DocumentoAdapter() {
+
+    protected DocumentoAdapter(boolean puedeEliminar) {
         super(DIFF_CALLBACK);
+        this.puedeEliminar = puedeEliminar;
     }
 
     @NonNull
     @Override
     public DocumentoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         DocumentoItemBinding binding = DocumentoItemBinding.inflate(LayoutInflater.from(parent.getContext()));
-        return new DocumentoViewHolder(binding);
+        return new DocumentoViewHolder(binding, puedeEliminar);
     }
 
     @Override
@@ -43,7 +48,7 @@ public class DocumentoAdapter extends ListAdapter<DocumentoDTO, DocumentoAdapter
     }
     private OnItemClickListener onItemClickListener;
     public interface OnItemClickListener {
-        void onItemClickListener(int position);
+        void onItemClickListener(DocumentoDTO documento, int position);
     }
     public void setOnItemClickListener(OnItemClickListener onItemClickListener){
         this.onItemClickListener = onItemClickListener;
@@ -52,14 +57,22 @@ public class DocumentoAdapter extends ListAdapter<DocumentoDTO, DocumentoAdapter
     public class DocumentoViewHolder extends RecyclerView.ViewHolder {
         private DocumentoItemBinding binding;
 
-        public DocumentoViewHolder(@NonNull DocumentoItemBinding itemView) {
+        public DocumentoViewHolder(@NonNull DocumentoItemBinding itemView, boolean puedeEliminar) {
             super(itemView.getRoot());
             binding = itemView;
+            if(!puedeEliminar){
+                binding.imgViewEliminar.setVisibility(View.INVISIBLE);
+                binding.imgViewDescargar.setVisibility(View.VISIBLE);
+            }
         }
 
         public void bindDocumento(DocumentoDTO documento, int posicionDocumento){
             binding.txtViewNombreDocumento.setText(documento.getNombre());
-            binding.imgViewEliminar.setOnClickListener(v-> onItemClickListener.onItemClickListener(posicionDocumento));
+            if(puedeEliminar){
+                binding.imgViewEliminar.setOnClickListener(v-> onItemClickListener.onItemClickListener(documento, posicionDocumento));
+            }else{
+                binding.imgViewDescargar.setOnClickListener(v-> onItemClickListener.onItemClickListener(documento, posicionDocumento));
+            }
         }
     }
 }

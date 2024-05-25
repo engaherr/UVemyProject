@@ -68,10 +68,10 @@ public class FormularioClase extends Fragment {
 
         viewModel = new ViewModelProvider(this).get(FormularioClaseViewModel.class);
 
-        DocumentoAdapter adapter = new DocumentoAdapter();
+        DocumentoAdapter adapter = new DocumentoAdapter(true);
         binding.rcyViewListadoDocumentos.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.rcyViewListadoDocumentos.setAdapter(adapter);
-        adapter.setOnItemClickListener( position -> eliminarDocumento(position));
+        adapter.setOnItemClickListener( (documento, position) -> eliminarDocumento(position));
 
         viewModel.getDocumentosClase().observe(getViewLifecycleOwner(), documentoDTOS -> {
             adapter.submitList(documentoDTOS);
@@ -235,7 +235,7 @@ public class FormularioClase extends Fragment {
                 cursor.close();
             }
         }
-        return nombre;
+        return FileUtil.eliminarExtensionNombre(nombre);
     }
 
     public void eliminarDocumento(int posicionDocumento) {

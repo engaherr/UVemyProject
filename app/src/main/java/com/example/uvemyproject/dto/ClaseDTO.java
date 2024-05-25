@@ -17,6 +17,7 @@ public class ClaseDTO {
     private int[] documentosId;
     @Json(name = "videoId")
     private int videoId;
+    private transient ArrayList<DocumentoDTO> documentos;
 
     public ClaseDTO() {
     }
@@ -71,6 +72,14 @@ public class ClaseDTO {
 
     public void setVideoId(int videoId) {
         this.videoId = videoId;
+    }
+
+    public ArrayList<DocumentoDTO> getDocumentos() {
+        return documentos;
+    }
+
+    public void setDocumentos(ArrayList<DocumentoDTO> documentos) {
+        this.documentos = documentos;
     }
 
     @Override

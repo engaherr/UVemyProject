@@ -1,16 +1,30 @@
 package com.example.uvemyproject.viewmodels;
 
+import android.content.Context;
+import android.net.Uri;
+import android.util.Log;
+import android.widget.Toast;
+
+import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.uvemyproject.api.ApiClient;
 import com.example.uvemyproject.api.services.ClaseServices;
+import com.example.uvemyproject.api.services.DocumentoServices;
 import com.example.uvemyproject.api.services.EstadisticaServices;
 import com.example.uvemyproject.dto.ClaseDTO;
+import com.example.uvemyproject.dto.DocumentoDTO;
+import com.example.uvemyproject.utils.FileUtil;
 import com.example.uvemyproject.utils.SingletonUsuario;
 import com.example.uvemyproject.utils.StatusRequest;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -34,7 +48,7 @@ public class ClaseDetallesViewModel extends ViewModel {
                 if(response.isSuccessful()){
                     status.setValue(StatusRequest.DONE);
                     claseActual.setValue(response.body());
-
+                    obtenerDocumentosClase();
                 }else{
                     status.setValue(StatusRequest.ERROR);
                 }
@@ -45,7 +59,97 @@ public class ClaseDetallesViewModel extends ViewModel {
                 status.setValue(StatusRequest.ERROR_CONEXION);
             }
         });
+    }
 
+    private void obtenerDocumentosClase(){
+        String auth = "Bearer " + SingletonUsuario.getJwt();
+        DocumentoServices service = ApiClient.getInstance().getDocumentoServices();
+        ArrayList<DocumentoDTO> documentosRecuperados = new ArrayList<>();
+
+        final boolean[] haHabidoError = {false};
+
+        int[] idDocumentos = claseActual.getValue().getDocumentosId();
+        for (int i = 0; i < idDocumentos.length; i++) {
+            if(!haHabidoError[0]){
+                int finalI = i;
+                service.obtenerDocumentoDeClase(auth, idDocumentos[i]).enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            String contentDisposition = response.headers().get("Content-Disposition");
+                            DocumentoDTO documento = new DocumentoDTO();
+
+                            String nombre = "Documento";
+                            if (contentDisposition != null && contentDisposition.contains("filename=")) {
+                                nombre = contentDisposition.split("filename=")[1].replace("\"", "");
+                            }
+                            documento.setNombre(FileUtil.eliminarExtensionNombre(nombre));
+
+                            try {
+                                documento.setDocumento(response.body().bytes());
+                            } catch (IOException e) {
+                                documento.setDocumento(null);
+                                haHabidoError[0] = true;
+                            }
+
+                            documentosRecuperados.add(documento);
+
+                            if((idDocumentos.length - 1) == finalI){
+                                //Recuperar video y comentarios
+                                ClaseDTO clase = claseActual.getValue();
+                                clase.setDocumentos(documentosRecuperados);
+                                claseActual.setValue(clase);
+
+                                recuperarVideo();
+                            }
+                        } else {
+                            status.setValue(StatusRequest.ERROR);
+                            haHabidoError[0] = true;
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        status.setValue(StatusRequest.ERROR_CONEXION);
+                        haHabidoError[0] = true;
+                    }
+                });
+            }else{
+                Log.e("RetrofitErrorDocumentos", "No se pudieron recibir los documentos");
+                break;
+            }
+        }
+    }
+
+    private void recuperarVideo(){
+
+    }
+
+    public int descargarDocumento(Context context, Uri treeUri, int posicionDocumento) {
+        if (claseActual.getValue().getDocumentos() == null) {
+            return -1;
+        }
+
+        ArrayList<DocumentoDTO> lista = claseActual.getValue().getDocumentos();
+        if(posicionDocumento < 0 || posicionDocumento >= lista.size()){
+            return -1;
+        }
+
+        byte[] pdfData = lista.get(posicionDocumento).getDocumento();
+
+        try {
+            DocumentFile pickedDir = DocumentFile.fromTreeUri(context, treeUri);
+            DocumentFile newFile = pickedDir.createFile("application/pdf", lista.get(posicionDocumento).getNombre() + ".pdf");
+
+            OutputStream outputStream = context.getContentResolver().openOutputStream(newFile.getUri());
+
+            outputStream.write(pdfData);
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return -1;
+        }
+
+        return 0;
     }
 
 

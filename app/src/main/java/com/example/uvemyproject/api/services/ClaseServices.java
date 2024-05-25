@@ -22,13 +22,6 @@ public interface ClaseServices {
     @POST("clases")
     Call<ClaseDTO> guardarClase(@Header("Authorization") String auth, @Body RequestBody claseNueva);
 
-    @Multipart
-    @POST("documentos/clase")
-    Call<DocumentoDTO> guardarDocumento(@Header("Authorization") String auth,
-                                        @Part("idClase") RequestBody idClase,
-                                        @Part("nombre") RequestBody nombre,
-                                        @Part MultipartBody.Part file);
-
     @GET("clases/{idClase}")
     Call<ClaseDTO> obtenerClase(@Header("Authorization") String auth,
                                 @Path("idClase") int idClase);

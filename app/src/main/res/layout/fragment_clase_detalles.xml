@@ -159,6 +159,7 @@
                                 android:text="Documentos:" />
 
                             <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/rcyViewDocumentos"
                                 android:layout_width="match_parent"
                                 android:layout_height="160dp"
                                 android:layout_marginBottom="10dp"
