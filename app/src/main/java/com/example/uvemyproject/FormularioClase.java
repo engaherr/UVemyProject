@@ -3,6 +3,7 @@ package com.example.uvemyproject;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -24,11 +25,14 @@ import android.widget.Toast;
 
 import com.example.uvemyproject.databinding.FragmentFormularioClaseBinding;
 import com.example.uvemyproject.dto.ClaseDTO;
+import com.example.uvemyproject.dto.DocumentoDTO;
 import com.example.uvemyproject.interfaces.INotificacionDocumento;
 import com.example.uvemyproject.utils.FileUtil;
+import com.example.uvemyproject.utils.TamanioDocumentos;
 import com.example.uvemyproject.viewmodels.FormularioClaseViewModel;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -79,10 +83,18 @@ public class FormularioClase extends Fragment implements INotificacionDocumento 
 
     private FragmentFormularioClaseBinding binding;
     private FormularioClaseViewModel viewModel;
+    private int idCurso;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentFormularioClaseBinding.inflate(inflater, container, false);
+        binding.scrViewPrincipal.post(new Runnable() {
+            @Override
+            public void run() {
+                binding.scrViewPrincipal.fullScroll(View.FOCUS_UP);
+            }
+        });
+
         viewModel = new ViewModelProvider(this).get(FormularioClaseViewModel.class);
 
         DocumentoAdapter adapter = new DocumentoAdapter(this);
@@ -108,11 +120,8 @@ public class FormularioClase extends Fragment implements INotificacionDocumento 
             }
         });
 
-        viewModel.getClaseNueva().observe(getViewLifecycleOwner(), claseNueva ->{
-            guardarDocumentos();
-        });
-
         binding.btnGuardarClase.setOnClickListener(v -> {
+            resetearCampos();
             if(validarCampos()){
                 guardarClase();
             }
@@ -125,21 +134,54 @@ public class FormularioClase extends Fragment implements INotificacionDocumento 
         return binding.getRoot();
     }
 
-    private Boolean validarCampos(){
-        return true;
+    private boolean validarCampos(){
+        boolean esValido = true;
+        String nombre = String.valueOf(binding.dtTextNombreClase.getText()).trim();
+        String descripcion = String.valueOf(binding.dtTextDescripcion.getText()).trim();
+        List<DocumentoDTO> lista = viewModel.getDocumentosClase().getValue();
+
+        if(nombre.isEmpty() || nombre.length() > 150){
+            esValido = false;
+            binding.dtTextNombreClase.setBackgroundResource(R.drawable.background_errorcampo);
+        }
+
+        if(descripcion.isEmpty() || nombre.length() > 660){
+            esValido = false;
+            binding.dtTextDescripcion.setBackgroundResource(R.drawable.background_errorcampo);
+        }
+
+        if(lista == null || lista.size() == 0){
+            esValido = false;
+            binding.rcyViewListadoDocumentos.setBackgroundResource(R.drawable.background_errorcampo);
+        }
+
+        if(viewModel.getVideoClase().getValue() == null){
+            esValido = false;
+            binding.rltLayoutVideoBackground.setBackgroundColor(Color.parseColor("#8A1818"));
+        }
+
+        if(!esValido){
+            binding.scrViewPrincipal.fullScroll(View.FOCUS_UP);
+            Toast.makeText(getContext(),"Campos inválidos, corrígalos por favor", Toast.LENGTH_LONG).show();
+        }
+
+        return esValido;
+    }
+
+    private void resetearCampos(){
+        binding.dtTextNombreClase.setBackgroundResource(R.drawable.background_lightblue);
+        binding.dtTextDescripcion.setBackgroundResource(R.drawable.background_lightblue);
+        binding.rcyViewListadoDocumentos.setBackgroundResource(R.drawable.background_lightblue);
+        binding.rltLayoutVideoBackground.setBackgroundColor(Color.parseColor("#000000"));
     }
 
     private void guardarClase(){
         ClaseDTO claseNueva = new ClaseDTO();
-        claseNueva.setNombre("Nuevaaaaa");
-        claseNueva.setDescripcion("Android");
+        claseNueva.setNombre(String.valueOf(binding.dtTextNombreClase.getText()).trim());
+        claseNueva.setDescripcion(String.valueOf(binding.dtTextDescripcion.getText()).trim());
         claseNueva.setIdCurso(1);
 
         viewModel.guardarClaseNueva(claseNueva);
-    }
-
-    private void guardarDocumentos(){
-        Log.i("Guardando", "Documentos");
     }
 
     private static final int PICK_PDF_FILE = 2;
@@ -174,13 +216,17 @@ public class FormularioClase extends Fragment implements INotificacionDocumento 
             String nombreDocumento = obtenerNombreDocumento(uri);
 
             if(nombreDocumento != null){
-                switch (requestCode){
-                    case PICK_PDF_FILE:
-                        agregarDocumento(uri, nombreDocumento);
-                        break;
-                    case PICK_VIDEO_FILE:
-                        agregarVideo(uri, nombreDocumento);
-                        break;
+                if(nombreDocumento.length() >  35){
+                    Toast.makeText(getContext(),"El nombre del archivo supera los 35 caracteres máximo", Toast.LENGTH_SHORT).show();
+                }else{
+                    switch (requestCode){
+                        case PICK_PDF_FILE:
+                            agregarDocumento(uri, nombreDocumento);
+                            break;
+                        case PICK_VIDEO_FILE:
+                            agregarVideo(uri, nombreDocumento);
+                            break;
+                    }
                 }
             }else{
                 Toast.makeText(getContext(),"Ocurrió un error al agregar el documento", Toast.LENGTH_SHORT).show();
@@ -191,7 +237,12 @@ public class FormularioClase extends Fragment implements INotificacionDocumento 
     private void agregarDocumento(Uri uri, String nombre) {
         File file = FileUtil.uriToFile(getContext(), uri, nombre);
         if(file != null){
-            viewModel.agregarDocumento(file);
+            int tamanioArchivo = Integer.parseInt(String.valueOf(file.length()/1024));
+            if(tamanioArchivo < TamanioDocumentos.TAMANIO_MAXIMO_DOCUMENTOS_KB){
+                viewModel.agregarDocumento(file);
+            }else{
+                Toast.makeText(getContext(),"El archivo supera el tamaño máximo de" + TamanioDocumentos.TAMANIO_MAXIMO_DOCUMENTOS_KB + "KB", Toast.LENGTH_SHORT).show();
+            }
         }else{
             Toast.makeText(getContext(),"Ocurrió un error al agregar el archivo", Toast.LENGTH_SHORT).show();
         }
@@ -224,18 +275,24 @@ public class FormularioClase extends Fragment implements INotificacionDocumento 
     private void agregarVideo(Uri uri, String nombre){
         File file = FileUtil.uriToFile(getContext(), uri, nombre);
         if(file != null){
-            viewModel.agregarVideo(file);
-            binding.videoView.setVideoURI(uri);
-            MediaController mediaController = new MediaController(getContext());
+            int tamanioArchivo = Integer.parseInt(String.valueOf(file.length()/1024));
+            if(tamanioArchivo < TamanioDocumentos.TAMANIO_MAXIMO_VIDEOS_KB){
+                viewModel.agregarVideo(file);
+                binding.videoView.setVideoURI(uri);
+                MediaController mediaController = new MediaController(getContext());
 
-            binding.videoView.setMediaController(mediaController);
-            mediaController.setAnchorView(binding.videoView);
-            binding.videoView.setVisibility(View.VISIBLE);
+                binding.videoView.setMediaController(mediaController);
+                mediaController.setAnchorView(binding.videoView);
+                binding.videoView.setVisibility(View.VISIBLE);
 
-            binding.btnAgregarVideo.setEnabled(false);
-            binding.btnEliminarVideo.setEnabled(true);
-            setDarkBlueStyle(binding.btnEliminarVideo);
-            setLightBlueStyle(binding.btnAgregarVideo);
+                binding.btnAgregarVideo.setEnabled(false);
+                binding.btnEliminarVideo.setEnabled(true);
+                setDarkBlueStyle(binding.btnEliminarVideo);
+                setLightBlueStyle(binding.btnAgregarVideo);
+            }else{
+                Toast.makeText(getContext(),"El video supera el tamaño máximo de " + TamanioDocumentos.TAMANIO_MAXIMO_VIDEOS_KB + "KB", Toast.LENGTH_SHORT).show();
+            }
+
         }
     }
 

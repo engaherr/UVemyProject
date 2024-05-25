@@ -114,7 +114,6 @@ public class FormularioClaseViewModel extends ViewModel implements INotificacion
 
     private void guardarVideo(int idClase){
         VideoGrpc.enviarVideo(videoClase.getValue(), idClase, this);
-        Log.i("Video", "guardando");
     }
 
     public void agregarDocumento(File file){
