@@ -25,14 +25,11 @@ import com.example.uvemyproject.viewmodels.EstadisticasCursoViewModel;
 public class ClaseDetalles extends Fragment {
     private FragmentClaseDetallesBinding binding;
     private ClaseDetallesViewModel viewModel;
+    private DocumentoAdapter adapter;
     private int documentoSeleccionado = -1;
     private static final int PICK_DIRECTORY_REQUEST_CODE = 1;
 
     public ClaseDetalles() {
-    }
-
-    public ClaseDetalles(int idClase) {
-
     }
 
     @Override
@@ -49,13 +46,23 @@ public class ClaseDetalles extends Fragment {
             ((MainActivity) getActivity()).cambiarFragmentoPrincipal(cursoDetalles);
         });
 
-        DocumentoAdapter adapter = new DocumentoAdapter(false);
+        adapter = new DocumentoAdapter(false);
         binding.rcyViewDocumentos.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.rcyViewDocumentos.setAdapter(adapter);
         adapter.setOnItemClickListener((documento, posicion) -> descargarDocumento(posicion));
 
         viewModel = new ViewModelProvider(this).get(ClaseDetallesViewModel.class);
 
+        observarStatus();
+        observarClase();
+
+        binding.lnrLayoutModificarClase.setOnClickListener(v -> cambiarFormularioClase());
+
+        obtenerIdClase();
+
+        return binding.getRoot();
+    }
+    private void observarStatus(){
         viewModel.getStatus().observe(getViewLifecycleOwner(), status ->{
             switch (status){
                 case ERROR:
@@ -67,28 +74,34 @@ public class ClaseDetalles extends Fragment {
             }
             quitarEspera();
         });
+    }
 
+    private void observarClase(){
         viewModel.getClaseActual().observe(getViewLifecycleOwner(), claseDTO -> {
             if(claseDTO != null){
                 binding.setClase(claseDTO);
-
                 if(claseDTO.getDocumentos() != null && claseDTO.getDocumentos().size() > 0){
                     adapter.submitList(claseDTO.getDocumentos());
                     adapter.notifyDataSetChanged();
                 }
             }
         });
+    }
 
-        binding.lnrLayoutModificarClase.setOnClickListener(v -> cambiarFormularioClase());
-
-        viewModel.recuperarDetallesClase(127);
-        ponerEspera();
-
-        return binding.getRoot();
+    private void obtenerIdClase(){
+        Bundle args = getArguments();
+        if (args != null) {
+            int idClase = args.getInt("id_clase");
+            viewModel.recuperarDetallesClase(idClase);
+            ponerEspera();
+        }
     }
 
     private void cambiarFormularioClase(){
-        FormularioClase formularioClase = new FormularioClase(viewModel.getClaseActual().getValue());
+        FormularioClase formularioClase = new FormularioClase();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("clave_clase_dto", viewModel.getClaseActual().getValue());
+        formularioClase.setArguments(bundle);
         ((MainActivity) getActivity()).cambiarFragmentoPrincipal(formularioClase);
     }
 

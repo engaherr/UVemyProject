@@ -2,8 +2,10 @@ package com.example.uvemyproject;
 
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,16 +13,17 @@ import android.view.ViewGroup;
 import com.example.uvemyproject.databinding.FragmentListadoClasesBinding;
 import com.example.uvemyproject.dto.ClaseDTO;
 import com.example.uvemyproject.interfaces.INotificacionFragmentoClase;
+import com.example.uvemyproject.viewmodels.ListadoClasesViewModel;
+import com.example.uvemyproject.viewmodels.ListadoEstudiantesCursoViewModel;
 
 import java.util.ArrayList;
 
 public class ListadoClases extends Fragment {
     private FragmentListadoClasesBinding binding;
+    private ListadoClasesViewModel viewModel;
     private INotificacionFragmentoClase notificacionFragmentoClase;
 
-
     public ListadoClases() {
-        // Required empty public constructor
     }
 
     public ListadoClases(INotificacionFragmentoClase notificacionVerClase) {
@@ -36,23 +39,37 @@ public class ListadoClases extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentListadoClasesBinding.inflate(getLayoutInflater());
+        viewModel = new ViewModelProvider(this).get(ListadoClasesViewModel.class);
+
+        if(notificacionFragmentoClase != null){
+            viewModel.setNotificacion(notificacionFragmentoClase);
+        }
 
         ClaseAdapter adapter = new ClaseAdapter();
         adapter.setOnItemClickListener( (clase, position) -> { cambiarFragmentoDetalles(clase, position); });
         binding.rcyViewListadoClases.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.rcyViewListadoClases.setAdapter(adapter);
 
-        ArrayList<ClaseDTO> clases = new ArrayList<ClaseDTO>();
-        clases.add(new ClaseDTO(1, "Es una clase donde ponemos ciertas cosas", "Figuras como hacer figuras"));
-        clases.add(new ClaseDTO(2, "Es una clase", "Fromas para mejorar objetcos"));
-        adapter.submitList(clases);
+        viewModel.getClasesDelCurso().observe(getViewLifecycleOwner(), clases ->{
+            adapter.submitList(clases);
+        });
 
-        binding.lnrLayoutAgregarClase.setOnClickListener(v -> notificacionFragmentoClase.cambiarFormularioClase());
+        binding.lnrLayoutAgregarClase.setOnClickListener(v -> viewModel.getNotificacion().getValue().cambiarFormularioClase());
+
+        obtenerListadoClases();
         return binding.getRoot();
     }
 
     private void cambiarFragmentoDetalles(ClaseDTO clase, int posicion){
-        notificacionFragmentoClase.cambiarVerMas(clase);
+        viewModel.getNotificacion().getValue().cambiarVerMas(clase);
+    }
+
+    private void obtenerListadoClases(){
+        Bundle args = getArguments();
+        if (args != null) {
+            ArrayList<ClaseDTO> clases = args.getParcelableArrayList("clave_clases");
+            viewModel.setClasesDelCurso(clases);
+        }
     }
 
 }

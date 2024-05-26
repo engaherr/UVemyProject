@@ -10,9 +10,9 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".CalificacionCurso">
+        tools:context=".CalificacionCurso"
+        android:layout_marginBottom="60dp">
 
-        <!-- TODO: Update blank fragment layout -->
         <LinearLayout
             android:id="@+id/main"
             android:layout_width="match_parent"

@@ -1,12 +1,16 @@
 package com.example.uvemyproject.dto;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.squareup.moshi.Json;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class EstadisticasCursoDTO {
+public class EstadisticasCursoDTO implements Parcelable {
     @Json(name="nombre")
     private String nombreCurso;
     @Json(name="calificacionCurso")
@@ -18,6 +22,47 @@ public class EstadisticasCursoDTO {
     private List<String> estudiantesCurso;
     @Json(name="clases")
     private List<ClaseEstadisticaDTO> clasesConComentarios;
+
+    public EstadisticasCursoDTO() {
+    }
+
+    protected EstadisticasCursoDTO(Parcel in) {
+        nombreCurso = in.readString();
+        calificacion = in.readDouble();
+        promedioComentarios = in.readDouble();
+        estudiantesInscritos = in.readInt();
+        etiquetasCoinciden = in.createStringArrayList();
+        estudiantesCurso = in.createStringArrayList();
+        clasesConComentarios = in.createTypedArrayList(ClaseEstadisticaDTO.CREATOR);
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(nombreCurso);
+        dest.writeDouble(calificacion);
+        dest.writeDouble(promedioComentarios);
+        dest.writeInt(estudiantesInscritos);
+        dest.writeStringList(etiquetasCoinciden);
+        dest.writeStringList(estudiantesCurso);
+        dest.writeTypedList(clasesConComentarios);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<EstadisticasCursoDTO> CREATOR = new Creator<EstadisticasCursoDTO>() {
+        @Override
+        public EstadisticasCursoDTO createFromParcel(Parcel in) {
+            return new EstadisticasCursoDTO(in);
+        }
+
+        @Override
+        public EstadisticasCursoDTO[] newArray(int size) {
+            return new EstadisticasCursoDTO[size];
+        }
+    };
 
     public List<ClaseEstadisticaDTO> getClasesConComentarios() {
         return clasesConComentarios;
@@ -93,37 +138,4 @@ public class EstadisticasCursoDTO {
         return joined;
     }
 
-    public static class ClaseEstadisticaDTO {
-        private String nombre;
-        private int cantidadComentarios;
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            ClaseEstadisticaDTO that = (ClaseEstadisticaDTO) o;
-            return cantidadComentarios == that.cantidadComentarios && Objects.equals(nombre, that.nombre);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(nombre, cantidadComentarios);
-        }
-
-        public String getNombre() {
-            return nombre;
-        }
-
-        public void setNombre(String nombre) {
-            this.nombre = nombre;
-        }
-
-        public int getCantidadComentarios() {
-            return cantidadComentarios;
-        }
-
-        public void setCantidadComentarios(int cantidadComentarios) {
-            this.cantidadComentarios = cantidadComentarios;
-        }
-    }
 }

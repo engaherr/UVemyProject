@@ -1,6 +1,7 @@
 package com.example.uvemyproject.api;
 
 import com.example.uvemyproject.api.services.ClaseServices;
+import com.example.uvemyproject.api.services.CursoServices;
 import com.example.uvemyproject.api.services.DocumentoServices;
 import com.example.uvemyproject.api.services.EstadisticaServices;
 
@@ -11,6 +12,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 
 public class ApiClient {
     private static Retrofit retrofit;
+    private CursoServices cursoServices;
     private ClaseServices claseServices;
     private EstadisticaServices estadisticaServices;
     private DocumentoServices documentoServices;
@@ -35,6 +37,12 @@ public class ApiClient {
                     .build();
         }
         return retrofit;
+    }
+    public CursoServices getCursoServices(){
+        if(cursoServices ==null) {
+            cursoServices = getRetrofit().create(CursoServices.class);
+        }
+        return cursoServices;
     }
     public ClaseServices getClaseServices(){
         if(claseServices ==null) {

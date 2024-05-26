@@ -32,11 +32,12 @@ public class VideoGrpc {
     }
 
     public static void enviarVideo(DocumentoDTO videoPorEnviar, int idClase, INotificacionEnvioVideo notificacion){
+        String auth = "Bearer " + SingletonUsuario.getJwt();
 
         Documento.DocumentoVideo video = Documento.DocumentoVideo.newBuilder()
                 .setIdClase(idClase).setIdVideo(videoPorEnviar.getIdDocumento())
                 .setNombre(videoPorEnviar.getNombre())
-                .setJwt(SingletonUsuario.getJwt()).build();
+                .setJwt(auth).build();
 
         Documento.VideoPartesEnvio peticionInicial = Documento.VideoPartesEnvio.newBuilder()
                 .setDatosVideo(video).build();

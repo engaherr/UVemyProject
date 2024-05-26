@@ -39,10 +39,10 @@ public class EstadisticasCursoViewModel extends ViewModel {
     public LiveData<EstadisticasCursoDTO> getEstadisticas(){
         return estadisticasCurso;
     }
-    public void recuperarEstadisticasCurso(){
+    public void recuperarEstadisticasCurso(int idCurso){
         EstadisticaServices service = ApiClient.getInstance().getEstadisticaServices();
         String auth = "Bearer " + SingletonUsuario.getJwt();
-        service.obtenerEstadisticasCurso(1, auth).enqueue(new Callback<EstadisticasCursoDTO>() {
+        service.obtenerEstadisticasCurso(idCurso, auth).enqueue(new Callback<EstadisticasCursoDTO>() {
             @Override
             public void onResponse(Call<EstadisticasCursoDTO> call, Response<EstadisticasCursoDTO> response) {
                 if (response.isSuccessful()) {

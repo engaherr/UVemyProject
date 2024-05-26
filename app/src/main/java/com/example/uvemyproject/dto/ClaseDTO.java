@@ -1,5 +1,10 @@
 package com.example.uvemyproject.dto;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import com.squareup.moshi.Json;
 
 import java.util.ArrayList;
@@ -7,7 +12,7 @@ import java.util.Objects;
 
 import kotlin.jvm.Transient;
 
-public class ClaseDTO {
+public class ClaseDTO implements Parcelable {
 
     private int idClase;
     private String descripcion;
@@ -28,6 +33,57 @@ public class ClaseDTO {
         this.descripcion = descripcion;
         this.nombre = nombre;
     }
+
+    public ClaseDTO(int idClase, String descripcion, String nombre, int idCurso, int[] documentosId, int videoId, ArrayList<DocumentoDTO> documentos, DocumentoDTO videoDocumento) {
+        this.idClase = idClase;
+        this.descripcion = descripcion;
+        this.nombre = nombre;
+        this.idCurso = idCurso;
+        this.documentosId = documentosId;
+        this.videoId = videoId;
+        this.documentos = documentos;
+        this.videoDocumento = videoDocumento;
+    }
+
+    protected ClaseDTO(Parcel in) {
+        idClase = in.readInt();
+        descripcion = in.readString();
+        nombre = in.readString();
+        idCurso = in.readInt();
+        documentosId = in.createIntArray();
+        videoId = in.readInt();
+        documentos = in.createTypedArrayList(DocumentoDTO.CREATOR);
+        videoDocumento = in.readParcelable(DocumentoDTO.class.getClassLoader());
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(idClase);
+        dest.writeString(descripcion);
+        dest.writeString(nombre);
+        dest.writeInt(idCurso);
+        dest.writeIntArray(documentosId);
+        dest.writeInt(videoId);
+        dest.writeTypedList(documentos);
+        dest.writeParcelable(videoDocumento, flags);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<ClaseDTO> CREATOR = new Creator<ClaseDTO>() {
+        @Override
+        public ClaseDTO createFromParcel(Parcel in) {
+            return new ClaseDTO(in);
+        }
+
+        @Override
+        public ClaseDTO[] newArray(int size) {
+            return new ClaseDTO[size];
+        }
+    };
 
     public DocumentoDTO getVideoDocumento() {
         return videoDocumento;
@@ -103,4 +159,5 @@ public class ClaseDTO {
     public int hashCode() {
         return Objects.hash(idClase, descripcion, nombre);
     }
+
 }

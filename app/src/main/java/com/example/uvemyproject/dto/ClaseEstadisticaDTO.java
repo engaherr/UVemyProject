@@ -1,11 +1,45 @@
 package com.example.uvemyproject.dto;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+
 import java.util.Objects;
 
-public class ClaseEstadisticaDTO {
+public class ClaseEstadisticaDTO implements Parcelable {
     private String nombre;
     private int cantidadComentarios;
 
+    public ClaseEstadisticaDTO() {
+    }
+
+    protected ClaseEstadisticaDTO(Parcel in) {
+        nombre = in.readString();
+        cantidadComentarios = in.readInt();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(nombre);
+        dest.writeInt(cantidadComentarios);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<ClaseEstadisticaDTO> CREATOR = new Creator<ClaseEstadisticaDTO>() {
+        @Override
+        public ClaseEstadisticaDTO createFromParcel(Parcel in) {
+            return new ClaseEstadisticaDTO(in);
+        }
+
+        @Override
+        public ClaseEstadisticaDTO[] newArray(int size) {
+            return new ClaseEstadisticaDTO[size];
+        }
+    };
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

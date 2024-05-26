@@ -39,14 +39,10 @@ public class FormularioClase extends Fragment {
     private FormularioClaseViewModel viewModel;
     private static final int PICK_PDF_FILE = 2;
     private static final int PICK_VIDEO_FILE = 1;
-    private ClaseDTO claseActual;
     private DocumentoAdapter adapter;
 
     public FormularioClase() {
-        claseActual = null;
-    }
-    public FormularioClase(ClaseDTO clase) {
-        claseActual = clase;
+
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,9 +68,7 @@ public class FormularioClase extends Fragment {
 
         viewModel = new ViewModelProvider(this).get(FormularioClaseViewModel.class);
 
-        if(claseActual != null){
-            viewModel.setClaseActual(claseActual);
-        }
+        cargarClaseModificar();
 
         adapter = new DocumentoAdapter(true);
         binding.rcyViewListadoDocumentos.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -125,12 +119,25 @@ public class FormularioClase extends Fragment {
         return binding.getRoot();
     }
 
+    private void cargarClaseModificar(){
+        Bundle args = getArguments();
+        if (args != null) {
+            ClaseDTO claseDTO = args.getParcelable("clave_clase_dto");
+            if (claseDTO != null) {
+                viewModel.setClaseActual(claseDTO);
+            }
+        }
+    }
     private void redireccionarPaginaSiguiente(){
         if(viewModel.getClaseActual().getValue() != null){
             ClaseDetalles claseDetalles = new ClaseDetalles();
+            Bundle bundle = new Bundle();
+            bundle.putInt("id_clase", viewModel.getClaseActual().getValue().getIdClase());
+            claseDetalles.setArguments(bundle);
             ((MainActivity) getActivity()).cambiarFragmentoPrincipal(claseDetalles);
         }else{
             CursoDetallesPrincipal cursoDetalles = new CursoDetallesPrincipal();
+            //TO_DO Agregar Bundle
             ((MainActivity) getActivity()).cambiarFragmentoPrincipal(cursoDetalles);
         }
     }
@@ -139,6 +146,7 @@ public class FormularioClase extends Fragment {
             if(claseEliminada == null){
                 Toast.makeText(getContext(),"La clase se eliminó con éxito", Toast.LENGTH_SHORT).show();
                 CursoDetallesPrincipal cursoDetalles = new CursoDetallesPrincipal();
+                //TO_DO Agregar bundle
                 ((MainActivity) getActivity()).cambiarFragmentoPrincipal(cursoDetalles);
             }
         });

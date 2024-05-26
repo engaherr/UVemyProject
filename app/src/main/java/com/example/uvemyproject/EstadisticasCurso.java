@@ -24,6 +24,7 @@ import com.example.uvemyproject.viewmodels.EstadisticasCursoViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class EstadisticasCurso extends Fragment {
@@ -31,12 +32,10 @@ public class EstadisticasCurso extends Fragment {
     private ListadoEstudiantesCurso listadoEstudiantes;
     private ClasesComentarios listadoClases;
     private FragmentEstadisticasCursoBinding binding;
-    private EstadisticasCursoDTO estadisticasCursoDTO;
     private EstadisticasCursoViewModel viewModel;
     private static final int PICK_DIRECTORY_REQUEST_CODE = 1;
 
     public EstadisticasCurso() {
-        // Required empty public constructor
     }
 
     @Override
@@ -56,6 +55,29 @@ public class EstadisticasCurso extends Fragment {
 
         viewModel = new ViewModelProvider(this).get(EstadisticasCursoViewModel.class);
 
+        observarStatus();
+        observarEstadisticas();
+        observarReporte();
+        obtenerDatosCurso();
+
+        binding.lnrLayoutListadoEstudiantes.setOnClickListener(v -> cambiarListadoEstudiantes());
+        binding.lnrLayoutComentariosClase.setOnClickListener(v -> cambiarListadoClases());
+
+        binding.lnrLayoutEstadisticas.setOnClickListener( v -> recuperarReporte());
+
+        return binding.getRoot();
+    }
+
+    private void obtenerDatosCurso(){
+        Bundle args = getArguments();
+        if (args != null) {
+            int idCurso = args.getInt("clave_id_curso");
+            viewModel.recuperarEstadisticasCurso(idCurso);
+            ponerEspera();
+        }
+    }
+
+    private void observarStatus(){
         viewModel.getStatus().observe(getViewLifecycleOwner(), status ->{
             switch (status){
                 case ERROR:
@@ -67,27 +89,39 @@ public class EstadisticasCurso extends Fragment {
             }
             quitarEspera();
         });
+    }
 
+    private void observarEstadisticas(){
         viewModel.getEstadisticas().observe(getViewLifecycleOwner(), estadisticas -> {
             if (estadisticas != null) {
-                estadisticasCursoDTO = estadisticas;
                 binding.setEstadisticasCurso(estadisticas);
-
                 if(estadisticas.getClasesConComentarios() != null){
                     fragmento = 0;
-                    listadoClases = new ClasesComentarios(convertirObjetos(estadisticas.getClasesConComentarios()));
-                    Fragment childFragment = listadoClases;
+                    listadoClases = new ClasesComentarios();
+                    Bundle bundle = new Bundle();
+                    ArrayList<ClaseEstadisticaDTO> clases = new ArrayList<>(estadisticas.getClasesConComentarios());
+                    Log.i("a", clases.size() + " ");
+                    Log.i("a", estadisticas.getClasesConComentarios().size() + " ");
+
+                    bundle.putParcelableArrayList("clave_clases", clases);
+                    listadoClases.setArguments(bundle);
                     FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-                    transaction.replace(R.id.frgDetalles, childFragment).commit();
+                    transaction.replace(R.id.frgDetalles, listadoClases).commit();
                 }
 
                 if(estadisticas.getEstudiantesCurso() != null){
-                    listadoEstudiantes = new ListadoEstudiantesCurso(estadisticas.getEstudiantesCurso());
+                    listadoEstudiantes = new ListadoEstudiantesCurso();
+                    ArrayList<String> arrayListDeEstudiantes = new ArrayList<>(estadisticas.getEstudiantesCurso());
+                    Bundle bundle = new Bundle();
+                    bundle.putStringArrayList("clave_listado_estudiantes", arrayListDeEstudiantes);
+                    listadoClases.setArguments(bundle);
                 }
 
             }
         });
+    }
 
+    private void observarReporte(){
         viewModel.getReporte().observe(getViewLifecycleOwner(), reporte ->{
             if(reporte == null){
                 Toast.makeText(getContext(),"Ocurrió un error y no se pudo recuperar el reporte correctamente", Toast.LENGTH_SHORT).show();
@@ -97,16 +131,6 @@ public class EstadisticasCurso extends Fragment {
             }
             quitarEspera();
         });
-
-        viewModel.recuperarEstadisticasCurso();
-        ponerEspera();
-
-        binding.lnrLayoutListadoEstudiantes.setOnClickListener(v -> cambiarListadoEstudiantes());
-        binding.lnrLayoutComentariosClase.setOnClickListener(v -> cambiarListadoClases());
-
-        binding.lnrLayoutEstadisticas.setOnClickListener( v -> recuperarReporte());
-
-        return binding.getRoot();
     }
 
     private void recuperarReporte(){
@@ -152,17 +176,6 @@ public class EstadisticasCurso extends Fragment {
             FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
             transaction.replace(R.id.frgDetalles, childFragment).commit();
         }
-    }
-
-    private List<ClaseEstadisticaDTO> convertirObjetos(List<EstadisticasCursoDTO.ClaseEstadisticaDTO> clases){
-        List<ClaseEstadisticaDTO> claseEstadisticaDTOS = new ArrayList<>();
-        for (int i = 0; i < clases.size(); i++) {
-            ClaseEstadisticaDTO claseNueva = new ClaseEstadisticaDTO();
-            claseNueva.setNombre(clases.get(i).getNombre());
-            claseNueva.setCantidadComentarios(clases.get(i).getCantidadComentarios());
-            claseEstadisticaDTOS.add(claseNueva);
-        }
-        return claseEstadisticaDTOS;
     }
 
     private void ponerEspera(){
