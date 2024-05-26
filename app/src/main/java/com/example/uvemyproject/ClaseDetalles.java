@@ -45,9 +45,8 @@ public class ClaseDetalles extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentClaseDetallesBinding.inflate(getLayoutInflater());
         binding.imgViewRegresar.setOnClickListener( v -> {
-            if (getActivity() != null) {
-                getActivity().getSupportFragmentManager().popBackStack();
-            }
+            CursoDetallesPrincipal cursoDetalles = new CursoDetallesPrincipal();
+            ((MainActivity) getActivity()).cambiarFragmentoPrincipal(cursoDetalles);
         });
 
         DocumentoAdapter adapter = new DocumentoAdapter(false);

@@ -198,7 +198,10 @@ public class FormularioClaseViewModel extends ViewModel implements INotificacion
                     documento.setIdClase(claseActualizada.getIdClase());
                     guardarDocumento(auth, documento, i, listaDocumentos.size(), haHabidoError, true);
                 }else{
-                    documentosEliminados.remove(documento.getIdDocumento());
+                    int posicion = obtenerPosicionDocumento(listaDocumentos.get(i).getIdDocumento(), documentosEliminados);
+                    if(posicion > -1){
+                        documentosEliminados.remove(posicion);
+                    }
                 }
             } else {
                 Log.e("RetrofitErrorDocumentos", "No se pudieron mandar los documentos");
@@ -209,6 +212,15 @@ public class FormularioClaseViewModel extends ViewModel implements INotificacion
         if(!haHabidoError.get()){
             eliminarDocumentosRestantes(documentosEliminados);
         }
+    }
+
+    private int obtenerPosicionDocumento(int idDocumento, List<Integer> listaDocumento){
+        for (int i = 0; i < listaDocumento.size(); i++) {
+            if(listaDocumento.get(i) == idDocumento){
+                return i;
+            }
+        }
+        return -1;
     }
 
     private void eliminarDocumentosRestantes(List<Integer> documentosPorEliminar){
@@ -222,7 +234,7 @@ public class FormularioClaseViewModel extends ViewModel implements INotificacion
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         if(!response.isSuccessful()){
-                            status.setValue(StatusRequest.ERROR_CONEXION);
+                            status.setValue(StatusRequest.ERROR);
                             haHabidoError.set(true);
                         }
                     }
@@ -251,6 +263,24 @@ public class FormularioClaseViewModel extends ViewModel implements INotificacion
     }
 
     public void eliminarClase(){
+        String auth = "Bearer " + SingletonUsuario.getJwt();
+        ClaseServices services = ApiClient.getInstance().getClaseServices();
+
+        services.eliminarClase(auth, claseActual.getValue().getIdClase()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if(response.isSuccessful()){
+                   claseActual.setValue(null);
+                }else{
+                    status.setValue(StatusRequest.ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                status.setValue(StatusRequest.ERROR_CONEXION);
+            }
+        });
 
     }
 

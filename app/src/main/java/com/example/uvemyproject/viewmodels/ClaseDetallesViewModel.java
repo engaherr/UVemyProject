@@ -76,12 +76,12 @@ public class ClaseDetallesViewModel extends ViewModel {
                         if (response.isSuccessful() && response.body() != null) {
                             String contentDisposition = response.headers().get("Content-Disposition");
                             DocumentoDTO documento = new DocumentoDTO();
-
                             String nombre = "Documento";
                             if (contentDisposition != null && contentDisposition.contains("filename=")) {
                                 nombre = contentDisposition.split("filename=")[1].replace("\"", "");
                             }
                             documento.setNombre(FileUtil.eliminarExtensionNombre(nombre));
+                            documento.setIdDocumento(idDocumentos[finalI]);
 
                             try {
                                 documento.setDocumento(response.body().bytes());

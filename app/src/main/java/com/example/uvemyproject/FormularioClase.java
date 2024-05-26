@@ -1,6 +1,8 @@
 package com.example.uvemyproject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -133,19 +135,36 @@ public class FormularioClase extends Fragment {
         }
     }
     private void cargarDatosClaseActual(ClaseDTO clase){
+        viewModel.getClaseActual().observe(getViewLifecycleOwner(), claseEliminada ->{
+            if(claseEliminada == null){
+                Toast.makeText(getContext(),"La clase se eliminó con éxito", Toast.LENGTH_SHORT).show();
+                CursoDetallesPrincipal cursoDetalles = new CursoDetallesPrincipal();
+                ((MainActivity) getActivity()).cambiarFragmentoPrincipal(cursoDetalles);
+            }
+        });
+
         binding.dtTextNombreClase.setText(clase.getNombre());
         binding.dtTextDescripcion.setText(clase.getDescripcion());
         binding.btnGuardarClase.setText("Actualizar clase");
 
         binding.btnEliminarClase.setVisibility(View.VISIBLE);
         binding.btnEliminarClase.setOnClickListener(v ->{
-            viewModel.eliminarClase();
+            mostrarConfirmacionEliminacion();
         });
 
         adapter.submitList(clase.getDocumentos());
         adapter.notifyDataSetChanged();
 
         //Falta video
+    }
+    private void mostrarConfirmacionEliminacion(){
+        new AlertDialog.Builder(getContext()).setTitle("Confirmar eliminar clase")
+                .setMessage("¿Desea eliminar la clase?").setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        viewModel.eliminarClase();
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
     }
 
     private boolean validarCampos(){
