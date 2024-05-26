@@ -174,6 +174,7 @@
                                 android:text="Guardar clase" />
 
                             <Button
+                                android:id="@+id/btnEliminarClase"
                                 style="@style/styleBtnGreen"
                                 android:layout_width="280dp"
                                 android:layout_height="wrap_content"

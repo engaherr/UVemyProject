@@ -63,16 +63,19 @@ public class VideoGrpc {
 
             @Override
             public void onCompleted() {
-                Log.i("El envio terminado", "si");
+                Log.i("Uvemy.grpc", "Envio Exitoso");
             }
         };
-
-        StreamObserver<Documento.VideoPartesEnvio> requestObserver = stub.enviarVideoClase(responseObserver);
+        StreamObserver<Documento.VideoPartesEnvio> requestObserver;
+        if(videoPorEnviar.getIdDocumento() == 0){
+            requestObserver = stub.enviarVideoClase(responseObserver);
+        }else{
+            requestObserver = stub.actualizarVideoClase(responseObserver);
+        }
 
         try {
             requestObserver.onNext(peticionInicial);
 
-            // Send the file in chunks
             InputStream inputStream = Files.newInputStream(videoPorEnviar.getFile().toPath());
             byte[] buffer = new byte[tamanioChunks];
             int bytesRead;

@@ -18,6 +18,7 @@ public class ClaseDTO {
     @Json(name = "videoId")
     private int videoId;
     private transient ArrayList<DocumentoDTO> documentos;
+    private transient DocumentoDTO videoDocumento;
 
     public ClaseDTO() {
     }
@@ -26,6 +27,14 @@ public class ClaseDTO {
         this.idClase = idClase;
         this.descripcion = descripcion;
         this.nombre = nombre;
+    }
+
+    public DocumentoDTO getVideoDocumento() {
+        return videoDocumento;
+    }
+
+    public void setVideoDocumento(DocumentoDTO videoDocumento) {
+        this.videoDocumento = videoDocumento;
     }
 
     public int getIdClase() {

@@ -14,7 +14,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.provider.OpenableColumns;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,12 +37,15 @@ public class FormularioClase extends Fragment {
     private FormularioClaseViewModel viewModel;
     private static final int PICK_PDF_FILE = 2;
     private static final int PICK_VIDEO_FILE = 1;
-
+    private ClaseDTO claseActual;
+    private DocumentoAdapter adapter;
 
     public FormularioClase() {
-        // Required empty public constructor
+        claseActual = null;
     }
-
+    public FormularioClase(ClaseDTO clase) {
+        claseActual = clase;
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +70,11 @@ public class FormularioClase extends Fragment {
 
         viewModel = new ViewModelProvider(this).get(FormularioClaseViewModel.class);
 
-        DocumentoAdapter adapter = new DocumentoAdapter(true);
+        if(claseActual != null){
+            viewModel.setClaseActual(claseActual);
+        }
+
+        adapter = new DocumentoAdapter(true);
         binding.rcyViewListadoDocumentos.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.rcyViewListadoDocumentos.setAdapter(adapter);
         adapter.setOnItemClickListener( (documento, position) -> eliminarDocumento(position));
@@ -81,7 +87,9 @@ public class FormularioClase extends Fragment {
         viewModel.getStatus().observe(getViewLifecycleOwner(), status ->{
             switch (status){
                 case DONE:
-                    Toast.makeText(getContext(),"Se ha creado la clase", Toast.LENGTH_SHORT).show();
+                    String mensajeExito = viewModel.getClaseActual().getValue() == null ? "Se ha creado " : "Se ha modificado ";
+                    Toast.makeText(getContext(),mensajeExito + " la clase existosamente", Toast.LENGTH_SHORT).show();
+                    redireccionarPaginaSiguiente();
                     break;
                 case ERROR:
                     Toast.makeText(getContext(),"Ocurrió un error en el servidor", Toast.LENGTH_SHORT).show();
@@ -96,7 +104,11 @@ public class FormularioClase extends Fragment {
         binding.btnGuardarClase.setOnClickListener(v -> {
             resetearCampos();
             if(validarCampos()){
-                guardarClase();
+                if(viewModel.getClaseActual().getValue() == null){
+                    guardarClase();
+                }else{
+                    actualizarClase();
+                }
             }
         });
 
@@ -104,7 +116,36 @@ public class FormularioClase extends Fragment {
         binding.btnAgregarVideo.setOnClickListener(v -> mostrarFileChooserVideo());
         binding.btnEliminarVideo.setOnClickListener(v -> eliminarVideo());
 
+        if(viewModel.getClaseActual().getValue() != null){
+            cargarDatosClaseActual(viewModel.getClaseActual().getValue());
+        }
+
         return binding.getRoot();
+    }
+
+    private void redireccionarPaginaSiguiente(){
+        if(viewModel.getClaseActual().getValue() != null){
+            ClaseDetalles claseDetalles = new ClaseDetalles();
+            ((MainActivity) getActivity()).cambiarFragmentoPrincipal(claseDetalles);
+        }else{
+            CursoDetallesPrincipal cursoDetalles = new CursoDetallesPrincipal();
+            ((MainActivity) getActivity()).cambiarFragmentoPrincipal(cursoDetalles);
+        }
+    }
+    private void cargarDatosClaseActual(ClaseDTO clase){
+        binding.dtTextNombreClase.setText(clase.getNombre());
+        binding.dtTextDescripcion.setText(clase.getDescripcion());
+        binding.btnGuardarClase.setText("Actualizar clase");
+
+        binding.btnEliminarClase.setVisibility(View.VISIBLE);
+        binding.btnEliminarClase.setOnClickListener(v ->{
+            viewModel.eliminarClase();
+        });
+
+        adapter.submitList(clase.getDocumentos());
+        adapter.notifyDataSetChanged();
+
+        //Falta video
     }
 
     private boolean validarCampos(){
@@ -156,6 +197,17 @@ public class FormularioClase extends Fragment {
 
         ponerEspera();
         viewModel.guardarClaseNueva(claseNueva);
+    }
+
+    private void actualizarClase(){
+        ClaseDTO claseModificada = new ClaseDTO();
+        claseModificada.setNombre(String.valueOf(binding.dtTextNombreClase.getText()).trim());
+        claseModificada.setDescripcion(String.valueOf(binding.dtTextDescripcion.getText()).trim());
+        claseModificada.setIdCurso(viewModel.getClaseActual().getValue().getIdCurso());
+        claseModificada.setIdClase(viewModel.getClaseActual().getValue().getIdClase());
+
+        ponerEspera();
+        viewModel.actualizarClase(claseModificada);
     }
 
     private void mostrarFileChooserPDF() {

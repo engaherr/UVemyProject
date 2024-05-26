@@ -22,7 +22,10 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -32,35 +35,43 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class FormularioClaseViewModel extends ViewModel implements INotificacionEnvioVideo {
+
     private final MutableLiveData<StatusRequest> status = new MutableLiveData<>();
-    private final MutableLiveData<ClaseDTO> claseNueva = new MutableLiveData<>();
+    private final MutableLiveData<ClaseDTO> claseActual = new MutableLiveData<>();
     private MutableLiveData<List<DocumentoDTO>> documentosClase = new MutableLiveData<>();
     private MutableLiveData<DocumentoDTO> videoClase = new MutableLiveData<>();
 
     public LiveData<StatusRequest> getStatus(){
         return status;
     }
-    public LiveData<ClaseDTO> getClaseNueva (){
-        return claseNueva;
+    public LiveData<ClaseDTO> getClaseActual(){
+        return claseActual;
     }
+
     public LiveData<List<DocumentoDTO>> getDocumentosClase (){
         return documentosClase;
     }
     public LiveData<DocumentoDTO> getVideoClase (){
         return videoClase;
     }
-
+    public void setClaseActual(ClaseDTO claseActual){
+        this.claseActual.setValue(claseActual);
+        if(claseActual.getDocumentos() != null){
+            documentosClase.setValue(claseActual.getDocumentos());
+        }
+        if(claseActual.getVideoDocumento() != null){
+            videoClase.setValue(claseActual.getVideoDocumento());
+        }
+    }
 
     public void guardarClaseNueva(ClaseDTO clase){
         ClaseServices service = ApiClient.getInstance().getClaseServices();
         String auth = "Bearer " + SingletonUsuario.getJwt();
-        service.guardarClase(auth, convertirRequestBody(clase)).enqueue(new Callback<ClaseDTO>() {
+        service.guardarClase(auth, convertirRequestBody(clase, "idClase")).enqueue(new Callback<ClaseDTO>() {
             @Override
             public void onResponse(Call<ClaseDTO> call, Response<ClaseDTO> response) {
                 if (response.isSuccessful()) {
-                    claseNueva.setValue(response.body());
-                    guardarDocumentosClase(claseNueva.getValue().getIdClase());
-
+                    guardarDocumentosClase(response.body().getIdClase());
                 }else{
                     status.setValue(StatusRequest.ERROR);
                 }
@@ -75,7 +86,7 @@ public class FormularioClaseViewModel extends ViewModel implements INotificacion
 
     }
 
-    private RequestBody convertirRequestBody(ClaseDTO clase){
+    private RequestBody convertirRequestBody(ClaseDTO clase, String campoEliminar){
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<ClaseDTO> jsonAdapter = moshi.adapter(ClaseDTO.class);
 
@@ -85,6 +96,7 @@ public class FormularioClaseViewModel extends ViewModel implements INotificacion
             JSONObject jsonObject = new JSONObject(json);
             jsonObject.remove("documentosId");
             jsonObject.remove("videoId");
+            jsonObject.remove(campoEliminar);
 
             jsonEnviado = jsonObject.toString();
         } catch (Exception e) {
@@ -98,48 +110,148 @@ public class FormularioClaseViewModel extends ViewModel implements INotificacion
 
     private void guardarDocumentosClase(int idClase){
         String auth = "Bearer " + SingletonUsuario.getJwt();
-        DocumentoServices service = ApiClient.getInstance().getDocumentoServices();
-
         List<DocumentoDTO> listaDocumentos = documentosClase.getValue();
-        final boolean[] haHabidoError = {false};
+        AtomicBoolean haHabidoError = new AtomicBoolean(false);
+
         for(int i = 0; i < listaDocumentos.size(); i++){
-            DocumentoDTO documento = listaDocumentos.get(i);
-            if(!haHabidoError[0]){
-                RequestBody idClaseBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(idClase));
-                RequestBody nombreBody = RequestBody.create(MediaType.parse("text/plain"), documento.getNombre());
-
-                RequestBody requestFile = RequestBody.create(MediaType.parse("application/pdf"), documento.getFile());
-                MultipartBody.Part body = MultipartBody.Part.createFormData("file", documento.getNombre(), requestFile);
-
-                int finalI = i;
-                service.guardarDocumento(auth, idClaseBody, nombreBody, body).enqueue(new Callback<DocumentoDTO>() {
-                    @Override
-                    public void onResponse(Call<DocumentoDTO> call, Response<DocumentoDTO> response) {
-                        if(!response.isSuccessful()){
-                            status.setValue(StatusRequest.ERROR_CONEXION);
-                            haHabidoError[0] = true;
-                        }else{
-                            if((listaDocumentos.size() - 1) == finalI){
-                                guardarVideo(idClase);
-                            }
-                        }
-                    }
-                    @Override
-                    public void onFailure(Call<DocumentoDTO> call, Throwable t) {
-                        Log.e("RetrofitError", "Error de red o excepción: " + t.getMessage(), t);
-                        status.setValue(StatusRequest.ERROR_CONEXION);
-                        haHabidoError[0] = true;
-                    }
-                });
-            }else{
+            if (!haHabidoError.get()) {
+                DocumentoDTO documento = listaDocumentos.get(i);
+                documento.setIdClase(idClase);
+                guardarDocumento(auth, documento, i, listaDocumentos.size(), haHabidoError, false);
+            } else {
                 Log.e("RetrofitErrorDocumentos", "No se pudieron mandar los documentos");
                 break;
             }
         }
     }
+    private void guardarDocumento(String auth, DocumentoDTO documento, int index, int fin, AtomicBoolean haHabidoError, boolean esActualizar){
+        if(!haHabidoError.get()){
+            DocumentoServices service = ApiClient.getInstance().getDocumentoServices();
+
+            RequestBody idClaseBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(documento.getIdClase()));
+            RequestBody nombreBody = RequestBody.create(MediaType.parse("text/plain"), documento.getNombre());
+
+            RequestBody requestFile = RequestBody.create(MediaType.parse("application/pdf"), documento.getFile());
+            MultipartBody.Part body = MultipartBody.Part.createFormData("file", documento.getNombre() + ".pdf", requestFile);
+
+            service.guardarDocumento(auth, idClaseBody, nombreBody, body).enqueue(new Callback<DocumentoDTO>() {
+                @Override
+                public void onResponse(Call<DocumentoDTO> call, Response<DocumentoDTO> response) {
+                    if(!response.isSuccessful()){
+                        status.setValue(StatusRequest.ERROR_CONEXION);
+                        haHabidoError.set(true);
+                    }else{
+                        if((fin - 1) == index){
+                            if(!esActualizar){
+                                guardarVideo(documento.getIdClase());
+                            }
+                        }
+                    }
+                }
+                @Override
+                public void onFailure(Call<DocumentoDTO> call, Throwable t) {
+                    Log.e("RetrofitError", "Error de red o excepción: " + t.getMessage(), t);
+                    status.setValue(StatusRequest.ERROR_CONEXION);
+                    haHabidoError.set(true);
+                }
+            });
+        }
+    }
 
     private void guardarVideo(int idClase){
         VideoGrpc.enviarVideo(videoClase.getValue(), idClase, this);
+    }
+
+    public void actualizarClase(ClaseDTO claseActualizada){
+        ClaseServices service = ApiClient.getInstance().getClaseServices();
+        String auth = "Bearer " + SingletonUsuario.getJwt();
+        service.actualizarClase(auth, claseActualizada.getIdClase(), convertirRequestBody(claseActualizada, "idCurso")).enqueue(new Callback<ClaseDTO>() {
+            @Override
+            public void onResponse(Call<ClaseDTO> call, Response<ClaseDTO> response) {
+                if (response.isSuccessful()) {
+                    status.setValue(StatusRequest.DONE);
+                    actualizarDocumentos(claseActualizada);
+                }else{
+                    status.setValue(StatusRequest.ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ClaseDTO> call, Throwable t) {
+                Log.e("RetrofitError", "Error de red o excepción: " + t.getMessage(), t);
+                status.setValue(StatusRequest.ERROR_CONEXION);
+            }
+        });
+    }
+    
+    private void actualizarDocumentos(ClaseDTO claseActualizada){
+        String auth = "Bearer " + SingletonUsuario.getJwt();
+        List<DocumentoDTO> listaDocumentos = documentosClase.getValue();
+        AtomicBoolean haHabidoError = new AtomicBoolean(false);
+
+        List<Integer> documentosEliminados = Arrays.stream(claseActual.getValue().getDocumentosId()).boxed().collect(Collectors.toList());
+
+        for(int i = 0; i < listaDocumentos.size(); i++){
+            if (!haHabidoError.get()) {
+                DocumentoDTO documento = listaDocumentos.get(i);
+                if(documento.getIdDocumento() == 0){
+                    documento.setIdClase(claseActualizada.getIdClase());
+                    guardarDocumento(auth, documento, i, listaDocumentos.size(), haHabidoError, true);
+                }else{
+                    documentosEliminados.remove(documento.getIdDocumento());
+                }
+            } else {
+                Log.e("RetrofitErrorDocumentos", "No se pudieron mandar los documentos");
+                break;
+            }
+        }
+
+        if(!haHabidoError.get()){
+            eliminarDocumentosRestantes(documentosEliminados);
+        }
+    }
+
+    private void eliminarDocumentosRestantes(List<Integer> documentosPorEliminar){
+        String auth = "Bearer " + SingletonUsuario.getJwt();
+        DocumentoServices service = ApiClient.getInstance().getDocumentoServices();
+        AtomicBoolean haHabidoError = new AtomicBoolean(false);
+
+        for (int i = 0; i < documentosPorEliminar.size(); i++) {
+            if(!haHabidoError.get()){
+                service.eliminarDocumento(auth, documentosPorEliminar.get(i)).enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if(!response.isSuccessful()){
+                            status.setValue(StatusRequest.ERROR_CONEXION);
+                            haHabidoError.set(true);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Log.e("RetrofitError", "Error de red o excepción: " + t.getMessage(), t);
+                        status.setValue(StatusRequest.ERROR_CONEXION);
+                        haHabidoError.set(true);
+                    }
+                });
+            }else{
+                break;
+            }
+        }
+
+        if(!haHabidoError.get()){
+            actualizarVideo();
+        }
+    }
+
+    private void actualizarVideo(){
+        DocumentoDTO video = videoClase.getValue();
+        video.setIdDocumento(claseActual.getValue().getVideoId());
+        VideoGrpc.enviarVideo(video, claseActual.getValue().getIdClase(), this);
+    }
+
+    public void eliminarClase(){
+
     }
 
     public void agregarDocumento(File file){

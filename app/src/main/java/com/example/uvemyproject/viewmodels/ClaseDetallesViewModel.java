@@ -46,14 +46,12 @@ public class ClaseDetallesViewModel extends ViewModel {
             @Override
             public void onResponse(Call<ClaseDTO> call, Response<ClaseDTO> response) {
                 if(response.isSuccessful()){
-                    status.setValue(StatusRequest.DONE);
                     claseActual.setValue(response.body());
                     obtenerDocumentosClase();
                 }else{
                     status.setValue(StatusRequest.ERROR);
                 }
             }
-
             @Override
             public void onFailure(Call<ClaseDTO> call, Throwable t) {
                 status.setValue(StatusRequest.ERROR_CONEXION);
@@ -121,7 +119,8 @@ public class ClaseDetallesViewModel extends ViewModel {
     }
 
     private void recuperarVideo(){
-
+        //Al final debería de recuperar y poner el vide, se debe poner el status done para quitar el progress bar
+        status.setValue(StatusRequest.DONE);
     }
 
     public int descargarDocumento(Context context, Uri treeUri, int posicionDocumento) {

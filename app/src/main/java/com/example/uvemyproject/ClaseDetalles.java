@@ -31,6 +31,10 @@ public class ClaseDetalles extends Fragment {
     public ClaseDetalles() {
     }
 
+    public ClaseDetalles(int idClase) {
+
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,14 +82,14 @@ public class ClaseDetalles extends Fragment {
 
         binding.lnrLayoutModificarClase.setOnClickListener(v -> cambiarFormularioClase());
 
-        viewModel.recuperarDetallesClase(1);
+        viewModel.recuperarDetallesClase(127);
         ponerEspera();
 
         return binding.getRoot();
     }
 
     private void cambiarFormularioClase(){
-        FormularioClase formularioClase = new FormularioClase();
+        FormularioClase formularioClase = new FormularioClase(viewModel.getClaseActual().getValue());
         ((MainActivity) getActivity()).cambiarFragmentoPrincipal(formularioClase);
     }
 

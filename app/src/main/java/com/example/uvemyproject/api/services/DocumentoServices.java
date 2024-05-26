@@ -6,6 +6,7 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
@@ -24,5 +25,9 @@ public interface DocumentoServices {
                                         @Part("idClase") RequestBody idClase,
                                         @Part("nombre") RequestBody nombre,
                                         @Part MultipartBody.Part file);
+
+    @DELETE("documentos/clase/{idDocumento}")
+    Call<Void> eliminarDocumento(@Header("Authorization") String auth,
+                                 @Path("idDocumento") int idDocumento);
 
 }
