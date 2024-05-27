@@ -97,7 +97,7 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
             viewModel.obtenerCurso(idClase);
             ponerEspera();
         }*/
-        viewModel.obtenerCurso(127);
+        viewModel.obtenerCurso(1);
         ponerEspera();
     }
 
@@ -121,7 +121,7 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
         binding.lnrLayoutEstadisticas.setOnClickListener(v ->{
             EstadisticasCurso curso = new EstadisticasCurso();
             Bundle bundle = new Bundle();
-            bundle.putInt("clave_id_curso", 1);
+            bundle.putInt("clave_id_curso", viewModel.getCursoActual().getValue().getIdCurso());
             curso.setArguments(bundle);
             cambiarFragmentoPrincipal(curso);
         });
@@ -132,6 +132,10 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
         binding.btnCalificarCurso.setVisibility(View.VISIBLE);
         binding.btnCalificarCurso.setOnClickListener(v ->{
             CalificacionCurso curso = new CalificacionCurso();
+            Bundle bundle = new Bundle();
+            bundle.putInt("clave_id_curso", viewModel.getCursoActual().getValue().getIdCurso());
+            bundle.putString("clave_nombre_curso", viewModel.getCursoActual().getValue().getNombre());
+            curso.setArguments(bundle);
             cambiarFragmentoPrincipal(curso);
         });
     }

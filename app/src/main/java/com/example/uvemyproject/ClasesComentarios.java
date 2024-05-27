@@ -24,7 +24,7 @@ public class ClasesComentarios extends Fragment {
 
     private FragmentClasesComentariosBinding binding;
     private ClasesComentariosViewModel viewModel;
-
+    private ArrayList<ClaseEstadisticaDTO> clases;
     public ClasesComentarios() {
     }
 
@@ -44,20 +44,20 @@ public class ClasesComentarios extends Fragment {
         binding.rcyViewListadoClases.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.rcyViewListadoClases.setAdapter(adapter);
 
-        Bundle args = getArguments();
-        if (args != null) {
-            ArrayList<ClaseEstadisticaDTO> listaEstadisticas = args.getParcelableArrayList("clave_clases");
-            Log.i("aa", "no creo " + listaEstadisticas);
-            if (listaEstadisticas != null) {
-                Log.i("ya vi", "no creo");
-                viewModel.guardarListaClases(listaEstadisticas);
-            }
-        }
-
         viewModel.getListaClases().observe(getViewLifecycleOwner(), clasesComentarios ->{
             adapter.submitList(clasesComentarios);
         });
 
+        if(clases != null){
+            viewModel.guardarListaClases(clases);
+        }
+
         return binding.getRoot();
+    }
+
+    public void recibirListadoClases(ArrayList<ClaseEstadisticaDTO> listadoEstadisticas){
+        if (listadoEstadisticas != null) {
+            this.clases = listadoEstadisticas;
+        }
     }
 }

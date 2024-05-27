@@ -22,6 +22,7 @@ public class ListadoEstudiantesCurso extends Fragment {
 
     private FragmentListadoEstudiantesCursoBinding binding;
     private ListadoEstudiantesCursoViewModel viewModel;
+    private ArrayList<String> estudiantes;
     public ListadoEstudiantesCurso() {
 
     }
@@ -44,12 +45,16 @@ public class ListadoEstudiantesCurso extends Fragment {
             adapter.submitList(estudiantes);
         });
 
-        Bundle args = getArguments();
-        if (args != null) {
-            ArrayList<String> listaDeEstudiantes = args.getStringArrayList("clave_listado_estudiantes");
-            viewModel.guardarListadoEstudiantes(listaDeEstudiantes);
+        if(estudiantes != null){
+            viewModel.guardarListadoEstudiantes(estudiantes);
         }
 
         return binding.getRoot();
+    }
+
+    public void recibirEstudiantes(ArrayList<String> estudiantes){
+        if(estudiantes != null){
+            this.estudiantes = estudiantes;
+        }
     }
 }

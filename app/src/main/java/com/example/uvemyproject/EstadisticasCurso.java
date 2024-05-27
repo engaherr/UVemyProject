@@ -60,11 +60,6 @@ public class EstadisticasCurso extends Fragment {
         observarReporte();
         obtenerDatosCurso();
 
-        binding.lnrLayoutListadoEstudiantes.setOnClickListener(v -> cambiarListadoEstudiantes());
-        binding.lnrLayoutComentariosClase.setOnClickListener(v -> cambiarListadoClases());
-
-        binding.lnrLayoutEstadisticas.setOnClickListener( v -> recuperarReporte());
-
         return binding.getRoot();
     }
 
@@ -95,28 +90,24 @@ public class EstadisticasCurso extends Fragment {
         viewModel.getEstadisticas().observe(getViewLifecycleOwner(), estadisticas -> {
             if (estadisticas != null) {
                 binding.setEstadisticasCurso(estadisticas);
-                if(estadisticas.getClasesConComentarios() != null){
-                    fragmento = 0;
-                    listadoClases = new ClasesComentarios();
-                    Bundle bundle = new Bundle();
-                    ArrayList<ClaseEstadisticaDTO> clases = new ArrayList<>(estadisticas.getClasesConComentarios());
-                    Log.i("a", clases.size() + " ");
-                    Log.i("a", estadisticas.getClasesConComentarios().size() + " ");
+                    if(estadisticas.getClasesConComentarios() != null){
+                        listadoClases = new ClasesComentarios();
+                        ArrayList<ClaseEstadisticaDTO> clases = new ArrayList<>(estadisticas.getClasesConComentarios());
+                        listadoClases.recibirListadoClases(clases);
 
-                    bundle.putParcelableArrayList("clave_clases", clases);
-                    listadoClases.setArguments(bundle);
-                    FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-                    transaction.replace(R.id.frgDetalles, listadoClases).commit();
-                }
+                    }
 
                 if(estadisticas.getEstudiantesCurso() != null){
                     listadoEstudiantes = new ListadoEstudiantesCurso();
                     ArrayList<String> arrayListDeEstudiantes = new ArrayList<>(estadisticas.getEstudiantesCurso());
-                    Bundle bundle = new Bundle();
-                    bundle.putStringArrayList("clave_listado_estudiantes", arrayListDeEstudiantes);
-                    listadoClases.setArguments(bundle);
+                    listadoEstudiantes.recibirEstudiantes(arrayListDeEstudiantes);
                 }
 
+                binding.lnrLayoutListadoEstudiantes.setOnClickListener(v -> cambiarListadoEstudiantes());
+                binding.lnrLayoutComentariosClase.setOnClickListener(v -> cambiarListadoClases());
+                binding.lnrLayoutEstadisticas.setOnClickListener( v -> recuperarReporte());
+
+                cambiarListadoClases();
             }
         });
     }
@@ -161,21 +152,20 @@ public class EstadisticasCurso extends Fragment {
     private void cambiarListadoEstudiantes(){
         if(fragmento != 1 && listadoEstudiantes != null){
             fragmento = 1;
-
-            Fragment childFragment = listadoEstudiantes;
-            FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-            transaction.replace(R.id.frgDetalles, childFragment).commit();
+            cambiarFragmentoListado(listadoEstudiantes);
         }
     }
 
     private void cambiarListadoClases(){
         if(fragmento != 0 && listadoClases != null){
             fragmento = 0;
-
-            Fragment childFragment = listadoClases;
-            FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-            transaction.replace(R.id.frgDetalles, childFragment).commit();
+            cambiarFragmentoListado(listadoClases);
         }
+    }
+
+    private void cambiarFragmentoListado(Fragment fragment){
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction.replace(binding.frgDetalles.getId(), fragment).commit();
     }
 
     private void ponerEspera(){
