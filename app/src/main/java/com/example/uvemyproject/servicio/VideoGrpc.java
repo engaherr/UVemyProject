@@ -60,6 +60,7 @@ public class VideoGrpc {
             public void onError(Throwable t) {
                 notificacion.envioErroneoVideo();
                 Log.i("Error GRPC en envio", t.getMessage());
+                t.printStackTrace();
             }
 
             @Override

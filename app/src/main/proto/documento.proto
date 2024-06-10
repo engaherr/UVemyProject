@@ -2,6 +2,7 @@ syntax = "proto3";
 
 option java_package = "com.proto.uvemyproject";
 
+
 message EnvioVideoRespuesta {
     int32 respuesta = 1;
 }
@@ -23,6 +24,8 @@ message DocumentoVideo{
 
 service VideoService {
     rpc EnviarVideoClase (stream VideoPartesEnvio) returns (EnvioVideoRespuesta);
+    rpc RecibirVideoClase (DocumentoVideo) returns (stream VideoPartesEnvio);
     rpc ActualizarVideoClase (stream VideoPartesEnvio) returns (EnvioVideoRespuesta);
 
 }
+

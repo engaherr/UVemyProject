@@ -91,6 +91,10 @@ public class ClaseDetalles extends Fragment {
     private void obtenerIdClase(){
         Bundle args = getArguments();
         if (args != null) {
+            int esEstudiante = args.getInt("es_estudiante");
+            if(esEstudiante > 0){
+                binding.lnrLayoutModificarClase.setVisibility(View.INVISIBLE);
+            }
             int idClase = args.getInt("id_clase");
             viewModel.recuperarDetallesClase(idClase);
             ponerEspera();

@@ -177,6 +177,8 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
     public void cambiarVerMas(ClaseDTO clase) {
         ClaseDetalles claseDetalles = new ClaseDetalles();
         Bundle bundle = new Bundle();
+        int esEstudiante = viewModel.getCursoActual().getValue().getRol().equals("Estudiante") ? 1 : 0;
+        bundle.putInt("es_estudiante",esEstudiante);
         bundle.putInt("id_clase", 127);
         claseDetalles.setArguments(bundle);
         ((MainActivity) getActivity()).cambiarFragmentoPrincipal(claseDetalles);

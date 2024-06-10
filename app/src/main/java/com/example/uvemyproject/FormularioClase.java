@@ -63,8 +63,7 @@ public class FormularioClase extends Fragment {
         binding.imgViewRegresar.setOnClickListener( v -> {
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().popBackStack();
-            }
-        });
+            }        });
 
         viewModel = new ViewModelProvider(this).get(FormularioClaseViewModel.class);
 
