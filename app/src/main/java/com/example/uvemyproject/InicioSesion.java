@@ -1,21 +1,18 @@
 package com.example.uvemyproject;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.uvemyproject.api.ApiClient;
-import com.example.uvemyproject.api.services.AutenticacionServices;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.example.uvemyproject.databinding.ActivityInicioSesionBinding;
-import com.example.uvemyproject.dto.CredencialesDTO;
-import com.example.uvemyproject.dto.UsuarioDTO;
 import com.example.uvemyproject.utils.CredencialesValidador;
 import com.example.uvemyproject.utils.SingletonUsuario;
 import com.example.uvemyproject.viewmodels.InicioSesionViewModel;
@@ -25,6 +22,8 @@ public class InicioSesion extends AppCompatActivity {
     private ActivityInicioSesionBinding binding;
     private InicioSesionViewModel viewModel;
 
+    boolean esContrasenaVisible = false;
+
     @SuppressLint("ShowToast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +32,19 @@ public class InicioSesion extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         viewModel = new ViewModelProvider(this).get(InicioSesionViewModel.class);
+
+        binding.imgViewVerContrasena.setOnClickListener(v -> {
+            if (esContrasenaVisible) {
+                binding.edtTextContrasena.setInputType(InputType.TYPE_CLASS_TEXT |
+                        InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                binding.imgViewVerContrasena.setImageResource(R.drawable.ic_slashed_eye);
+            } else {
+                binding.edtTextContrasena.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                binding.imgViewVerContrasena.setImageResource(R.drawable.ic_opened_eye);
+            }
+            binding.edtTextContrasena.setSelection(binding.edtTextContrasena.getText().length());
+            esContrasenaVisible = !esContrasenaVisible;
+        });
 
         binding.edtTextCorreoElectronico.addTextChangedListener(new TextWatcher() {
             @Override

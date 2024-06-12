@@ -74,19 +74,43 @@
             android:maxLength="18"
             app:layout_constraintTop_toBottomOf="@+id/edtTextCorreoElectronico"
             tools:layout_editor_absoluteX="15dp" />
-        <EditText
-            android:id="@+id/edtTextContrasena"
-            style="@style/styleEdtTextFormularioUsuario"
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cnsLayoutContrasena"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:autofillHints="emailAddress"
-            android:hint="Ingrese su contraseña"
-            android:inputType="textPassword"
-            android:maxHeight="300dp"
-            android:maxLength="18"
             android:layout_marginHorizontal="15dp"
-            android:minHeight="48dp"
-            app:layout_constraintTop_toBottomOf="@+id/txtViewContraseña" />
+            app:layout_constraintTop_toBottomOf="@+id/txtViewContraseña">
+
+            <EditText
+                android:id="@+id/edtTextContrasena"
+                style="@style/styleEdtTextFormularioUsuario"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:autofillHints="emailAddress"
+                android:hint="Ingrese su contraseña"
+                android:inputType="textPassword"
+                android:maxHeight="300dp"
+                android:maxLength="18"
+                android:minHeight="48dp"
+                app:layout_constraintEnd_toStartOf="@+id/imgViewVerContrasena"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintWidth_percent="0.9" />
+
+            <ImageView
+                android:id="@+id/imgViewVerContrasena"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:contentDescription="Ver contraseña"
+                android:src="@drawable/ic_slashed_eye"
+                app:layout_constraintStart_toEndOf="@+id/edtTextContrasena"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintWidth_percent="0.1" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/txtViewMensajeError"
@@ -95,7 +119,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
             android:textColor="@color/design_default_color_error"
-            app:layout_constraintTop_toBottomOf="@+id/edtTextContrasena"
+            app:layout_constraintTop_toBottomOf="@+id/cnsLayoutContrasena"
             tools:layout_editor_absoluteX="15dp" />
 
         <Button
