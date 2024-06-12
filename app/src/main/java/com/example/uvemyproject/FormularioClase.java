@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.provider.OpenableColumns;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ import com.example.uvemyproject.dto.DocumentoDTO;
 import com.example.uvemyproject.utils.FileUtil;
 import com.example.uvemyproject.utils.TamanioDocumentos;
 import com.example.uvemyproject.viewmodels.FormularioClaseViewModel;
+import com.example.uvemyproject.viewmodels.FormularioDetallesClaseViewModel;
 
 import java.io.File;
 import java.util.List;
@@ -37,6 +39,7 @@ public class FormularioClase extends Fragment {
 
     private FragmentFormularioClaseBinding binding;
     private FormularioClaseViewModel viewModel;
+    private FormularioDetallesClaseViewModel viewModelCompartido;
     private static final int PICK_PDF_FILE = 2;
     private static final int PICK_VIDEO_FILE = 1;
     private DocumentoAdapter adapter;
@@ -66,6 +69,8 @@ public class FormularioClase extends Fragment {
             }        });
 
         viewModel = new ViewModelProvider(this).get(FormularioClaseViewModel.class);
+
+        viewModelCompartido = new ViewModelProvider(requireActivity()).get(FormularioDetallesClaseViewModel.class);
 
         cargarClaseModificar();
 
@@ -119,12 +124,9 @@ public class FormularioClase extends Fragment {
     }
 
     private void cargarClaseModificar(){
-        Bundle args = getArguments();
-        if (args != null) {
-            ClaseDTO claseDTO = args.getParcelable("clave_clase_dto");
-            if (claseDTO != null) {
-                viewModel.setClaseActual(claseDTO);
-            }
+        if(viewModelCompartido.obtenerClase().getValue() != null){
+            binding.txtViewTitulo.setText("Modificar clase");
+            viewModel.setClaseActual(viewModelCompartido.obtenerClase().getValue());
         }
     }
     private void redireccionarPaginaSiguiente(){
@@ -243,11 +245,10 @@ public class FormularioClase extends Fragment {
 
         try {
             startActivityForResult(
-                    Intent.createChooser(intent, "Select a File to Upload"),
+                    Intent.createChooser(intent, "Seleccionar un documento PDF"),
                     PICK_PDF_FILE);
         } catch (android.content.ActivityNotFoundException ex) {
-            // Potentially direct the user to the Market with a Dialog
-            Toast.makeText(getContext(), "Please install a File Manager.",
+            Toast.makeText(getContext(), "Instale un manejador de archivos",
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -255,7 +256,13 @@ public class FormularioClase extends Fragment {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("video/mp4");
-        startActivityForResult(intent, PICK_VIDEO_FILE);
+        try{
+            startActivityForResult(
+                    Intent.createChooser(intent, "Seleccionar un video"), PICK_VIDEO_FILE);
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(getContext(), "Instale un manejador de archivos",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

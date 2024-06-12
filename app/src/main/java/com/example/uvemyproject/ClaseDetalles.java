@@ -21,10 +21,12 @@ import com.example.uvemyproject.databinding.FragmentClaseDetallesBinding;
 import com.example.uvemyproject.databinding.FragmentListadoClasesBinding;
 import com.example.uvemyproject.viewmodels.ClaseDetallesViewModel;
 import com.example.uvemyproject.viewmodels.EstadisticasCursoViewModel;
+import com.example.uvemyproject.viewmodels.FormularioDetallesClaseViewModel;
 
 public class ClaseDetalles extends Fragment {
     private FragmentClaseDetallesBinding binding;
     private ClaseDetallesViewModel viewModel;
+    private FormularioDetallesClaseViewModel viewModelCompartido;
     private DocumentoAdapter adapter;
     private int documentoSeleccionado = -1;
     private static final int PICK_DIRECTORY_REQUEST_CODE = 1;
@@ -52,6 +54,8 @@ public class ClaseDetalles extends Fragment {
         adapter.setOnItemClickListener((documento, posicion) -> descargarDocumento(posicion));
 
         viewModel = new ViewModelProvider(this).get(ClaseDetallesViewModel.class);
+
+        viewModelCompartido = new ViewModelProvider(requireActivity()).get(FormularioDetallesClaseViewModel.class);
 
         observarStatus();
         observarClase();
@@ -84,6 +88,7 @@ public class ClaseDetalles extends Fragment {
                     adapter.submitList(claseDTO.getDocumentos());
                     adapter.notifyDataSetChanged();
                 }
+                viewModelCompartido.setClase(claseDTO);
             }
         });
     }
@@ -103,9 +108,9 @@ public class ClaseDetalles extends Fragment {
 
     private void cambiarFormularioClase(){
         FormularioClase formularioClase = new FormularioClase();
-        Bundle bundle = new Bundle();
+        /*Bundle bundle = new Bundle();
         bundle.putParcelable("clave_clase_dto", viewModel.getClaseActual().getValue());
-        formularioClase.setArguments(bundle);
+        formularioClase.setArguments(bundle);*/
         ((MainActivity) getActivity()).cambiarFragmentoPrincipal(formularioClase);
     }
 

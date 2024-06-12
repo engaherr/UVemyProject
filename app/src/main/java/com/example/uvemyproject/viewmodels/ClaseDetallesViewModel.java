@@ -67,6 +67,7 @@ public class ClaseDetallesViewModel extends ViewModel {
         final boolean[] haHabidoError = {false};
 
         int[] idDocumentos = claseActual.getValue().getDocumentosId();
+
         for (int i = 0; i < idDocumentos.length; i++) {
             if(!haHabidoError[0]){
                 int finalI = i;
@@ -116,6 +117,11 @@ public class ClaseDetallesViewModel extends ViewModel {
                 break;
             }
         }
+        if(idDocumentos == null || idDocumentos.length == 0){
+            status.setValue(StatusRequest.ERROR);
+            recuperarVideo();
+            Log.e("Error BD", "No tiene asociados documentos");
+        }
     }
 
     private void recuperarVideo(){
@@ -150,6 +156,4 @@ public class ClaseDetallesViewModel extends ViewModel {
 
         return 0;
     }
-
-
 }

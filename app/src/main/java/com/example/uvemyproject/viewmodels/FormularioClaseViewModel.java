@@ -142,9 +142,7 @@ public class FormularioClaseViewModel extends ViewModel implements INotificacion
                         haHabidoError.set(true);
                     }else{
                         if((fin - 1) == index){
-                            if(!esActualizar){
-                                guardarVideo(documento.getIdClase());
-                            }
+                            guardarVideo(documento.getIdClase(), esActualizar);
                         }
                     }
                 }
@@ -158,8 +156,12 @@ public class FormularioClaseViewModel extends ViewModel implements INotificacion
         }
     }
 
-    private void guardarVideo(int idClase){
-        VideoGrpc.enviarVideo(videoClase.getValue(), idClase, this);
+    private void guardarVideo(int idClase, boolean esActualizar){
+        DocumentoDTO video = videoClase.getValue();
+        if(esActualizar){
+            video.setIdDocumento(claseActual.getValue().getVideoId());
+        }
+        VideoGrpc.enviarVideo(video, idClase, this);
     }
 
     public void actualizarClase(ClaseDTO claseActualizada){
@@ -169,8 +171,7 @@ public class FormularioClaseViewModel extends ViewModel implements INotificacion
             @Override
             public void onResponse(Call<ClaseDTO> call, Response<ClaseDTO> response) {
                 if (response.isSuccessful()) {
-                    status.setValue(StatusRequest.DONE);
-                    actualizarDocumentos(claseActualizada);
+                    actualizarDocumentosClase(claseActualizada);
                 }else{
                     status.setValue(StatusRequest.ERROR);
                 }
@@ -184,24 +185,38 @@ public class FormularioClaseViewModel extends ViewModel implements INotificacion
         });
     }
     
-    private void actualizarDocumentos(ClaseDTO claseActualizada){
+    private void actualizarDocumentosClase(ClaseDTO claseActualizada){
+        ArrayList<Integer> documentosPorEliminar = obtenerDocumentosPorEliminar();
+        IDocumentosEliminados notificarFinDocumentosEliminados = new IDocumentosEliminados() {
+            @Override
+            public void documentosEliminados(boolean haHabidoError) {
+                if(!haHabidoError){
+                    actualizarDocumentosNuevos(claseActualizada.getIdClase());
+                }
+            }
+        };
+
+        if(documentosPorEliminar.size() != 0){
+            eliminarDocumentosRestantes(documentosPorEliminar, notificarFinDocumentosEliminados);
+        }else{
+            actualizarDocumentosNuevos(claseActualizada.getIdClase());
+        }
+    }
+
+    private void actualizarDocumentosNuevos(int idClase){
         String auth = "Bearer " + SingletonUsuario.getJwt();
         List<DocumentoDTO> listaDocumentos = documentosClase.getValue();
         AtomicBoolean haHabidoError = new AtomicBoolean(false);
 
-        List<Integer> documentosEliminados = Arrays.stream(claseActual.getValue().getDocumentosId()).boxed().collect(Collectors.toList());
+        int documentosAgregados = 0;
 
         for(int i = 0; i < listaDocumentos.size(); i++){
             if (!haHabidoError.get()) {
                 DocumentoDTO documento = listaDocumentos.get(i);
                 if(documento.getIdDocumento() == 0){
-                    documento.setIdClase(claseActualizada.getIdClase());
+                    documento.setIdClase(idClase);
                     guardarDocumento(auth, documento, i, listaDocumentos.size(), haHabidoError, true);
-                }else{
-                    int posicion = obtenerPosicionDocumento(listaDocumentos.get(i).getIdDocumento(), documentosEliminados);
-                    if(posicion > -1){
-                        documentosEliminados.remove(posicion);
-                    }
+                    documentosAgregados ++;
                 }
             } else {
                 Log.e("RetrofitErrorDocumentos", "No se pudieron mandar los documentos");
@@ -209,33 +224,57 @@ public class FormularioClaseViewModel extends ViewModel implements INotificacion
             }
         }
 
-        if(!haHabidoError.get()){
-            eliminarDocumentosRestantes(documentosEliminados);
+        if(documentosAgregados == 0){
+            guardarVideo(idClase, true);
         }
     }
 
-    private int obtenerPosicionDocumento(int idDocumento, List<Integer> listaDocumento){
+    private ArrayList<Integer> obtenerDocumentosPorEliminar(){
+        List<DocumentoDTO> documentosActuales = documentosClase.getValue();
+        List<Integer> documentosPrevios = Arrays.stream(claseActual.getValue().getDocumentosId()).boxed().collect(Collectors.toList());
+
+        ArrayList<Integer> documentosPorEliminar = new ArrayList<>();
+
+        for(int i = 0; i < documentosPrevios.size(); i++) {
+            int idDocumento = documentosPrevios.get(i);
+            //El documento previo existe en los documentos nuevos
+            int posicion = obtenerPosicionDocumento(idDocumento, documentosActuales);
+            if(posicion == -1){
+                documentosPorEliminar.add(idDocumento);
+            }
+        }
+
+        return documentosPorEliminar;
+
+    }
+
+    private int obtenerPosicionDocumento(int idDocumento, List<DocumentoDTO> listaDocumento){
         for (int i = 0; i < listaDocumento.size(); i++) {
-            if(listaDocumento.get(i) == idDocumento){
+            if(listaDocumento.get(i).getIdDocumento() == idDocumento){
                 return i;
             }
         }
         return -1;
     }
 
-    private void eliminarDocumentosRestantes(List<Integer> documentosPorEliminar){
+    private void eliminarDocumentosRestantes(List<Integer> documentosPorEliminar, IDocumentosEliminados notificarFinEliminacion){
         String auth = "Bearer " + SingletonUsuario.getJwt();
         DocumentoServices service = ApiClient.getInstance().getDocumentoServices();
         AtomicBoolean haHabidoError = new AtomicBoolean(false);
 
         for (int i = 0; i < documentosPorEliminar.size(); i++) {
             if(!haHabidoError.get()){
+                int finalI = i;
                 service.eliminarDocumento(auth, documentosPorEliminar.get(i)).enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         if(!response.isSuccessful()){
                             status.setValue(StatusRequest.ERROR);
                             haHabidoError.set(true);
+                        }else{
+                            if(!haHabidoError.get() && ((documentosPorEliminar.size() - 1) == finalI)){
+                                notificarFinEliminacion.documentosEliminados(haHabidoError.get());
+                            }
                         }
                     }
 
@@ -251,16 +290,8 @@ public class FormularioClaseViewModel extends ViewModel implements INotificacion
             }
         }
 
-        if(!haHabidoError.get()){
-            actualizarVideo();
-        }
     }
 
-    private void actualizarVideo(){
-        DocumentoDTO video = videoClase.getValue();
-        video.setIdDocumento(claseActual.getValue().getVideoId());
-        VideoGrpc.enviarVideo(video, claseActual.getValue().getIdClase(), this);
-    }
 
     public void eliminarClase(){
         String auth = "Bearer " + SingletonUsuario.getJwt();
@@ -333,5 +364,9 @@ public class FormularioClaseViewModel extends ViewModel implements INotificacion
     @Override
     public void envioErroneoVideo() {
         status.postValue(StatusRequest.ERROR);
+    }
+
+    private interface IDocumentosEliminados{
+        void documentosEliminados(boolean haHabidoError);
     }
 }
