@@ -1,6 +1,5 @@
 package com.example.uvemyproject;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -24,7 +23,6 @@ public class InicioSesion extends AppCompatActivity {
 
     boolean esContrasenaVisible = false;
 
-    @SuppressLint("ShowToast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +42,10 @@ public class InicioSesion extends AppCompatActivity {
             }
             binding.edtTextContrasena.setSelection(binding.edtTextContrasena.getText().length());
             esContrasenaVisible = !esContrasenaVisible;
+        });
+
+        binding.txtViewRegistrate.setOnClickListener(c -> {
+            redireccionarRegistroUsuario();
         });
 
         binding.edtTextCorreoElectronico.addTextChangedListener(new TextWatcher() {
@@ -81,6 +83,13 @@ public class InicioSesion extends AppCompatActivity {
         observarStatus();
 
         observarUsuario();
+    }
+
+    private void redireccionarRegistroUsuario() {
+        FormularioUsuario formularioUsuario = new FormularioUsuario(false);
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.frmLayoutInicioSesion,
+                formularioUsuario).commit();
     }
 
     private void observarUsuario() {
