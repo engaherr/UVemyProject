@@ -32,7 +32,7 @@ public class ApiClient {
                     .build();
 
             retrofit = new Retrofit.Builder()
-                    .baseUrl("http://192.168.100.23:3000/api/").client(client)
+                    .baseUrl("http://192.168.100.38:3000/api/").client(client)
                     .addConverterFactory(MoshiConverterFactory.create())
                     .build();
         }

@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.uvemyproject.databinding.FragmentCursoDetallesPrincipalBinding;
 import com.example.uvemyproject.dto.ClaseDTO;
+import com.example.uvemyproject.dto.CrearCursoDTO;
 import com.example.uvemyproject.dto.CursoDTO;
 import com.example.uvemyproject.interfaces.INotificacionFragmentoClase;
 import com.example.uvemyproject.utils.SingletonUsuario;
@@ -97,7 +98,7 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
             viewModel.obtenerCurso(idClase);
             ponerEspera();
         }*/
-        viewModel.obtenerCurso(1);
+        viewModel.obtenerCurso(213);
         ponerEspera();
     }
 
@@ -118,6 +119,17 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
     private void mostrarOpcionesProfesor(){
         binding.lnrLayoutEstadisticas.setVisibility(View.VISIBLE);
         binding.btnModificarCurso.setVisibility(View.VISIBLE);
+        CrearCursoDTO cursoNuevo = new CrearCursoDTO();
+        cursoNuevo.setIdCurso(viewModel.getCursoActual().getValue().getIdCurso());
+
+        binding.btnModificarCurso.setOnClickListener(v ->{
+            FormularioCurso formularioCurso = new FormularioCurso();
+            Bundle bundle = new Bundle();
+            //bundle.putBoolean("clave_esCrearCurso", false);
+            bundle.putParcelable("clave_curso", cursoNuevo);
+            formularioCurso.setArguments(bundle);
+            cambiarFragmentoPrincipal(formularioCurso);
+        });
         binding.lnrLayoutEstadisticas.setOnClickListener(v ->{
             EstadisticasCurso curso = new EstadisticasCurso();
             Bundle bundle = new Bundle();
