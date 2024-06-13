@@ -57,6 +57,7 @@
                     android:paddingHorizontal="40dp"
                     android:paddingTop="5dp"
                     android:text="¡Bienvenido a UVemy! ¡Crea tu cuenta para comenzar a aprender!"/>
+
                 <TextView android:id="@+id/txtViewImagen"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -66,13 +67,6 @@
                     android:paddingHorizontal="40dp"
                     android:paddingVertical="10dp"
                     style="@style/styleTxtViewInfoBoldFormularioUsuario"/>
-                <TextView android:id="@+id/txtViewInfoImagen"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="¡Puedes añadir o cambiar tu foto de perfil más tarde!"
-                    android:layout_below="@id/txtViewImagen"
-                    style="@style/styleTxtViewInfoFormularioUsuario"/>
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/imgViewPerfil"
@@ -85,7 +79,7 @@
                     app:strokeWidth="2dp"
                     app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.circleImageView"
                     app:srcCompat="@drawable/default_profile_picture"
-                    android:layout_below="@id/txtViewInfoImagen"
+                    android:layout_below="@id/txtViewImagen"
                     />
 
                 <Button android:id="@+id/btnSubirImagen"
@@ -143,6 +137,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:autofillHints="name"
+                        android:maxLength="150"
                         android:hint="Ej. Diego Ernesto"
                         android:inputType="textPersonName"
                         android:minHeight="48dp" />
@@ -159,6 +154,7 @@
                         style="@style/styleEdtTextFormularioUsuario"
                         android:layout_width="match_parent"
                         android:autofillHints="name"
+                        android:maxLength="660"
                         android:hint="Ej. Rodríguez Salazar"
                         android:layout_height="wrap_content"
                         android:inputType="textPersonName"
@@ -178,6 +174,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:autofillHints="emailAddress"
+                        android:maxLength="600"
                         android:hint="Ej. ejemplo@dominio.com"
                         android:inputType="textEmailAddress"
                         android:minHeight="48dp" />
@@ -212,40 +209,42 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Contraseña"/>
-                    <RelativeLayout android:id="@+id/rltLayoutContraseña"
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cnsLayoutContrasena"
                         android:layout_width="match_parent"
-                        android:padding="10dp"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/background_lightblue">
+                        app:layout_constraintTop_toBottomOf="@+id/txtViewContraseña">
 
                         <EditText
                             android:id="@+id/edtTextContrasena"
-                            android:layout_width="match_parent"
+                            style="@style/styleEdtTextFormularioUsuario"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_toStartOf="@id/btn_toggle_password"
-                            android:autofillHints="password"
-                            android:background="@android:color/transparent"
-                            android:hint="Contraseña"
+                            android:autofillHints="emailAddress"
                             android:inputType="textPassword"
-                            android:maxWidth="400dp"
-                            android:maxLength="15"
-                            android:paddingEnd="26dp"
-                            android:scrollbars="vertical"
-                            android:textColor="@color/black"
-                            android:textSize="16sp"
-                            tools:ignore="TouchTargetSizeCheck" />
+                            android:maxHeight="300dp"
+                            android:maxLength="18"
+                            android:minHeight="48dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/imgViewVerContrasena"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_percent="0.9" />
 
-                        <ImageButton
-                            android:id="@+id/btn_toggle_password"
-                            android:layout_width="26dp"
-                            android:layout_height="26dp"
-                            android:layout_alignParentEnd="true"
-                            android:background="?attr/selectableItemBackground"
-                            android:contentDescription="Ver Contraseña"
-                            android:src="@drawable/ic_opened_eye"
-                            tools:ignore="TouchTargetSizeCheck" />
-                    </RelativeLayout>
+                        <ImageView
+                            android:id="@+id/imgViewVerContrasena"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:contentDescription="Ver contraseña"
+                            android:src="@drawable/ic_slashed_eye"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/edtTextContrasena"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_percent="0.1" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
                     <TextView
                         android:id="@+id/txtViewContraseñaRepetida"
@@ -254,40 +253,39 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Confirme contraseña"/>
-                    <RelativeLayout android:id="@+id/rltLayoutContraseñaRepetida"
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cnsLayoutContrasenRepetida"
                         android:layout_width="match_parent"
-                        android:padding="10dp"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/background_lightblue">
+                        app:layout_constraintTop_toBottomOf="@+id/txtViewContraseña">
 
                         <EditText
                             android:id="@+id/edtTextContrasenaRepetida"
-                            android:layout_width="match_parent"
+                            style="@style/styleEdtTextFormularioUsuario"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_toStartOf="@id/btn_toggle_repeated_password"
-                            android:autofillHints="password"
-                            android:background="@android:color/transparent"
-                            android:hint="Repite tu contraseña"
+                            android:autofillHints="emailAddress"
                             android:inputType="textPassword"
-                            android:maxWidth="400dp"
-                            android:maxLength="15"
-                            android:paddingEnd="26dp"
-                            android:scrollbars="vertical"
-                            android:textColor="@color/black"
-                            android:textSize="16sp"
-                            tools:ignore="TouchTargetSizeCheck" />
+                            android:maxHeight="300dp"
+                            android:maxLength="18"
+                            android:minHeight="48dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintWidth_percent="0.9" />
 
-                        <ImageButton
-                            android:id="@+id/btn_toggle_repeated_password"
-                            android:layout_width="26dp"
-                            android:layout_height="26dp"
-                            android:layout_alignParentEnd="true"
-                            android:background="?attr/selectableItemBackground"
-                            android:contentDescription="Ver Contraseña"
-                            android:src="@drawable/ic_opened_eye"
-                            tools:ignore="TouchTargetSizeCheck" />
-                    </RelativeLayout>
+                        <ImageView
+                            android:id="@+id/imgViewVerContrasenaRepetida"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:contentDescription="Ver contraseña"
+                            android:src="@drawable/ic_slashed_eye"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintWidth_percent="0.1" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <Button
                         android:id="@+id/btnRegistrarse"
