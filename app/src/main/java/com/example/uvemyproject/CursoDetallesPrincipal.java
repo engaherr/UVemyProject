@@ -24,6 +24,7 @@ import com.example.uvemyproject.viewmodels.CursoDetallesPrincipalViewModel;
 import com.example.uvemyproject.viewmodels.FormularioClaseViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CursoDetallesPrincipal extends Fragment implements INotificacionFragmentoClase {
 
@@ -124,8 +125,25 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
 
         binding.btnModificarCurso.setOnClickListener(v ->{
             FormularioCurso formularioCurso = new FormularioCurso();
+            //log
+            cursoNuevo.setIdCurso(288);
+            cursoNuevo.setIdDocumento(154);
+            cursoNuevo.setTitulo("Titulo");
+            cursoNuevo.setObjetivos("Objetivos");
+            cursoNuevo.setRequisitos("Requisitos");
+            cursoNuevo.setDescripcion("Descripcion");
+            List<String> lstS = new ArrayList<>();
+            lstS.add("Etiqueta 11");
+            lstS.add("Etiqueta 22");
+            lstS.add("Etiqueta 33");
+            List<Integer> lstI = new ArrayList<>();
+            lstI.add(1);
+            lstI.add(2);
+            lstI.add(3);
+            cursoNuevo.setEtiquetas(lstI);
+            cursoNuevo.setNombreEtiquetas(lstS);
             Bundle bundle = new Bundle();
-            //bundle.putBoolean("clave_esCrearCurso", false);
+            bundle.putBoolean("clave_esCrearCurso", false);
             bundle.putParcelable("clave_curso", cursoNuevo);
             formularioCurso.setArguments(bundle);
             cambiarFragmentoPrincipal(formularioCurso);

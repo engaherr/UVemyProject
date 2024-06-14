@@ -4,8 +4,10 @@ import static android.app.Activity.RESULT_OK;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -52,7 +54,8 @@ public class FormularioCurso extends Fragment {
     private CrearCursoDTO _curso;
     private int idCurso;
     private byte[] _arrayImagen;
-    private ArrayList<Integer> _listIdEtiquetas = new ArrayList<Integer>();
+    private List<Integer> _listIdEtiquetas = new ArrayList<>();
+    private List<String> _listNombreEtiquetas = new ArrayList<>();
     private FragmentFormularioCursoBinding binding;
     private FormularioCursoViewModel viewModel;
     public FormularioCurso() {
@@ -78,40 +81,52 @@ public class FormularioCurso extends Fragment {
         if (getArguments() != null) {
             _esCrearCurso = getArguments().getBoolean("clave_esCrearCurso", true);
             _curso = getArguments().getParcelable("clave_curso");
+            Log.d("Log", "Modificar "+_curso.getIdCurso()+" idCurso");
             viewModel.setCursoActual(_curso);
         }
-        //Si es crear curso hago algo sino es modificar curso, dependiento de si tiene idCurso
         binding = FragmentFormularioCursoBinding.inflate(inflater, container, false);
         if (_esCrearCurso == false) {
+            //Cargar el curso mostrar los botones
+            cargarCurso();
+            List<String> lista = viewModel.getCursoActual().getValue().getNombreEtiquetas();
+            List<Integer> lista2 = viewModel.getCursoActual().getValue().getEtiquetas();
+            for (String elemento : lista) {
+                Log.d("Log", elemento+" ");
+            }
+            for (Integer elemento : lista2) {
+                Log.d("Log", elemento+" ");
+            }
+            binding.btnGuardarCurso.setText("Modificar curso");
+            binding.btnEliminarCurso.setVisibility(View.VISIBLE);
             binding.btnEliminarCurso.setOnClickListener(v -> {
-
+                eliminarCurso();
             });
             binding.btnGuardarCurso.setOnClickListener(v -> {
-                //Modificar curso
+                guardarDatosCurso();
+                modificarCurso();
             });
         }
         else {
+            binding.btnEliminarCurso.setVisibility(View.GONE);
             binding.btnGuardarCurso.setOnClickListener(v -> {
                 if(validarCampos()){
-                    GuardarDatosCurso();
-                    GuardarCurso();
+                    guardarDatosCurso();
+                    guardarCurso();
                 }
             });
         }
         binding.btnAnadirTemas.setOnClickListener(v -> {
-            GuardarDatosCurso();
+            guardarDatosCurso();
 
         });
         binding.btnEliminarMiniatura.setOnClickListener(v -> {
-            binding.imageView.setImageResource(android.R.drawable.ic_menu_upload);
+            binding.imgView.setImageResource(android.R.drawable.ic_menu_upload);
             viewModel.setArrayBites(null);
         });
-        binding.imageView.setOnClickListener(v -> {
+        binding.imgView.setOnClickListener(v -> {
             openGallery();
         });
-        IngresarEtiquetas();
-
-
+        ingresarEtiquetas();
 
         viewModel.getStatus().observe(getViewLifecycleOwner(), new Observer<StatusRequest>() {
             @Override
@@ -137,33 +152,46 @@ public class FormularioCurso extends Fragment {
         return binding.getRoot();
     }
 
-    private void IngresarEtiquetas(){
-        List<String> listaNombres = new ArrayList<>();
-        //listaNombres.add("Etiqueta 1");
-        //listaNombres.add("Etiqueta 2");
-        //listaNombres.add("Etiqueta 3");
-        //ArrayList<Integer> listaID = new ArrayList<>();
-        //listaID.add(1);
-        //listaID.add(2);
-        //viewModel.setListEtiquetas(listaID);
-        //ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, listaNombres);
-        //binding.lstView.setAdapter(adapter);
+    private void cargarCurso(){
+        binding.edtTextDescripcion.setText(viewModel.getCursoActual().getValue().getDescripcion());
+        binding.edtTextTitulo.setText(viewModel.getCursoActual().getValue().getTitulo());
+        binding.edtTextObjetivos.setText(viewModel.getCursoActual().getValue().getObjetivos());
+        binding.edtTextRequisitos.setText(viewModel.getCursoActual().getValue().getRequisitos());
+        binding.imgView.setImageBitmap(BitmapFactory.decodeByteArray(_arrayImagen, 0, _arrayImagen.length));
     }
-    private void GuardarCurso(){
+
+    private void eliminarCurso(){
+        viewModel.eliminarCurso();
+    }
+
+    private void ingresarEtiquetas(){
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, viewModel.getCursoActual().getValue().getNombreEtiquetas());
+        binding.lstView.setAdapter(adapter);
+    }
+
+    private void guardarCurso(){
         viewModel.guardarCurso(viewModel.getCursoActual().getValue());
     }
 
-    private void GuardarDatosCurso(){
+    private void modificarCurso(){
+        viewModel.modificarCurso(viewModel.getCursoActual().getValue());
+    }
+
+    private void guardarDatosCurso(){
+
         CrearCursoDTO curso = new CrearCursoDTO();
         curso = viewModel.getCursoActual().getValue();
-        String tituloCurso = String.valueOf(binding.dtTextTitulo.getText()).trim();
-        String descripcionCurso = String.valueOf(binding.dtTextDescripcion.getText()).trim();
-        String requisitosCurso = String.valueOf(binding.dtTextRequisitos.getText()).trim();
-        String objetivosCurso = String.valueOf(binding.dtTextObjetivos.getText()).trim();
+        String tituloCurso = String.valueOf(binding.edtTextTitulo.getText()).trim();
+        String descripcionCurso = String.valueOf(binding.edtTextDescripcion.getText()).trim();
+        String requisitosCurso = String.valueOf(binding.edtTextRequisitos.getText()).trim();
+        String objetivosCurso = String.valueOf(binding.edtTextObjetivos.getText()).trim();
         curso.setTitulo(tituloCurso);
         curso.setDescripcion(descripcionCurso);
         curso.setRequisitos(requisitosCurso);
         curso.setObjetivos(objetivosCurso);
+        curso.setEtiquetas(_listIdEtiquetas);
+        curso.setNombreEtiquetas(_listNombreEtiquetas);
+        curso.setArchivo(_arrayImagen);
         viewModel.setCursoActual(curso);
     }
 
@@ -171,38 +199,38 @@ public class FormularioCurso extends Fragment {
         boolean sonCamposValidos = true;
         boolean sonEtiquetasValidas = true;
         CrearCursoDTO curso = viewModel.getCursoActual().getValue();
-        String tituloCurso = String.valueOf(binding.dtTextTitulo.getText()).trim();
-        String descripcionCurso = String.valueOf(binding.dtTextDescripcion.getText()).trim();
-        String requisitosCurso = String.valueOf(binding.dtTextRequisitos.getText()).trim();
-        String objetivosCurso = String.valueOf(binding.dtTextObjetivos.getText()).trim();
+        String tituloCurso = String.valueOf(binding.edtTextTitulo.getText()).trim();
+        String descripcionCurso = String.valueOf(binding.edtTextDescripcion.getText()).trim();
+        String requisitosCurso = String.valueOf(binding.edtTextRequisitos.getText()).trim();
+        String objetivosCurso = String.valueOf(binding.edtTextObjetivos.getText()).trim();
 
-        binding.dtTextTitulo.setBackgroundResource(R.drawable.background_lightblue);
-        binding.dtTextDescripcion.setBackgroundResource(R.drawable.background_lightblue);
-        binding.dtTextRequisitos.setBackgroundResource(R.drawable.background_lightblue);
-        binding.dtTextObjetivos.setBackgroundResource(R.drawable.background_lightblue);
-        binding.imageView.setBackgroundColor(Color.parseColor("#00000000"));
+        binding.edtTextTitulo.setBackgroundResource(R.drawable.background_lightblue);
+        binding.edtTextDescripcion.setBackgroundResource(R.drawable.background_lightblue);
+        binding.edtTextRequisitos.setBackgroundResource(R.drawable.background_lightblue);
+        binding.edtTextObjetivos.setBackgroundResource(R.drawable.background_lightblue);
+        binding.imgView.setBackgroundColor(Color.parseColor("#00000000"));
         binding.lstView.setBackgroundResource(R.drawable.background_commentary);
         if(tituloCurso.isEmpty() || tituloCurso.length() >= 150){
             sonCamposValidos = false;
-            binding.dtTextTitulo.setBackgroundResource(R.drawable.background_errorcampo);
+            binding.edtTextTitulo.setBackgroundResource(R.drawable.background_errorcampo);
         }
         if(descripcionCurso.isEmpty() || descripcionCurso.length() >= 660){
             sonCamposValidos = false;
-            binding.dtTextDescripcion.setBackgroundResource(R.drawable.background_errorcampo);
+            binding.edtTextDescripcion.setBackgroundResource(R.drawable.background_errorcampo);
         }
         if(requisitosCurso.isEmpty() || requisitosCurso.length() >= 300){
             sonCamposValidos = false;
-            binding.dtTextRequisitos.setBackgroundResource(R.drawable.background_errorcampo);
+            binding.edtTextRequisitos.setBackgroundResource(R.drawable.background_errorcampo);
         }
         if(objetivosCurso.isEmpty() || objetivosCurso.length() >= 300){
             sonCamposValidos = false;
-            binding.dtTextObjetivos.setBackgroundResource(R.drawable.background_errorcampo);
+            binding.edtTextObjetivos.setBackgroundResource(R.drawable.background_errorcampo);
         }
-        if(curso.archivo == null){
+        if(curso.getArchivo() == null){
             sonCamposValidos = false;
-            binding.imageView.setBackgroundColor(Color.parseColor("#8A1818"));
+            binding.imgView.setBackgroundColor(Color.parseColor("#8A1818"));
         }
-        if(curso.etiquetas.isEmpty()){
+        if(curso.getEtiquetas().isEmpty()){
             sonCamposValidos = false;
             sonEtiquetasValidas = false;
             binding.lstView.setBackgroundColor(Color.parseColor("#8A1818"));
@@ -237,7 +265,7 @@ public class FormularioCurso extends Fragment {
                         Uri selectedImageUri = data.getData();
                         try {
                             Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImageUri);
-                            binding.imageView.setImageBitmap(bitmap);
+                            binding.imgView.setImageBitmap(bitmap);
                             _arrayImagen = bitmapToByteArray(bitmap);
                             viewModel.setArrayBites(_arrayImagen);
 

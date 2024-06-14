@@ -70,7 +70,7 @@
                             android:text="Titulo del curso" />
 
                         <EditText
-                            android:id="@+id/dtTextTitulo"
+                            android:id="@+id/edtTextTitulo"
                             style="@style/styleEdtTextCamposFormulario"
                             android:layout_width="match_parent"
                             android:layout_height="140dp"
@@ -86,7 +86,7 @@
 
                         <ImageView
                             android:layout_marginBottom="10dp"
-                            android:id="@+id/imageView"
+                            android:id="@+id/imgView"
                             android:layout_width="match_parent"
                             android:layout_height="220dp"
                             android:src="@android:drawable/ic_menu_upload"/>
@@ -108,7 +108,7 @@
                             android:text="Descripción del curso" />
 
                         <EditText
-                            android:id="@+id/dtTextDescripcion"
+                            android:id="@+id/edtTextDescripcion"
                             android:layout_marginBottom="15dp"
                             style="@style/styleEdtTextCamposFormulario"
                             android:layout_width="match_parent"
@@ -125,7 +125,7 @@
                             />
 
                         <EditText
-                            android:id="@+id/dtTextRequisitos"
+                            android:id="@+id/edtTextRequisitos"
                             android:layout_marginBottom="15dp"
                             style="@style/styleEdtTextCamposFormulario"
                             android:layout_width="match_parent"
@@ -140,7 +140,7 @@
                             android:text="Objetivos del curso" />
 
                         <EditText
-                            android:id="@+id/dtTextObjetivos"
+                            android:id="@+id/edtTextObjetivos"
                             android:layout_marginBottom="15dp"
                             style="@style/styleEdtTextCamposFormulario"
                             android:layout_width="match_parent"
@@ -163,7 +163,7 @@
                             />
 
                         <Button
-                            android:id="@+id/btnEliminarCurso"
+                            android:id="@+id/btnAnadirTemas"
                             android:layout_marginBottom="15dp"
                             style="@style/styleBtnLightBlue"
                             android:layout_width="280dp"
@@ -172,13 +172,13 @@
                             android:layout_gravity="center_horizontal"/>
 
                         <Button
-                            android:id="@+id/btnAnadirTemas"
+                            android:id="@+id/btnEliminarCurso"
                             android:layout_marginBottom="15dp"
                             style="@style/styleBtnDarkBlue"
                             android:layout_width="280dp"
                             android:layout_height="wrap_content"
                             android:text="Eliminar curso"
-                            android:visibility="gone"
+                            android:visibility="visible"
                             android:layout_gravity="center_horizontal"/>
 
                         <Button

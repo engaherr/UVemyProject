@@ -9,15 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CrearCursoDTO implements Parcelable {
-    public int idCurso;
-    public String titulo;
-    public String descripcion;
-    public String objetivos;
-    public String requisitos;
-    public int idUsuario;
-    public List<Integer> etiquetas;
-    public int idDocumento;
-    public byte[] archivo;
+    private int idCurso;
+    private String titulo;
+    private String descripcion;
+    private String objetivos;
+    private String requisitos;
+    private int idUsuario;
+    private List<Integer> etiquetas;
+    private List<String> nombreEtiquetas;
+    private int idDocumento;
+    private byte[] archivo;
 
     public CrearCursoDTO(){
 
@@ -30,9 +31,13 @@ public class CrearCursoDTO implements Parcelable {
         requisitos = in.readString();
         idUsuario = in.readInt();
         etiquetas = new ArrayList<>();
+        nombreEtiquetas = new ArrayList<>();
         int etiquetasLength = in.readInt();
         for (int i = 0; i < etiquetasLength; i++) {
             etiquetas.add(in.readInt());
+        }
+        for (int i = 0; i < etiquetasLength; i++) {
+            nombreEtiquetas.add(in.readString());
         }
         idDocumento = in.readInt();
         archivo = in.createByteArray();
@@ -50,6 +55,13 @@ public class CrearCursoDTO implements Parcelable {
         }
     };
 
+    public List<String> getNombreEtiquetas() {
+        return nombreEtiquetas;
+    }
+
+    public void setNombreEtiquetas(List<String> nombreEtiquetas) {
+        this.nombreEtiquetas = nombreEtiquetas;
+    }
     public int getIdCurso() {
         return idCurso;
     }
@@ -137,8 +149,10 @@ public class CrearCursoDTO implements Parcelable {
         dest.writeInt(idUsuario);
         if (etiquetas != null) {
             dest.writeIntArray(etiquetas.stream().mapToInt(Integer::intValue).toArray());
+            String[] nombreEtiquetasArray = nombreEtiquetas.toArray(new String[nombreEtiquetas.size()]);
+            dest.writeStringArray(nombreEtiquetasArray);
         } else {
-            dest.writeInt(0); // Indica que no hay etiquetas
+            dest.writeInt(0);
         }
         dest.writeInt(idDocumento);
         dest.writeByteArray(archivo);

@@ -26,6 +26,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.security.auth.callback.Callback;
@@ -70,59 +71,100 @@ public class FormularioCursoViewModel extends ViewModel {
 
     private MultipartBody.Part crearFilePeticion() {
         byte[] fileBytes = arrayBites.getValue();
-        //RequestBody requestFile = RequestBody.create(arrayBites.getValue(),MediaType.parse("application/json"));
-        //MultipartBody.Part body = MultipartBody.Part.createFormData("file",  "pnf", requestFile);
         RequestBody requestFile = RequestBody.create(MediaType.parse("application/octet-stream"), fileBytes);
         return MultipartBody.Part.createFormData("file", "archivo.png", requestFile);
     }
     public void guardarCurso(CrearCursoDTO curso){
+        Log.d("Log", "Guardar");
         CursoServices service = ApiClient.getInstance().getCursoServices();
         String auth = "Bearer " + SingletonUsuario.getJwt();
-
-        RequestBody tituloPart = RequestBody.create(MediaType.parse("text/plain"), curso.getTitulo());
-        RequestBody descripcionPart = RequestBody.create(MediaType.parse("text/plain"), curso.getDescripcion());
-        RequestBody objetivosPart = RequestBody.create(MediaType.parse("text/plain"), curso.getObjetivos());
-        RequestBody requisitosPart = RequestBody.create(MediaType.parse("text/plain"), curso.getRequisitos());
-        ArrayList<RequestBody> etiquetasParts = new ArrayList<>();
-        for (Integer etiqueta : Objects.requireNonNull(listIdEtiquetas.getValue())) {
-            RequestBody etiquetaPart = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(etiqueta));
-            etiquetasParts.add(etiquetaPart);
-        }
+        RequestBody tituloPart = createPartFromString(curso.getTitulo());
+        RequestBody descripcionPart = createPartFromString(curso.getDescripcion());
+        RequestBody objetivosPart = createPartFromString(curso.getObjetivos());
+        RequestBody requisitosPart = createPartFromString(curso.getRequisitos());
+        ArrayList<RequestBody> etiquetasParts = createEtiquetasParts(listIdEtiquetas.getValue());
         MultipartBody.Part filePart = crearFilePeticion();
         service.crearCurso(auth, tituloPart, descripcionPart, objetivosPart, requisitosPart, etiquetasParts, filePart).enqueue(new retrofit2.Callback<CrearCursoDTO>(){@Override
             public void onResponse(Call<CrearCursoDTO> call, Response<CrearCursoDTO> response) {
                 if (response.isSuccessful()) {
-                    status.setValue(StatusRequest.ERROR_CONEXION);
+                    status.setValue(StatusRequest.DONE);
+                    Log.d("Log", response.message()+" "+response.code()+" "+response.body());
                 }else{
-                    Log.d("Log", response.message()+"H H"+response.code()+"H H"+response.body());
+                    Log.d("Log", response.message()+" "+response.code()+" "+response.body());
                     status.setValue(StatusRequest.ERROR);
                 }
             }
-
             @Override
             public void onFailure(Call<CrearCursoDTO> call, Throwable t) {
-                Log.e("RetrofitError", "Error de red o excepción: " + t.getMessage(), t);
+                Log.e("Log", "Error de red o excepción: " + t.getMessage(), t);
                 status.setValue(StatusRequest.ERROR_CONEXION);
             }
         });
     }
 
-    private RequestBody convertirRequestBodyCrearCurso(CrearCursoDTO curso){
-        Moshi moshi = new Moshi.Builder().build();
-        JsonAdapter<CrearCursoDTO> jsonAdapter = moshi.adapter(CrearCursoDTO.class);
-        String jsonEnviado = "";
-        try {
-            String json = jsonAdapter.toJson(curso);
-            JSONObject jsonObject = new JSONObject(json);
-            jsonObject.remove("idUsuario");
-            jsonObject.remove("idCurso");
-            jsonObject.remove("idDocumento");
-            jsonObject.remove("archivo");
-            jsonEnviado = jsonObject.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void modificarCurso(CrearCursoDTO curso){
+        Log.d("Log", "Modificar "+curso.getIdCurso()+" idCurso");
+        CursoServices service = ApiClient.getInstance().getCursoServices();
+        String auth = "Bearer " + SingletonUsuario.getJwt();
+        RequestBody idCursoPart = createPartFromString(String.valueOf(curso.getIdCurso()));
+        RequestBody tituloPart = createPartFromString(curso.getTitulo());
+        RequestBody descripcionPart = createPartFromString(curso.getDescripcion());
+        RequestBody objetivosPart = createPartFromString(curso.getObjetivos());
+        RequestBody requisitosPart = createPartFromString(curso.getRequisitos());
+        RequestBody idDocumentoPart = createPartFromString(String.valueOf(curso.getIdDocumento()));
+        ArrayList<RequestBody> etiquetasParts = createEtiquetasParts(listIdEtiquetas.getValue());
+        MultipartBody.Part filePart = crearFilePeticion();
+        service.modificarCurso(auth, curso.getIdCurso(), idCursoPart, idDocumentoPart, tituloPart, descripcionPart, objetivosPart, requisitosPart, etiquetasParts, filePart).enqueue(new retrofit2.Callback<CrearCursoDTO>(){@Override
+        public void onResponse(Call<CrearCursoDTO> call, Response<CrearCursoDTO> response) {
+            if (response.isSuccessful()) {
+                status.setValue(StatusRequest.DONE);
+                Log.d("Log", response.message()+" "+response.code()+" "+response.body());
+            }else{
+                Log.d("Log", response.message()+" "+response.code()+" "+response.body());
+                status.setValue(StatusRequest.ERROR);
+            }
         }
-        RequestBody jsonRequestBody = RequestBody.create(jsonEnviado, MediaType.parse("application/json; charset=utf-8"));
-        return jsonRequestBody;
+            @Override
+            public void onFailure(Call<CrearCursoDTO> call, Throwable t) {
+                Log.e("Log", "Error de red o excepción: " + t.getMessage(), t);
+                status.setValue(StatusRequest.ERROR_CONEXION);
+            }
+        });
     }
+
+    public void eliminarCurso(){
+        Log.d("Log", "Guardar");
+        CursoServices service = ApiClient.getInstance().getCursoServices();
+        String auth = "Bearer " + SingletonUsuario.getJwt();
+        service.eliminarCurso(auth, cursoActual.getValue().getIdCurso()).enqueue(new retrofit2.Callback<CrearCursoDTO>(){@Override
+        public void onResponse(Call<CrearCursoDTO> call, Response<CrearCursoDTO> response) {
+            if (response.isSuccessful()) {
+                status.setValue(StatusRequest.DONE);
+                Log.d("Log", response.message()+" "+response.code()+" "+response.body());
+            }else{
+                Log.d("Log", response.message()+" "+response.code()+" "+response.body());
+                status.setValue(StatusRequest.ERROR);
+            }
+        }
+            @Override
+            public void onFailure(Call<CrearCursoDTO> call, Throwable t) {
+                Log.e("Log", "Error de red o excepción: " + t.getMessage(), t);
+                status.setValue(StatusRequest.ERROR_CONEXION);
+            }
+        });
+    }
+
+    private RequestBody createPartFromString(String value) {
+        return RequestBody.create(value,MediaType.parse("text/plain"));
+    }
+
+    private ArrayList<RequestBody> createEtiquetasParts(List<Integer> listIdEtiquetas) {
+        ArrayList<RequestBody> etiquetasParts = new ArrayList<>();
+        for (Integer etiqueta : Objects.requireNonNull(listIdEtiquetas)) {
+            RequestBody etiquetaPart = createPartFromString(String.valueOf(etiqueta));
+            etiquetasParts.add(etiquetaPart);
+        }
+        return etiquetasParts;
+    }
+
 }
