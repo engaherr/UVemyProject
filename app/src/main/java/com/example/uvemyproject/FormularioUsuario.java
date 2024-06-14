@@ -11,14 +11,18 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.uvemyproject.databinding.FragmentFormularioUsuarioBinding;
+import com.example.uvemyproject.dto.UsuarioDTO;
 import com.example.uvemyproject.utils.CredencialesValidador;
+import com.example.uvemyproject.viewmodels.FormularioUsuarioViewModel;
 
 public class FormularioUsuario extends Fragment {
 
     private FragmentFormularioUsuarioBinding binding;
-
+    private FormularioUsuarioViewModel viewModel;
     boolean esActualizacion;
     boolean esContrasenaVisible;
     boolean esContrasenaRepetidaVisible;
@@ -38,6 +42,8 @@ public class FormularioUsuario extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentFormularioUsuarioBinding.inflate(getLayoutInflater());
+
+        viewModel = new ViewModelProvider(this).get(FormularioUsuarioViewModel.class);
 
         if(!esActualizacion) {
             binding.imgViewRegresar.setVisibility(View.GONE);
@@ -83,7 +89,7 @@ public class FormularioUsuario extends Fragment {
         binding.btnRegistrarse.setOnClickListener(c -> {
             resetearCampos();
             if (validarCampos()) {
-                //TODO: Registrar usuario con ViewModel
+                continuarRegistro();
             }
         });
 
@@ -94,6 +100,19 @@ public class FormularioUsuario extends Fragment {
         });
 
         return binding.getRoot();
+    }
+
+    private void continuarRegistro() {
+        UsuarioDTO usuario = new UsuarioDTO();
+        usuario.setNombres(binding.edtTextNombre.getText().toString());
+        usuario.setApellidos(binding.edtTextApellidos.getText().toString());
+        usuario.setCorreoElectronico(binding.edtTextCorreoElectronico.getText().toString());
+        usuario.setContrasena(binding.edtTextContrasena.getText().toString());
+        viewModel.setUsuario(new MutableLiveData<>(usuario));
+
+        SeleccionEtiquetas seleccionEtiquetas = new SeleccionEtiquetas(viewModel.getUsuario().getValue(),false);
+
+        ((InicioSesion) getActivity()).cambiarFragmentoPrincipal(seleccionEtiquetas);
     }
 
     private void setEditTextNombreListener() {
@@ -170,36 +189,36 @@ public class FormularioUsuario extends Fragment {
         String contrasenaRepetida = binding.edtTextContrasenaRepetida.getText().toString().trim();
 
         if (nombre.isEmpty()) {
-            binding.edtTextNombre.setBackgroundResource(R.drawable.background_red);
+            binding.edtTextNombre.setBackgroundResource(R.drawable.background_errorcampo);
             Toast.makeText(getActivity(),"Nombre/s requerido/s", Toast.LENGTH_SHORT).show();
             camposValidos = false;
         } else if (apellidos.isEmpty()) {
-            binding.edtTextApellidos.setBackgroundResource(R.drawable.background_red);
+            binding.edtTextApellidos.setBackgroundResource(R.drawable.background_errorcampo);
             Toast.makeText(getActivity(),"Apellido/s requerido/s", Toast.LENGTH_SHORT).show();
             camposValidos = false;
         } else if (correoElectronico.isEmpty()) {
-            binding.edtTextCorreoElectronico.setBackgroundResource(R.drawable.background_red);
+            binding.edtTextCorreoElectronico.setBackgroundResource(R.drawable.background_errorcampo);
             Toast.makeText(getActivity(),"Correo electrónico requerido", Toast.LENGTH_SHORT).show();
             camposValidos = false;
         } else if (!CredencialesValidador.esEmailValido(correoElectronico)) {
-            binding.edtTextCorreoElectronico.setBackgroundResource(R.drawable.background_red);
+            binding.edtTextCorreoElectronico.setBackgroundResource(R.drawable.background_errorcampo);
             Toast.makeText(getActivity(),"Correo electrónico inválido", Toast.LENGTH_SHORT).show();
             camposValidos = false;
         } else if (contrasena.isEmpty()) {
-            binding.edtTextContrasena.setBackgroundResource(R.drawable.background_red);
+            binding.edtTextContrasena.setBackgroundResource(R.drawable.background_errorcampo);
             Toast.makeText(getActivity(),"Contraseña requerida", Toast.LENGTH_SHORT).show();
             camposValidos = false;
         } else if (contrasenaRepetida.isEmpty()) {
-            binding.edtTextContrasenaRepetida.setBackgroundResource(R.drawable.background_red);
+            binding.edtTextContrasenaRepetida.setBackgroundResource(R.drawable.background_errorcampo);
             Toast.makeText(getActivity(),"Repite tu contraseña", Toast.LENGTH_SHORT).show();
             camposValidos = false;
         }
         else if (!contrasena.equals(contrasenaRepetida)) {
-            binding.edtTextContrasenaRepetida.setBackgroundResource(R.drawable.background_red);
+            binding.edtTextContrasenaRepetida.setBackgroundResource(R.drawable.background_errorcampo);
             Toast.makeText(getActivity(),"Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
             camposValidos = false;
         } else if (!CredencialesValidador.esContrasenaSegura(contrasena)) {
-            binding.edtTextContrasena.setBackgroundResource(R.drawable.background_red);
+            binding.edtTextContrasena.setBackgroundResource(R.drawable.background_errorcampo);
             Toast.makeText(getActivity(),"Contraseña inválida " +
                     "(debe contener al menos una minúscula, una mayúscula y un número)",
                     Toast.LENGTH_SHORT).show();
