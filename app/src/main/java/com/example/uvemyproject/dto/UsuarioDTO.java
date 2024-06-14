@@ -10,6 +10,7 @@ public class UsuarioDTO implements Parcelable {
     private String nombres;
     private String apellidos;
     private String correoElectronico;
+    private String contrasena;
     private int[] idsEtiqueta;
     private String jwt;
 
@@ -98,5 +99,13 @@ public class UsuarioDTO implements Parcelable {
     @Override
     public int describeContents() {
         return 0;
+    }
+
+    public String getContrasena() {
+        return contrasena;
+    }
+
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
     }
 }

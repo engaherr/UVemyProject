@@ -1,79 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context=".ConfirmacionCorreo">
+        android:layout_height="match_parent">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/background_darkblue"
-            android:paddingHorizontal="0dp"
-            android:paddingVertical="10dp">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            tools:context=".ConfirmacionCorreo">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_darkblue"
+                android:paddingHorizontal="0dp"
+                android:paddingVertical="10dp">
+
+                <TextView
+                    style="@style/styleTxtViewTitulo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="Registro" />
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="15dp"
+                    android:contentDescription="Regresar"
+                    android:src="@drawable/previous" />
+            </RelativeLayout>
 
             <TextView
-                style="@style/styleTxtViewTitulo"
-                android:layout_width="wrap_content"
+                style="@style/styleTxtViewInfoFormularioUsuario"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:text="Registro" />
+                android:gravity="center"
+                android:paddingHorizontal="30dp"
+                android:paddingVertical="10dp"
+                android:text="Selecciona las etiquetas de los temas que te interesan" />
 
-            <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="15dp"
-                android:contentDescription="Regresar"
-                android:src="@drawable/previous" />
-        </RelativeLayout>
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chpGroupEtiquetas"
+                android:padding="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <TextView
-            style="@style/styleTxtViewInfoFormularioUsuario"
+            </com.google.android.material.chip.ChipGroup>
+
+            <Button
+                android:id="@+id/btnConfirmar"
+                style="@style/styleBtnDarkBlueRounded"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginVertical="40dp"
+                android:maxWidth="300dp"
+                android:paddingHorizontal="25dp"
+                android:text="Confirmar" />
+
+            <Button
+                android:id="@+id/btnGuardar"
+                style="@style/styleBtnDarkBlueRounded"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginVertical="40dp"
+                android:maxWidth="300dp"
+                android:paddingHorizontal="25dp"
+                android:text="Guardar" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/progress_overlay"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:background="#20000000"
             android:gravity="center"
-            android:paddingHorizontal="30dp"
-            android:paddingVertical="10dp"
-            android:text="Selecciona las etiquetas de los temas que te interesan" />
+            android:clickable="true"
+            android:focusable="true">
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chpGroupEtiquetas"
-            android:padding="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            <androidx.cardview.widget.CardView
+                android:layout_width="300dp"
+                android:layout_height="100dp"
+                app:cardCornerRadius="100dp"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:backgroundTint="#8DBC92">
 
-        </com.google.android.material.chip.ChipGroup>
-
-        <Button
-            android:id="@+id/btnConfirmar"
-            style="@style/styleBtnDarkBlueRounded"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="15dp"
-            android:layout_marginVertical="40dp"
-            android:maxWidth="300dp"
-            android:paddingHorizontal="25dp"
-            android:text="Confirmar" />
-
-        <Button
-            android:id="@+id/btnGuardar"
-            style="@style/styleBtnDarkBlueRounded"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="15dp"
-            android:layout_marginVertical="40dp"
-            android:maxWidth="300dp"
-            android:paddingHorizontal="25dp"
-            android:text="Guardar" />
-    </LinearLayout>
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"/>
+            </androidx.cardview.widget.CardView>
+        </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
