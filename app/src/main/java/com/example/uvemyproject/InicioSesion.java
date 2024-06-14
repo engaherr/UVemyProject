@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.uvemyproject.databinding.ActivityInicioSesionBinding;
@@ -44,9 +45,7 @@ public class InicioSesion extends AppCompatActivity {
             esContrasenaVisible = !esContrasenaVisible;
         });
 
-        binding.txtViewRegistrate.setOnClickListener(c -> {
-            redireccionarRegistroUsuario();
-        });
+        binding.txtViewRegistrate.setOnClickListener(c -> redireccionarRegistroUsuario());
 
         binding.edtTextCorreoElectronico.addTextChangedListener(new TextWatcher() {
             @Override
@@ -172,5 +171,11 @@ public class InicioSesion extends AppCompatActivity {
 
     private void quitarEspera() {
         binding.progressOverlay.setVisibility(View.GONE);
+    }
+
+    public void cambiarFragmentoPrincipal(Fragment fragmentoMostrar){
+        binding.cnsLayoutInicioSesion.setVisibility(View.GONE);
+        getSupportFragmentManager().beginTransaction().replace(
+                R.id.frmLayoutInicioSesion, fragmentoMostrar).addToBackStack(null).commit();
     }
 }
