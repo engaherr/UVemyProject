@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.uvemyproject.databinding.FragmentCursoDetallesPrincipalBinding;
 import com.example.uvemyproject.dto.ClaseDTO;
+import com.example.uvemyproject.dto.CrearCursoDTO;
 import com.example.uvemyproject.dto.CursoDTO;
 import com.example.uvemyproject.interfaces.INotificacionFragmentoClase;
 import com.example.uvemyproject.utils.SingletonUsuario;
@@ -23,6 +24,7 @@ import com.example.uvemyproject.viewmodels.CursoDetallesPrincipalViewModel;
 import com.example.uvemyproject.viewmodels.FormularioClaseViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CursoDetallesPrincipal extends Fragment implements INotificacionFragmentoClase {
 
@@ -31,6 +33,7 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
     private ListadoClases listadoClases;
     private CursoDetallesInformacion detallesCurso;
     private int fragmento = -1;
+    private CrearCursoDTO _curso;
 
     public CursoDetallesPrincipal() {
     }
@@ -43,15 +46,23 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if (getArguments() != null) {
+
+            _curso = getArguments().getParcelable("clave_curso");
+
+            viewModel.setCursoActual(_curso);
+        }
         binding = FragmentCursoDetallesPrincipalBinding.inflate(inflater, container, false);
         viewModel = new ViewModelProvider(this).get(CursoDetallesPrincipalViewModel.class);
-
+        //Recuperar datos del curso
+        obtenerIdCurso();
+        //Recuperar clases
         observarCurso();
         observarStatus();
-        obtenerIdCurso();
 
         return binding.getRoot();
     }
+
     private void observarCurso(){
         viewModel.getCursoActual().observe(getViewLifecycleOwner(), curso ->{
             if(curso != null){
@@ -97,7 +108,7 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
             viewModel.obtenerCurso(idClase);
             ponerEspera();
         }*/
-        viewModel.obtenerCurso(1);
+        viewModel.obtenerCurso(213);
         ponerEspera();
     }
 
@@ -118,6 +129,34 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
     private void mostrarOpcionesProfesor(){
         binding.lnrLayoutEstadisticas.setVisibility(View.VISIBLE);
         binding.btnModificarCurso.setVisibility(View.VISIBLE);
+        CrearCursoDTO cursoNuevo = new CrearCursoDTO();
+        cursoNuevo.setIdCurso(viewModel.getCursoActual().getValue().getIdCurso());
+
+        binding.btnModificarCurso.setOnClickListener(v ->{
+            FormularioCurso formularioCurso = new FormularioCurso();
+            //log
+            cursoNuevo.setIdCurso(288);
+            cursoNuevo.setIdDocumento(154);
+            cursoNuevo.setTitulo("Titulo");
+            cursoNuevo.setObjetivos("Objetivos");
+            cursoNuevo.setRequisitos("Requisitos");
+            cursoNuevo.setDescripcion("Descripcion");
+            List<String> lstS = new ArrayList<>();
+            lstS.add("Etiqueta 11");
+            lstS.add("Etiqueta 22");
+            lstS.add("Etiqueta 33");
+            List<Integer> lstI = new ArrayList<>();
+            lstI.add(1);
+            lstI.add(2);
+            lstI.add(3);
+            cursoNuevo.setEtiquetas(lstI);
+            cursoNuevo.setNombreEtiquetas(lstS);
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("clave_esCrearCurso", false);
+            bundle.putParcelable("clave_curso", cursoNuevo);
+            formularioCurso.setArguments(bundle);
+            cambiarFragmentoPrincipal(formularioCurso);
+        });
         binding.lnrLayoutEstadisticas.setOnClickListener(v ->{
             EstadisticasCurso curso = new EstadisticasCurso();
             Bundle bundle = new Bundle();

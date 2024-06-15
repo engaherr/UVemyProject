@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.uvemyproject.api.ApiClient;
 import com.example.uvemyproject.api.services.CursoServices;
 import com.example.uvemyproject.dto.ClaseDTO;
+import com.example.uvemyproject.dto.CrearCursoDTO;
 import com.example.uvemyproject.dto.CursoDTO;
 import com.example.uvemyproject.dto.UsuarioCursoDTO;
 import com.example.uvemyproject.utils.SingletonUsuario;
@@ -27,7 +28,7 @@ import retrofit2.Response;
 
 public class CursoDetallesPrincipalViewModel extends ViewModel {
     private final MutableLiveData<StatusRequest> status = new MutableLiveData<>();
-    private final MutableLiveData<CursoDTO> cursoActual = new MutableLiveData<>();
+    private final MutableLiveData<CrearCursoDTO> cursoActual = new MutableLiveData<>();
 
     public MutableLiveData<StatusRequest> getStatus() {
         return status;
@@ -37,16 +38,17 @@ public class CursoDetallesPrincipalViewModel extends ViewModel {
         return cursoActual;
     }
 
+    //public CrearCursoDTO
     public void obtenerCurso(int idCurso){
         //Recuperar de API
-        CursoDTO curso = new CursoDTO();
+        CrearCursoDTO curso = new CrearCursoDTO();
         curso.setIdCurso(idCurso);
-        curso.setNombre("Curso real");
-        curso.setRol("Profesor");
+        curso.setTitulo("Curso real");
+        //curso.set("Profesor");
         ArrayList<ClaseDTO> clases = new ArrayList<ClaseDTO>();
         clases.add(new ClaseDTO(1, "Es una clase donde ponemos ciertas cosas", "Figuras como hacer figuras"));
         clases.add(new ClaseDTO(2, "Es una clase", "Fromas para mejorar objetcos"));
-        curso.setClases(clases);
+        //curso.setClases(clases);
         cursoActual.setValue(curso);
     }
 
