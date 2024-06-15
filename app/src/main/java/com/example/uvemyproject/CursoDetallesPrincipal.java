@@ -33,6 +33,7 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
     private ListadoClases listadoClases;
     private CursoDetallesInformacion detallesCurso;
     private int fragmento = -1;
+    private CrearCursoDTO _curso;
 
     public CursoDetallesPrincipal() {
     }
@@ -45,15 +46,23 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if (getArguments() != null) {
+
+            _curso = getArguments().getParcelable("clave_curso");
+
+            viewModel.setCursoActual(_curso);
+        }
         binding = FragmentCursoDetallesPrincipalBinding.inflate(inflater, container, false);
         viewModel = new ViewModelProvider(this).get(CursoDetallesPrincipalViewModel.class);
-
+        //Recuperar datos del curso
+        obtenerIdCurso();
+        //Recuperar clases
         observarCurso();
         observarStatus();
-        obtenerIdCurso();
 
         return binding.getRoot();
     }
+
     private void observarCurso(){
         viewModel.getCursoActual().observe(getViewLifecycleOwner(), curso ->{
             if(curso != null){
