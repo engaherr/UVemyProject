@@ -1,23 +1,21 @@
 package com.example.uvemyproject;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModelProvider;
-
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.example.uvemyproject.databinding.FragmentSeleccionEtiquetasBinding;
 import com.example.uvemyproject.dto.CredencialesDTO;
 import com.example.uvemyproject.dto.EtiquetaDTO;
 import com.example.uvemyproject.dto.UsuarioDTO;
-import com.example.uvemyproject.viewmodels.FormularioUsuarioViewModel;
 import com.example.uvemyproject.viewmodels.SeleccionEtiquetasViewModel;
 import com.google.android.material.chip.Chip;
 
@@ -31,9 +29,8 @@ public class SeleccionEtiquetas extends Fragment {
     SeleccionEtiquetasViewModel viewModel;
 
     UsuarioDTO usuario;
-    private List<Integer> idEtiquetasSeleccionadas = new ArrayList<>();
+    private final List<Integer> idEtiquetasSeleccionadas = new ArrayList<>();
     boolean esActualizacionUsuario;
-    boolean esEnvioCodigoVerificacion;
 
     // Constructor para Registro/Actualizacion de Usuario
     public SeleccionEtiquetas(UsuarioDTO usuario, boolean esActualizacionUsuario) {
@@ -76,6 +73,13 @@ public class SeleccionEtiquetas extends Fragment {
         viewModel.getJwt().observe(getViewLifecycleOwner(), jwt -> {
             if(!esActualizacionUsuario) {
                 usuario.setJwt(jwt);
+                int[] idsArray = new int[idEtiquetasSeleccionadas.size()];
+
+                for (int i = 0; i < idEtiquetasSeleccionadas.size(); i++) {
+                    idsArray[i] = idEtiquetasSeleccionadas.get(i);
+                }
+                usuario.setIdsEtiqueta(idsArray);
+                Log.d("Etiquetas", usuario.getIdsEtiqueta().toString());
                 redireccionarConfirmacionCorreo();
             }
         });
@@ -154,8 +158,10 @@ public class SeleccionEtiquetas extends Fragment {
         chip.setOnCheckedChangeListener((buttonView, isChecked) -> {
             int idEtiqueta = (int) buttonView.getTag();
             if (isChecked) {
+                Log.d("Etiquetas", "Seleccionado: " + idEtiqueta);
                 idEtiquetasSeleccionadas.add(idEtiqueta);
             } else {
+                Log.d("Etiquetas", "Deseleccionado: " + idEtiqueta);
                 idEtiquetasSeleccionadas.remove(Integer.valueOf(idEtiqueta));
             }
         });
