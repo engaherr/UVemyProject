@@ -17,7 +17,11 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.uvemyproject.databinding.FragmentFormularioUsuarioBinding;
 import com.example.uvemyproject.dto.UsuarioDTO;
 import com.example.uvemyproject.utils.CredencialesValidador;
+import com.example.uvemyproject.utils.SingletonUsuario;
+import com.example.uvemyproject.utils.StatusRequest;
 import com.example.uvemyproject.viewmodels.FormularioUsuarioViewModel;
+
+import java.util.Objects;
 
 public class FormularioUsuario extends Fragment {
 
@@ -51,7 +55,11 @@ public class FormularioUsuario extends Fragment {
             binding.imgViewPerfil.setVisibility(View.GONE);
             binding.btnSubirImagen.setVisibility(View.GONE);
         } else {
-            binding.txtViewBienvenida.setVisibility(View.GONE);
+            setUIActualizar();
+            viewModel.obtenerFotoPerfil();
+            observarImagenPerfil();
+            observarStatusGetFotoPerfil();
+            observarStatusActualizarDatos();
         }
 
         setEditTextNombreListener();
@@ -100,6 +108,117 @@ public class FormularioUsuario extends Fragment {
         });
 
         return binding.getRoot();
+    }
+
+    private void observarStatusActualizarDatos() {
+        viewModel.getstatusActualizarDatos().observe(getViewLifecycleOwner(), status ->{
+            switch (status) {
+                case DONE:
+                    Toast.makeText(getActivity(), "Datos actualizados correctamente",
+                            Toast.LENGTH_SHORT).show();
+                    binding.edtTextContrasena.setText("");
+                    binding.edtTextContrasenaRepetida.setText("");
+                    SingletonUsuario.setNombres(binding.edtTextNombre.getText().toString());
+                    SingletonUsuario.setApellidos(binding.edtTextApellidos.getText().toString());
+                    break;
+                case ERROR:
+                    Toast.makeText(getActivity(), "Error al actualizar los datos",
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                case ERROR_CONEXION:
+                    Toast.makeText(getActivity(), "No hay conexion al servidor. " +
+                                    "Intentelo de nuevo más tarde",
+                            Toast.LENGTH_SHORT).show();
+                    break;
+            }
+            quitarEspera();
+        });
+    }
+
+    private void observarStatusGetFotoPerfil() {
+        viewModel.getstatusGetImagen().observe(getViewLifecycleOwner(), status ->{
+            if (Objects.requireNonNull(status) == StatusRequest.ERROR_CONEXION) {
+                Toast.makeText(getActivity(), "No hay conexion al servidor",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void observarImagenPerfil() {
+        viewModel.getImagenPerfil().observe(getViewLifecycleOwner(), imagenPerfil -> {
+            if (imagenPerfil != null) {
+                binding.imgViewPerfil.setImageBitmap(imagenPerfil);
+            }
+        });
+    }
+
+    private void setUIActualizar() {
+        binding.txtViewTitulo.setText("Perfil");
+        binding.txtViewBienvenida.setVisibility(View.GONE);
+        binding.btnSubirImagen.setVisibility(View.GONE);
+        binding.cnsLayoutContrasena.setVisibility(View.GONE);
+        binding.txtViewContrasena.setVisibility(View.GONE);
+        binding.txtViewContrasenaRepetida.setVisibility(View.GONE);
+        binding.cnsLayoutContrasenaRepetida.setVisibility(View.GONE);
+        binding.btnRegistrarse.setVisibility(View.GONE);
+        binding.txtViewYaTienesCuenta.setVisibility(View.GONE);
+        binding.txtViewIniciarSesion.setVisibility(View.GONE);
+        binding.btnModificar.setVisibility(View.VISIBLE);
+
+        binding.edtTextNombre.setEnabled(false);
+        binding.edtTextApellidos.setEnabled(false);
+        binding.edtTextCorreoElectronico.setEnabled(false);
+
+        binding.edtTextNombre.setText(SingletonUsuario.getNombres());
+        binding.edtTextApellidos.setText(SingletonUsuario.getApellidos());
+        binding.edtTextCorreoElectronico.setText(SingletonUsuario.getCorreoElectronico());
+
+        binding.btnModificar.setOnClickListener(c -> setUIModificar());
+    }
+
+    private void setUIModificar() {
+        binding.edtTextNombre.setEnabled(true);
+        binding.edtTextApellidos.setEnabled(true);
+
+        binding.txtViewTitulo.setText("Modificar perfil");
+        binding.btnSubirImagen.setVisibility(View.VISIBLE);
+        binding.cnsLayoutContrasena.setVisibility(View.VISIBLE);
+        binding.txtViewContrasena.setVisibility(View.VISIBLE);
+        binding.txtViewContrasena.setText("Contraseña (Opcional)");
+        binding.txtViewContrasenaRepetida.setVisibility(View.VISIBLE);
+        binding.cnsLayoutContrasenaRepetida.setVisibility(View.VISIBLE);
+        binding.ctrLayoutEtiquetasActualizar.setVisibility(View.VISIBLE);
+        binding.btnModificar.setVisibility(View.GONE);
+
+        binding.btnActualizar.setOnClickListener(c -> clickActualizar());
+    }
+
+    private void clickActualizar() {
+        UsuarioDTO usuarioDTO = new UsuarioDTO();
+
+        String contrasena = binding.edtTextContrasena.getText().toString().trim();
+        String contrasenaRepetida = binding.edtTextContrasenaRepetida.getText().toString().trim();
+
+        if (contrasena.isEmpty() && contrasenaRepetida.isEmpty()) {
+            binding.edtTextContrasena.setText("Contrasena1");
+            binding.edtTextContrasenaRepetida.setText("Contrasena1");
+
+            if (validarCampos()) {
+                binding.edtTextContrasena.setText("");
+                binding.edtTextContrasenaRepetida.setText("");
+
+                ponerEspera();
+                usuarioDTO.setNombres(binding.edtTextNombre.getText().toString().trim());
+                usuarioDTO.setApellidos(binding.edtTextApellidos.getText().toString().trim());
+                viewModel.actualizarDatosUsuario(usuarioDTO);
+            }
+        } else if(validarCampos()){
+            ponerEspera();
+            usuarioDTO.setNombres(binding.edtTextNombre.getText().toString().trim());
+            usuarioDTO.setApellidos(binding.edtTextApellidos.getText().toString().trim());
+            usuarioDTO.setContrasena(contrasena);
+            viewModel.actualizarDatosUsuario(usuarioDTO);
+        }
     }
 
     private void continuarRegistro() {
@@ -235,4 +354,8 @@ public class FormularioUsuario extends Fragment {
         binding.edtTextContrasena.setBackgroundResource(R.drawable.background_lightblue);
         binding.edtTextContrasenaRepetida.setBackgroundResource(R.drawable.background_lightblue);
     }
+
+    private void ponerEspera() { binding.progressOverlay.setVisibility(View.VISIBLE); }
+
+    private void quitarEspera() { binding.progressOverlay.setVisibility(View.GONE); }
 }
