@@ -16,10 +16,13 @@ import com.example.uvemyproject.databinding.FragmentSeleccionEtiquetasBinding;
 import com.example.uvemyproject.dto.CredencialesDTO;
 import com.example.uvemyproject.dto.EtiquetaDTO;
 import com.example.uvemyproject.dto.UsuarioDTO;
+import com.example.uvemyproject.utils.SingletonUsuario;
 import com.example.uvemyproject.viewmodels.SeleccionEtiquetasViewModel;
 import com.google.android.material.chip.Chip;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class SeleccionEtiquetas extends Fragment {
@@ -32,7 +35,7 @@ public class SeleccionEtiquetas extends Fragment {
     private final List<Integer> idEtiquetasSeleccionadas = new ArrayList<>();
     boolean esActualizacionUsuario;
 
-    // Constructor para Registro/Actualizacion de Usuario
+    // Constructor para Registro/Actualizacion de Usuario TODO: Constructor para cursos
     public SeleccionEtiquetas(UsuarioDTO usuario, boolean esActualizacionUsuario) {
         this.usuario = usuario;
         this.esActualizacionUsuario = esActualizacionUsuario;
@@ -57,8 +60,15 @@ public class SeleccionEtiquetas extends Fragment {
 
         viewModel.obtenerEtiquetas();
 
+        //TODO: Poner caso para cuando es creación/actualización de curso
+        if(esActualizacionUsuario) {
+            binding.btnConfirmar.setVisibility(View.GONE);
+            binding.btnGuardar.setVisibility(View.VISIBLE);
+            observarStatusActualizarUsuarioEtiquetas();
+        }
+
         binding.btnConfirmar.setOnClickListener(c -> {
-            if(!esActualizacionUsuario && !idEtiquetasSeleccionadas.isEmpty()) {
+            if(!idEtiquetasSeleccionadas.isEmpty()) {
                 solicitarCodigoVerificacion();
             } else {
                 Toast.makeText(getContext(), "Debe seleccionar al menos una etiqueta.",
@@ -66,7 +76,60 @@ public class SeleccionEtiquetas extends Fragment {
             }
         });
 
+        binding.btnGuardar.setOnClickListener(c -> {
+            Log.d("Etiquetas", "Guardar " + idEtiquetasSeleccionadas);
+            if(esActualizacionUsuario && !idEtiquetasSeleccionadas.isEmpty()) {
+                actualizarEtiquetasUsuario();
+            } else {
+                Toast.makeText(getContext(), "Debe seleccionar al menos una etiqueta.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
         return binding.getRoot();
+    }
+
+    private void observarStatusActualizarUsuarioEtiquetas() {
+        viewModel.getStatusActualizarUsuarioEtiquetas().observe(getViewLifecycleOwner(), status -> {
+            switch (status) {
+                case DONE:
+                    Toast.makeText(getContext(), "Etiquetas actualizadas correctamente.",
+                            Toast.LENGTH_SHORT).show();
+
+                    int[] idsArray = new int[idEtiquetasSeleccionadas.size()];
+
+                    for (int i = 0; i < idEtiquetasSeleccionadas.size(); i++) {
+                        idsArray[i] = idEtiquetasSeleccionadas.get(i);
+                    }
+
+                    SingletonUsuario.setIdsEtiqueta(idsArray);
+
+                    ((MainActivity) getActivity()).cambiarFragmentoPrincipal(
+                            new FormularioUsuario(true));
+                    break;
+                case ERROR:
+                    Toast.makeText(getContext(), "Ocurrió un error en el servidor. Intentélo " +
+                                    "de nuevo más tarde", Toast.LENGTH_SHORT).show();
+                    break;
+                case ERROR_CONEXION:
+                    Toast.makeText(getContext(), "No hay conexión con el servidor. Intentélo " +
+                                    "de nuevo más tarde" ,Toast.LENGTH_SHORT).show();
+                    break;
+            }
+            quitarEspera();
+        });
+    }
+
+    private void actualizarEtiquetasUsuario() {
+        int[] idsArray = new int[idEtiquetasSeleccionadas.size()];
+
+        for (int i = 0; i < idEtiquetasSeleccionadas.size(); i++) {
+            idsArray[i] = idEtiquetasSeleccionadas.get(i);
+        }
+
+        ponerEspera();
+        viewModel.actualizarEtiquetasUsuario(idsArray);
     }
 
     private void observarJwt() {
@@ -79,7 +142,7 @@ public class SeleccionEtiquetas extends Fragment {
                     idsArray[i] = idEtiquetasSeleccionadas.get(i);
                 }
                 usuario.setIdsEtiqueta(idsArray);
-                Log.d("Etiquetas", usuario.getIdsEtiqueta().toString());
+                Log.d("Etiquetas", Arrays.toString(usuario.getIdsEtiqueta()));
                 redireccionarConfirmacionCorreo();
             }
         });
@@ -142,6 +205,15 @@ public class SeleccionEtiquetas extends Fragment {
 
                     Chip chip = getChip(etiqueta, contextThemeWrapper);
 
+                    // TODO: Poner caso para cuando es actualización de curso
+                    if(esActualizacionUsuario) {
+                        for (int idEtiqueta : SingletonUsuario.getIdsEtiqueta()) {
+                            if(idEtiqueta == etiqueta.getIdEtiqueta()) {
+                                chip.setChecked(true);
+                            }
+                        }
+                    }
+
                     binding.chpGroupEtiquetas.addView(chip);
                 }
             }
@@ -158,11 +230,13 @@ public class SeleccionEtiquetas extends Fragment {
         chip.setOnCheckedChangeListener((buttonView, isChecked) -> {
             int idEtiqueta = (int) buttonView.getTag();
             if (isChecked) {
-                Log.d("Etiquetas", "Seleccionado: " + idEtiqueta);
+                Log.d("Etiquetas", "Seleccionado: " + idEtiqueta + " " +
+                        idEtiquetasSeleccionadas);
                 idEtiquetasSeleccionadas.add(idEtiqueta);
             } else {
-                Log.d("Etiquetas", "Deseleccionado: " + idEtiqueta);
-                idEtiquetasSeleccionadas.remove(Integer.valueOf(idEtiqueta));
+                Log.d("Etiquetas", "Deseleccionado: " + idEtiqueta +
+                        " " + idEtiquetasSeleccionadas);
+                idEtiquetasSeleccionadas.removeAll(Collections.singleton(idEtiqueta));
             }
         });
         return chip;

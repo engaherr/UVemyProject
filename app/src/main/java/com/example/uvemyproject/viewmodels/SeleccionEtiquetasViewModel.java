@@ -1,7 +1,6 @@
 package com.example.uvemyproject.viewmodels;
 
 import android.util.Log;
-import android.view.View;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -12,11 +11,13 @@ import com.example.uvemyproject.api.services.PerfilServices;
 import com.example.uvemyproject.dto.CredencialesDTO;
 import com.example.uvemyproject.dto.EtiquetaDTO;
 import com.example.uvemyproject.dto.JwtDTO;
+import com.example.uvemyproject.dto.UsuarioDTO;
 import com.example.uvemyproject.utils.SingletonUsuario;
 import com.example.uvemyproject.utils.StatusRequest;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -31,6 +32,7 @@ public class SeleccionEtiquetasViewModel extends ViewModel {
     private final MutableLiveData<StatusRequest> status = new MutableLiveData<>();
     private final MutableLiveData<List<EtiquetaDTO>> etiquetas = new MutableLiveData<>();
     private final MutableLiveData<StatusRequest> statusCodigoVerificacion = new MutableLiveData<>();
+    private final MutableLiveData<StatusRequest> statusActualizarUsuarioEtiquetas = new MutableLiveData<>();
     private final MutableLiveData<String> jwt = new MutableLiveData<>();
 
     public MutableLiveData<StatusRequest> getStatus() {
@@ -42,6 +44,9 @@ public class SeleccionEtiquetasViewModel extends ViewModel {
     }
     public MutableLiveData<StatusRequest> getStatusCodigoVerificacion() {
         return statusCodigoVerificacion;
+    }
+    public MutableLiveData<StatusRequest> getStatusActualizarUsuarioEtiquetas() {
+        return statusActualizarUsuarioEtiquetas;
     }
 
     public MutableLiveData<String> getJwt() { return jwt; }
@@ -107,6 +112,55 @@ public class SeleccionEtiquetasViewModel extends ViewModel {
             jsonEnviado = jsonObject.toString();
         }catch(Exception e){
             e.printStackTrace();
+        }
+
+        return RequestBody.create(jsonEnviado,
+                MediaType.parse("application/json"));
+    }
+
+    public void actualizarEtiquetasUsuario(int[] idEtiquetasSeleccionadas) {
+        PerfilServices service = ApiClient.getInstance().getPerfilServices();
+        String auth = "Bearer " + SingletonUsuario.getJwt();
+
+        UsuarioDTO usuario = new UsuarioDTO();
+        usuario.setIdsEtiqueta(idEtiquetasSeleccionadas);
+        usuario.setIdUsuario(SingletonUsuario.getIdUsuario());
+
+        service.actualizarEtiquetas(auth, convertirRequestBody(usuario)).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    statusActualizarUsuarioEtiquetas.setValue(StatusRequest.DONE);
+                } else {
+                    statusActualizarUsuarioEtiquetas.setValue(StatusRequest.ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("RetrofitError", "Error de red o excepción: " + t.getMessage(), t);
+                statusActualizarUsuarioEtiquetas.setValue(StatusRequest.ERROR_CONEXION);
+            }
+        });
+    }
+
+    private RequestBody convertirRequestBody(UsuarioDTO etiquetasUsuario) {
+        Moshi moshi = new Moshi.Builder().build();
+        JsonAdapter<UsuarioDTO> jsonAdapter = moshi.adapter(UsuarioDTO.class);
+
+        String jsonEnviado = "";
+        try{
+            String json = jsonAdapter.toJson(etiquetasUsuario);
+            JSONObject jsonObject = new JSONObject(json);
+            jsonObject.remove("contrasena");
+            jsonObject.remove("nombres");
+            jsonObject.remove("apellidos");
+            jsonObject.remove("correoElectronico");
+            jsonObject.remove("jwt");
+
+            jsonEnviado = jsonObject.toString();
+        } catch (JSONException e) {
+            Log.e("RetrofitError", "Error al convertir el objeto a JSON", e);
         }
 
         return RequestBody.create(jsonEnviado,

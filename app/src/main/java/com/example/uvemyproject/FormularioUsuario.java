@@ -191,6 +191,18 @@ public class FormularioUsuario extends Fragment {
         binding.btnModificar.setVisibility(View.GONE);
 
         binding.btnActualizar.setOnClickListener(c -> clickActualizar());
+        binding.btnSubirImagen.setOnClickListener(c -> clickSubirImagen());
+        binding.btnEtiquetas.setOnClickListener(c -> clickEtiquetas());
+    }
+
+    private void clickEtiquetas() {
+        SeleccionEtiquetas seleccionEtiquetas = new SeleccionEtiquetas(
+                null,true);
+        ((MainActivity) getActivity()).cambiarFragmentoPrincipal(seleccionEtiquetas);
+    }
+
+    private void clickSubirImagen() {
+        //TODO: Abrir la galeria
     }
 
     private void clickActualizar() {
