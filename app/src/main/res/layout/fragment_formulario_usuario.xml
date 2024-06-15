@@ -7,371 +7,403 @@
 
     </data>
 
-    <LinearLayout
-        android:id="@+id/main"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/background_darkblue"
-        android:orientation="vertical"
-        tools:context=".MainActivity">
-
-        <RelativeLayout
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/main"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="10dp">
-
-            <TextView
-                style="@style/styleTxtViewTitulo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:text="Registro" />
-
-            <ImageView
-                android:id="@+id/imgViewRegresar"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:contentDescription="Regresar"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="15dp"
-                android:src="@drawable/previous" />
-
-        </RelativeLayout>
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@drawable/background_darkblue"
+            android:orientation="vertical"
+            tools:context=".MainActivity">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="#FFFFFF">
+                android:layout_marginVertical="10dp">
 
-                <TextView android:id="@+id/txtViewBienvenida"
-                    style="@style/styleTxtViewInfoFormularioUsuario"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:layout_alignParentTop="true"
-                    android:paddingHorizontal="40dp"
-                    android:paddingTop="5dp"
-                    android:text="¡Bienvenido a UVemy! ¡Crea tu cuenta para comenzar a aprender!"/>
-
-                <TextView android:id="@+id/txtViewImagen"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="Vista previa de imagen de perfil"
-                    android:layout_below="@id/txtViewBienvenida"
-                    android:paddingHorizontal="40dp"
-                    android:paddingVertical="10dp"
-                    style="@style/styleTxtViewInfoBoldFormularioUsuario"/>
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/imgViewPerfil"
-                    android:layout_width="160dp"
-                    android:padding="10dp"
-                    android:layout_height="160dp"
-                    android:layout_centerHorizontal="true"
-                    android:scaleType="centerCrop"
-                    app:strokeColor="@color/black"
-                    app:strokeWidth="2dp"
-                    app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.circleImageView"
-                    app:srcCompat="@drawable/default_profile_picture"
-                    android:layout_below="@id/txtViewImagen"
-                    />
-
-                <Button android:id="@+id/btnSubirImagen"
+                <TextView
+                    android:id="@+id/txtViewTitulo"
+                    style="@style/styleTxtViewTitulo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:layout_below="@id/imgViewPerfil"
-                    android:paddingHorizontal="25dp"
-                    android:text="Subir imagen"
-                    style="@style/styleBtnDarkBlueRounded"/>
+                    android:text="Registro" />
 
-                <LinearLayout android:id="@+id/linearLayoutImagenSubida"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/btnSubirImagen"
-                    android:layout_centerHorizontal="true"
-                    android:visibility="gone"
-                    android:orientation="horizontal">
-
-                    <ImageView android:id="@+id/imgEliminarImagen"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_marginEnd="20dp"
-                        android:importantForAccessibility="no"
-                        android:src="@drawable/ic_trash" />
-
-                    <Button
-                        android:id="@+id/btnCambiarImagen"
-                        style="@style/styleBtnDarkBlueRounded"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingHorizontal="25dp"
-                        android:text="Cambiar imagen" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_below="@id/linearLayoutImagenSubida"
-                    android:orientation="vertical"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginHorizontal="20dp">
-
-
-                    <TextView
-                        android:id="@+id/txtViewNombre"
-                        style="@style/styleTxtViewInfoBoldFormularioUsuario"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Nombre/s"/>
-
-                    <EditText
-                        android:id="@+id/edtTextNombre"
-                        style="@style/styleEdtTextFormularioUsuario"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:autofillHints="name"
-                        android:maxLength="150"
-                        android:hint="Ej. Diego Ernesto"
-                        android:inputType="textPersonName"
-                        android:minHeight="48dp" />
-
-                    <TextView
-                        android:id="@+id/txtViewApellidos"
-                        style="@style/styleTxtViewInfoBoldFormularioUsuario"
-                        android:layout_marginTop="5dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Apellido/s"/>
-                    <EditText
-                        android:id="@+id/edtTextApellidos"
-                        style="@style/styleEdtTextFormularioUsuario"
-                        android:layout_width="match_parent"
-                        android:autofillHints="name"
-                        android:maxLength="660"
-                        android:hint="Ej. Rodríguez Salazar"
-                        android:layout_height="wrap_content"
-                        android:inputType="textPersonName"
-                        android:minHeight="48dp"/>
-
-                    <TextView
-                        android:id="@+id/txtViewCorreoElectronico"
-                        style="@style/styleTxtViewInfoBoldFormularioUsuario"
-                        android:layout_marginTop="5dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Correo electrónico"/>
-
-                    <EditText
-                        android:id="@+id/edtTextCorreoElectronico"
-                        style="@style/styleEdtTextFormularioUsuario"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:autofillHints="emailAddress"
-                        android:maxLength="600"
-                        android:hint="Ej. ejemplo@dominio.com"
-                        android:inputType="textEmailAddress"
-                        android:minHeight="48dp" />
-
-                    <TextView
-                        android:id="@+id/txtViewDescripcion"
-                        style="@style/styleTxtViewInfoBoldFormularioUsuario"
-                        android:layout_marginTop="5dp"
-                        android:visibility="gone"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Descripción:"/>
-
-                    <EditText
-                        android:id="@+id/edtTextDescripcion"
-                        style="@style/styleEdtTextFormularioUsuario"
-                        android:layout_weight="1"
-                        android:visibility="gone"
-                        android:layout_width="match_parent"
-                        android:layout_height="80dp"
-                        android:hint="Cuentáles a los demás sobre ti..."
-                        android:inputType="textMultiLine"
-                        android:gravity="start|top"
-                        android:maxLines="3"
-                        android:minHeight="48dp"
-                        android:importantForAutofill="no" />
-
-                    <TextView
-                        android:id="@+id/txtViewContraseña"
-                        style="@style/styleTxtViewInfoBoldFormularioUsuario"
-                        android:layout_marginTop="5dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Contraseña"/>
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/cnsLayoutContrasena"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintTop_toBottomOf="@+id/txtViewContraseña">
-
-                        <EditText
-                            android:id="@+id/edtTextContrasena"
-                            style="@style/styleEdtTextFormularioUsuario"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:autofillHints="emailAddress"
-                            android:inputType="textPassword"
-                            android:maxHeight="300dp"
-                            android:maxLength="18"
-                            android:minHeight="48dp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toStartOf="@+id/imgViewVerContrasena"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintWidth_percent="0.9" />
-
-                        <ImageView
-                            android:id="@+id/imgViewVerContrasena"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:contentDescription="Ver contraseña"
-                            android:src="@drawable/ic_slashed_eye"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/edtTextContrasena"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintWidth_percent="0.1" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-                    <TextView
-                        android:id="@+id/txtViewContraseñaRepetida"
-                        style="@style/styleTxtViewInfoBoldFormularioUsuario"
-                        android:layout_marginTop="5dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Confirme contraseña"/>
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/cnsLayoutContrasenRepetida"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintTop_toBottomOf="@+id/txtViewContraseña">
-
-                        <EditText
-                            android:id="@+id/edtTextContrasenaRepetida"
-                            style="@style/styleEdtTextFormularioUsuario"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:autofillHints="emailAddress"
-                            android:inputType="textPassword"
-                            android:maxHeight="300dp"
-                            android:maxLength="18"
-                            android:minHeight="48dp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintWidth_percent="0.9" />
-
-                        <ImageView
-                            android:id="@+id/imgViewVerContrasenaRepetida"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:contentDescription="Ver contraseña"
-                            android:src="@drawable/ic_slashed_eye"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintWidth_percent="0.1" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <Button
-                        android:id="@+id/btnRegistrarse"
-                        style="@style/styleBtnDarkBlueRounded"
-                        android:layout_width="match_parent"
-                        android:maxWidth="480dp"
-                        android:layout_height="wrap_content"
-                        android:paddingHorizontal="25dp"
-                        android:layout_marginVertical="10dp"
-                        android:text="Regístrate" />
-
-                    <Button
-                        android:id="@+id/btnModificar"
-                        style="@style/styleBtnDarkBlueRounded"
-                        android:layout_width="match_parent"
-                        android:maxWidth="480dp"
-                        android:visibility="gone"
-                        android:layout_height="wrap_content"
-                        android:paddingHorizontal="25dp"
-                        android:layout_marginVertical="10dp"
-                        android:text="Modificar perfil" />
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/ctrLayoutEtiquetasActualizar"
-                        android:layout_width="match_parent"
-                        android:visibility="gone"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="20dp"
-                        android:orientation="horizontal">
-
-                        <Button
-                            android:id="@+id/btnEtiquetas"
-                            style="@style/styleBtnDarkBlueRounded"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginVertical="10dp"
-                            android:maxWidth="480dp"
-                            android:paddingHorizontal="40dp"
-                            android:text="Etiquetas"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <Button
-                            android:id="@+id/btnActualizar"
-                            style="@style/styleBtnDarkBlueRounded"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginVertical="10dp"
-                            android:maxWidth="480dp"
-                            android:paddingHorizontal="40dp"
-                            android:text="Actualizar"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <LinearLayout android:id="@+id/lnrLayoutCuentaExistente"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginBottom="20dp"
-                        android:orientation="horizontal">
-                        
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            style="@style/styleTxtViewInfoFormularioUsuario"
-                            android:text="¿Ya tienes una cuenta? "/>
-                        <TextView
-                            android:id="@+id/txtViewIniciarSesion"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="#115E47"
-                            android:fontFamily="@font/nunito_bold"
-                            android:textStyle="bold"
-                            style="@style/styleTxtViewInfoFormularioUsuario"
-                            android:text="Inicia sesión"/>
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
+                <ImageView
+                    android:id="@+id/imgViewRegresar"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:contentDescription="Regresar"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="15dp"
+                    android:src="@drawable/previous" />
 
             </RelativeLayout>
 
-        </ScrollView>
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-    </LinearLayout>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="#FFFFFF">
+
+                    <TextView android:id="@+id/txtViewBienvenida"
+                        style="@style/styleTxtViewInfoFormularioUsuario"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_alignParentTop="true"
+                        android:paddingHorizontal="40dp"
+                        android:paddingTop="5dp"
+                        android:text="¡Bienvenido a UVemy! ¡Crea tu cuenta para comenzar a aprender!"/>
+
+                    <TextView android:id="@+id/txtViewImagen"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Vista previa de imagen de perfil"
+                        android:layout_below="@id/txtViewBienvenida"
+                        android:paddingHorizontal="40dp"
+                        android:paddingVertical="10dp"
+                        style="@style/styleTxtViewInfoBoldFormularioUsuario"/>
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/imgViewPerfil"
+                        android:layout_width="160dp"
+                        android:padding="10dp"
+                        android:layout_height="160dp"
+                        android:layout_centerHorizontal="true"
+                        android:scaleType="centerCrop"
+                        app:strokeColor="@color/black"
+                        app:strokeWidth="2dp"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.circleImageView"
+                        app:srcCompat="@drawable/default_profile_picture"
+                        android:layout_below="@id/txtViewImagen"
+                        />
+
+                    <Button android:id="@+id/btnSubirImagen"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@id/imgViewPerfil"
+                        android:paddingHorizontal="25dp"
+                        android:text="Subir imagen"
+                        style="@style/styleBtnDarkBlueRounded"/>
+
+                    <LinearLayout android:id="@+id/linearLayoutImagenSubida"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/btnSubirImagen"
+                        android:layout_centerHorizontal="true"
+                        android:visibility="gone"
+                        android:orientation="horizontal">
+
+                        <ImageView android:id="@+id/imgEliminarImagen"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_marginEnd="20dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_trash" />
+
+                        <Button
+                            android:id="@+id/btnCambiarImagen"
+                            style="@style/styleBtnDarkBlueRounded"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="25dp"
+                            android:text="Cambiar imagen" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@id/linearLayoutImagenSubida"
+                        android:orientation="vertical"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginHorizontal="20dp">
+
+
+                        <TextView
+                            android:id="@+id/txtViewNombre"
+                            style="@style/styleTxtViewInfoBoldFormularioUsuario"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Nombre/s"/>
+
+                        <EditText
+                            android:id="@+id/edtTextNombre"
+                            style="@style/styleEdtTextFormularioUsuario"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:autofillHints="name"
+                            android:maxLength="150"
+                            android:hint="Ej. Diego Ernesto"
+                            android:inputType="textPersonName"
+                            android:minHeight="48dp" />
+
+                        <TextView
+                            android:id="@+id/txtViewApellidos"
+                            style="@style/styleTxtViewInfoBoldFormularioUsuario"
+                            android:layout_marginTop="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Apellido/s"/>
+                        <EditText
+                            android:id="@+id/edtTextApellidos"
+                            style="@style/styleEdtTextFormularioUsuario"
+                            android:layout_width="match_parent"
+                            android:autofillHints="name"
+                            android:maxLength="660"
+                            android:hint="Ej. Rodríguez Salazar"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPersonName"
+                            android:minHeight="48dp"/>
+
+                        <TextView
+                            android:id="@+id/txtViewCorreoElectronico"
+                            style="@style/styleTxtViewInfoBoldFormularioUsuario"
+                            android:layout_marginTop="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Correo electrónico"/>
+
+                        <EditText
+                            android:id="@+id/edtTextCorreoElectronico"
+                            style="@style/styleEdtTextFormularioUsuario"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:autofillHints="emailAddress"
+                            android:maxLength="600"
+                            android:hint="Ej. ejemplo@dominio.com"
+                            android:inputType="textEmailAddress"
+                            android:minHeight="48dp" />
+
+                        <TextView
+                            android:id="@+id/txtViewDescripcion"
+                            style="@style/styleTxtViewInfoBoldFormularioUsuario"
+                            android:layout_marginTop="5dp"
+                            android:visibility="gone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Descripción:"/>
+
+                        <EditText
+                            android:id="@+id/edtTextDescripcion"
+                            style="@style/styleEdtTextFormularioUsuario"
+                            android:layout_weight="1"
+                            android:visibility="gone"
+                            android:layout_width="match_parent"
+                            android:layout_height="80dp"
+                            android:hint="Cuentáles a los demás sobre ti..."
+                            android:inputType="textMultiLine"
+                            android:gravity="start|top"
+                            android:maxLines="3"
+                            android:minHeight="48dp"
+                            android:importantForAutofill="no" />
+
+                        <TextView
+                            android:id="@+id/txtViewContrasena"
+                            style="@style/styleTxtViewInfoBoldFormularioUsuario"
+                            android:layout_marginTop="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Contraseña"/>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/cnsLayoutContrasena"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintTop_toBottomOf="@+id/txtViewContraseña">
+
+                            <EditText
+                                android:id="@+id/edtTextContrasena"
+                                style="@style/styleEdtTextFormularioUsuario"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:autofillHints="emailAddress"
+                                android:inputType="textPassword"
+                                android:maxHeight="300dp"
+                                android:maxLength="18"
+                                android:minHeight="48dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toStartOf="@+id/imgViewVerContrasena"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintWidth_percent="0.9" />
+
+                            <ImageView
+                                android:id="@+id/imgViewVerContrasena"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:contentDescription="Ver contraseña"
+                                android:src="@drawable/ic_slashed_eye"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@+id/edtTextContrasena"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintWidth_percent="0.1" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                        <TextView
+                            android:id="@+id/txtViewContrasenaRepetida"
+                            style="@style/styleTxtViewInfoBoldFormularioUsuario"
+                            android:layout_marginTop="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Confirme contraseña"/>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/cnsLayoutContrasenaRepetida"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintTop_toBottomOf="@+id/txtViewContraseña">
+
+                            <EditText
+                                android:id="@+id/edtTextContrasenaRepetida"
+                                style="@style/styleEdtTextFormularioUsuario"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:autofillHints="emailAddress"
+                                android:inputType="textPassword"
+                                android:maxHeight="300dp"
+                                android:maxLength="18"
+                                android:minHeight="48dp"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintWidth_percent="0.9" />
+
+                            <ImageView
+                                android:id="@+id/imgViewVerContrasenaRepetida"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:contentDescription="Ver contraseña"
+                                android:src="@drawable/ic_slashed_eye"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintWidth_percent="0.1" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <Button
+                            android:id="@+id/btnRegistrarse"
+                            style="@style/styleBtnDarkBlueRounded"
+                            android:layout_width="match_parent"
+                            android:maxWidth="480dp"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="25dp"
+                            android:layout_marginVertical="10dp"
+                            android:text="Regístrate" />
+
+                        <Button
+                            android:id="@+id/btnModificar"
+                            style="@style/styleBtnDarkBlueRounded"
+                            android:layout_width="match_parent"
+                            android:maxWidth="480dp"
+                            android:visibility="gone"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="25dp"
+                            android:layout_marginVertical="10dp"
+                            android:text="Modificar perfil" />
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/ctrLayoutEtiquetasActualizar"
+                            android:layout_width="match_parent"
+                            android:visibility="gone"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="20dp"
+                            android:orientation="horizontal">
+
+                            <Button
+                                android:id="@+id/btnEtiquetas"
+                                style="@style/styleBtnDarkBlueRounded"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginVertical="10dp"
+                                android:maxWidth="480dp"
+                                android:paddingHorizontal="40dp"
+                                android:text="Etiquetas"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <Button
+                                android:id="@+id/btnActualizar"
+                                style="@style/styleBtnDarkBlueRounded"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginVertical="10dp"
+                                android:maxWidth="480dp"
+                                android:paddingHorizontal="40dp"
+                                android:text="Actualizar"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <LinearLayout android:id="@+id/lnrLayoutCuentaExistente"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginBottom="20dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/txtViewYaTienesCuenta"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                style="@style/styleTxtViewInfoFormularioUsuario"
+                                android:text="¿Ya tienes una cuenta? "/>
+                            <TextView
+                                android:id="@+id/txtViewIniciarSesion"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="#115E47"
+                                android:fontFamily="@font/nunito_bold"
+                                android:textStyle="bold"
+                                style="@style/styleTxtViewInfoFormularioUsuario"
+                                android:text="Inicia sesión"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                </RelativeLayout>
+
+            </ScrollView>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/progress_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#20000000"
+            android:visibility="gone"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="300dp"
+                android:layout_height="100dp"
+                app:cardCornerRadius="100dp"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:backgroundTint="#8DBC92">
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"/>
+            </androidx.cardview.widget.CardView>
+        </RelativeLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
