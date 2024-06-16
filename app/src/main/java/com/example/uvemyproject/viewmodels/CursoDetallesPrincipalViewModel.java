@@ -28,10 +28,14 @@ import retrofit2.Response;
 
 public class CursoDetallesPrincipalViewModel extends ViewModel {
     private final MutableLiveData<StatusRequest> status = new MutableLiveData<>();
-    private final MutableLiveData<CrearCursoDTO> cursoActual = new MutableLiveData<>();
+    private final MutableLiveData<CursoDTO> cursoActual = new MutableLiveData<>();
 
     public MutableLiveData<StatusRequest> getStatus() {
         return status;
+    }
+
+    public void setCursoActual(CursoDTO cursoActual){
+        this.cursoActual.setValue(cursoActual);
     }
 
     public MutableLiveData<CursoDTO> getCursoActual() {
@@ -41,7 +45,7 @@ public class CursoDetallesPrincipalViewModel extends ViewModel {
     //public CrearCursoDTO
     public void obtenerCurso(int idCurso){
         //Recuperar de API
-        CrearCursoDTO curso = new CrearCursoDTO();
+        CursoDTO curso = new CursoDTO();
         curso.setIdCurso(idCurso);
         curso.setTitulo("Curso real");
         //curso.set("Profesor");

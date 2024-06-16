@@ -33,7 +33,7 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
     private ListadoClases listadoClases;
     private CursoDetallesInformacion detallesCurso;
     private int fragmento = -1;
-    private CrearCursoDTO _curso;
+    private CursoDTO _curso;
 
     public CursoDetallesPrincipal() {
     }
@@ -66,6 +66,7 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
     private void observarCurso(){
         viewModel.getCursoActual().observe(getViewLifecycleOwner(), curso ->{
             if(curso != null){
+                curso.setRol("Profesor");
                 mostrarOpcionesSegunRol(curso.getRol());
                 if(curso.getClases() != null){
                     listadoClases = new ListadoClases(this);
@@ -135,7 +136,7 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
         binding.btnModificarCurso.setOnClickListener(v ->{
             FormularioCurso formularioCurso = new FormularioCurso();
             //log
-            cursoNuevo.setIdCurso(288);
+            cursoNuevo.setIdCurso(295);
             cursoNuevo.setIdDocumento(154);
             cursoNuevo.setTitulo("Titulo");
             cursoNuevo.setObjetivos("Objetivos");
@@ -173,7 +174,7 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
             CalificacionCurso curso = new CalificacionCurso();
             Bundle bundle = new Bundle();
             bundle.putInt("clave_id_curso", viewModel.getCursoActual().getValue().getIdCurso());
-            bundle.putString("clave_nombre_curso", viewModel.getCursoActual().getValue().getNombre());
+            bundle.putString("clave_nombre_curso", viewModel.getCursoActual().getValue().getTitulo());
             curso.setArguments(bundle);
             cambiarFragmentoPrincipal(curso);
         });

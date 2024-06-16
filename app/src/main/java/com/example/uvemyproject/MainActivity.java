@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
 
     FormularioUsuario formularioUsuario = new FormularioUsuario(true);
-    FormularioClase formularioCurso = new FormularioClase();
+    CursoDetallesPrincipal formularioCurso = new CursoDetallesPrincipal();
     CursoDetallesInformacion cursoDetallesInformacion = new CursoDetallesInformacion();
 
     @Override

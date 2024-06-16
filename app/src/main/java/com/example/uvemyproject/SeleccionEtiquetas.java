@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.uvemyproject.databinding.FragmentSeleccionEtiquetasBinding;
+import com.example.uvemyproject.dto.CrearCursoDTO;
 import com.example.uvemyproject.dto.CredencialesDTO;
 import com.example.uvemyproject.dto.EtiquetaDTO;
 import com.example.uvemyproject.dto.UsuarioDTO;
@@ -33,14 +34,17 @@ public class SeleccionEtiquetas extends Fragment {
 
     UsuarioDTO usuario;
     private final List<Integer> idEtiquetasSeleccionadas = new ArrayList<>();
+    private final List<String> nombreEtiquetasSeleccionadas = new ArrayList<>();
     boolean esActualizacionUsuario;
-
-    // Constructor para Registro/Actualizacion de Usuario TODO: Constructor para cursos
+    private boolean _esCrearCurso;
+    private boolean _esFormularioCurso;
+    private CrearCursoDTO _curso;
     public SeleccionEtiquetas(UsuarioDTO usuario, boolean esActualizacionUsuario) {
         this.usuario = usuario;
         this.esActualizacionUsuario = esActualizacionUsuario;
     }
-
+    public SeleccionEtiquetas() {
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +56,16 @@ public class SeleccionEtiquetas extends Fragment {
         binding = FragmentSeleccionEtiquetasBinding.inflate(getLayoutInflater());
 
         viewModel = new ViewModelProvider(this).get(SeleccionEtiquetasViewModel.class);
+        _esFormularioCurso = false;
+        if (getArguments() != null) {
+            _esCrearCurso = getArguments().getBoolean("clave_esCrearCurso", true);
+            _curso = getArguments().getParcelable("clave_curso");
+            if(_curso != null){
+                _esFormularioCurso = true;
+                esActualizacionUsuario = false;
+            }
+            viewModel.setCursoActual(_curso);
+        }
 
         observarStatus();
         observarEtiquetas();
@@ -60,7 +74,6 @@ public class SeleccionEtiquetas extends Fragment {
 
         viewModel.obtenerEtiquetas();
 
-        //TODO: Poner caso para cuando es creación/actualización de curso
         if(esActualizacionUsuario) {
             binding.btnConfirmar.setVisibility(View.GONE);
             binding.btnGuardar.setVisibility(View.VISIBLE);
@@ -69,7 +82,19 @@ public class SeleccionEtiquetas extends Fragment {
 
         binding.btnConfirmar.setOnClickListener(c -> {
             if(!idEtiquetasSeleccionadas.isEmpty()) {
-                solicitarCodigoVerificacion();
+                if(_esFormularioCurso){
+                    FormularioCurso formularioCurso = new FormularioCurso();
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("clave_esCrearCurso", _esCrearCurso);
+                    bundle.putIntegerArrayList("clave_listaEtiquetas", (ArrayList<Integer>) idEtiquetasSeleccionadas);
+                    bundle.putStringArrayList("clave_listaEtiquetasNombre", (ArrayList<String>) nombreEtiquetasSeleccionadas);
+                    bundle.putParcelable("clave_curso", _curso);
+                    formularioCurso.setArguments(bundle);
+                    cambiarFragmentoPrincipal(formularioCurso);
+                }
+                else {
+                    solicitarCodigoVerificacion();
+                }
             } else {
                 Toast.makeText(getContext(), "Debe seleccionar al menos una etiqueta.",
                         Toast.LENGTH_SHORT).show();
@@ -77,7 +102,6 @@ public class SeleccionEtiquetas extends Fragment {
         });
 
         binding.btnGuardar.setOnClickListener(c -> {
-            Log.d("Etiquetas", "Guardar " + idEtiquetasSeleccionadas);
             if(esActualizacionUsuario && !idEtiquetasSeleccionadas.isEmpty()) {
                 actualizarEtiquetasUsuario();
             } else {
@@ -85,11 +109,12 @@ public class SeleccionEtiquetas extends Fragment {
                         Toast.LENGTH_SHORT).show();
             }
         });
-
-
         return binding.getRoot();
     }
 
+    private void cambiarFragmentoPrincipal(Fragment fragmento){
+        ((MainActivity) getActivity()).cambiarFragmentoPrincipal(fragmento);
+    }
     private void observarStatusActualizarUsuarioEtiquetas() {
         viewModel.getStatusActualizarUsuarioEtiquetas().observe(getViewLifecycleOwner(), status -> {
             switch (status) {
@@ -142,7 +167,6 @@ public class SeleccionEtiquetas extends Fragment {
                     idsArray[i] = idEtiquetasSeleccionadas.get(i);
                 }
                 usuario.setIdsEtiqueta(idsArray);
-                Log.d("Etiquetas", Arrays.toString(usuario.getIdsEtiqueta()));
                 redireccionarConfirmacionCorreo();
             }
         });
@@ -205,7 +229,11 @@ public class SeleccionEtiquetas extends Fragment {
 
                     Chip chip = getChip(etiqueta, contextThemeWrapper);
 
-                    // TODO: Poner caso para cuando es actualización de curso
+                    CrearCursoDTO curso = viewModel.getCurso().getValue();
+                    if (curso != null && curso.getEtiquetas() != null && curso.getEtiquetas().contains(etiqueta.getIdEtiqueta())) {
+                        chip.setChecked(true);
+                    }
+
                     if(esActualizacionUsuario) {
                         for (int idEtiqueta : SingletonUsuario.getIdsEtiqueta()) {
                             if(idEtiqueta == etiqueta.getIdEtiqueta()) {
@@ -213,7 +241,6 @@ public class SeleccionEtiquetas extends Fragment {
                             }
                         }
                     }
-
                     binding.chpGroupEtiquetas.addView(chip);
                 }
             }
@@ -229,14 +256,13 @@ public class SeleccionEtiquetas extends Fragment {
 
         chip.setOnCheckedChangeListener((buttonView, isChecked) -> {
             int idEtiqueta = (int) buttonView.getTag();
+            String nombreEtiqueta = (String) buttonView.getText();
             if (isChecked) {
-                Log.d("Etiquetas", "Seleccionado: " + idEtiqueta + " " +
-                        idEtiquetasSeleccionadas);
                 idEtiquetasSeleccionadas.add(idEtiqueta);
+                nombreEtiquetasSeleccionadas.add(nombreEtiqueta);
             } else {
-                Log.d("Etiquetas", "Deseleccionado: " + idEtiqueta +
-                        " " + idEtiquetasSeleccionadas);
                 idEtiquetasSeleccionadas.removeAll(Collections.singleton(idEtiqueta));
+                nombreEtiquetasSeleccionadas.removeAll(Collections.singleton(nombreEtiqueta));
             }
         });
         return chip;
