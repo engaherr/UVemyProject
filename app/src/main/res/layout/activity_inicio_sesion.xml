@@ -14,6 +14,7 @@
         tools:context=".InicioSesion">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cnsLayoutInicioSesion"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".InicioSesion">
