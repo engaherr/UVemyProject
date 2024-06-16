@@ -26,6 +26,7 @@ public class ClaseDetalles extends Fragment {
     private FragmentClaseDetallesBinding binding;
     private ClaseDetallesViewModel viewModel;
     private DocumentoAdapter adapter;
+    private ComentarioAdapter comentarioAdapter;
     private int documentoSeleccionado = -1;
     private static final int PICK_DIRECTORY_REQUEST_CODE = 1;
 
@@ -51,10 +52,16 @@ public class ClaseDetalles extends Fragment {
         binding.rcyViewDocumentos.setAdapter(adapter);
         adapter.setOnItemClickListener((documento, posicion) -> descargarDocumento(posicion));
 
+        comentarioAdapter = new ComentarioAdapter();
+        binding.rcyViewComentarios.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.rcyViewComentarios.setAdapter(comentarioAdapter);
+        //TODO: comentarioAdapter.submitList(); de comentarios recuperados
+
         viewModel = new ViewModelProvider(this).get(ClaseDetallesViewModel.class);
 
         observarStatus();
         observarClase();
+        observarComentarios();
 
         binding.lnrLayoutModificarClase.setOnClickListener(v -> cambiarFormularioClase());
 
@@ -62,6 +69,7 @@ public class ClaseDetalles extends Fragment {
 
         return binding.getRoot();
     }
+
     private void observarStatus(){
         viewModel.getStatus().observe(getViewLifecycleOwner(), status ->{
             switch (status){
@@ -84,6 +92,15 @@ public class ClaseDetalles extends Fragment {
                     adapter.submitList(claseDTO.getDocumentos());
                     adapter.notifyDataSetChanged();
                 }
+            }
+        });
+    }
+
+    private void observarComentarios() {
+        viewModel.getComentarios().observe(getViewLifecycleOwner(), comentarios -> {
+            if(comentarios != null && !comentarios.isEmpty()){
+                comentarioAdapter.submitList(comentarios);
+                comentarioAdapter.notifyDataSetChanged();
             }
         });
     }

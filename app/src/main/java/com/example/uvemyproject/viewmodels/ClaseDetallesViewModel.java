@@ -12,9 +12,11 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.uvemyproject.api.ApiClient;
 import com.example.uvemyproject.api.services.ClaseServices;
+import com.example.uvemyproject.api.services.ComentarioServices;
 import com.example.uvemyproject.api.services.DocumentoServices;
 import com.example.uvemyproject.api.services.EstadisticaServices;
 import com.example.uvemyproject.dto.ClaseDTO;
+import com.example.uvemyproject.dto.ComentarioDTO;
 import com.example.uvemyproject.dto.DocumentoDTO;
 import com.example.uvemyproject.utils.FileUtil;
 import com.example.uvemyproject.utils.SingletonUsuario;
@@ -23,6 +25,7 @@ import com.example.uvemyproject.utils.StatusRequest;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -32,11 +35,13 @@ import retrofit2.Response;
 public class ClaseDetallesViewModel extends ViewModel {
     private final MutableLiveData<StatusRequest> status = new MutableLiveData<>();
     private final MutableLiveData<ClaseDTO> claseActual = new MutableLiveData<>();
+    private final MutableLiveData<List<ComentarioDTO>> comentarios = new MutableLiveData<>();
 
     public LiveData<StatusRequest> getStatus(){
         return status;
     }
     public LiveData<ClaseDTO> getClaseActual() { return claseActual; }
+    public LiveData<List<ComentarioDTO>> getComentarios() { return comentarios; }
 
     public void recuperarDetallesClase(int idClase){
         ClaseServices service = ApiClient.getInstance().getClaseServices();
@@ -48,12 +53,37 @@ public class ClaseDetallesViewModel extends ViewModel {
                 if(response.isSuccessful()){
                     claseActual.setValue(response.body());
                     obtenerDocumentosClase();
+                    obtenerComentariosClase();
                 }else{
                     status.setValue(StatusRequest.ERROR);
                 }
             }
             @Override
             public void onFailure(Call<ClaseDTO> call, Throwable t) {
+                status.setValue(StatusRequest.ERROR_CONEXION);
+            }
+        });
+    }
+
+    private void obtenerComentariosClase() {
+        String auth = "Bearer " + SingletonUsuario.getJwt();
+        ComentarioServices service = ApiClient.getInstance().getComentarioServices();
+
+        service.obtenerComentariosClase(auth, claseActual.getValue().getIdClase())
+                .enqueue(new Callback<List<ComentarioDTO>>() {
+            @Override
+            public void onResponse(Call<List<ComentarioDTO>> call, Response<List<ComentarioDTO>> response) {
+                if (response.isSuccessful()) {
+                    comentarios.setValue(response.body());
+                    status.setValue(StatusRequest.DONE);
+                } else {
+                    status.setValue(StatusRequest.ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ComentarioDTO>> call, Throwable t) {
+                Log.e("RetrofitErrorComentarios", t.getMessage(), t);
                 status.setValue(StatusRequest.ERROR_CONEXION);
             }
         });
@@ -93,7 +123,6 @@ public class ClaseDetallesViewModel extends ViewModel {
                             documentosRecuperados.add(documento);
 
                             if((idDocumentos.length - 1) == finalI){
-                                //Recuperar video y comentarios
                                 ClaseDTO clase = claseActual.getValue();
                                 clase.setDocumentos(documentosRecuperados);
                                 claseActual.setValue(clase);

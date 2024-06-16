@@ -2,6 +2,7 @@ package com.example.uvemyproject.api;
 
 import com.example.uvemyproject.api.services.AutenticacionServices;
 import com.example.uvemyproject.api.services.ClaseServices;
+import com.example.uvemyproject.api.services.ComentarioServices;
 import com.example.uvemyproject.api.services.CursoServices;
 import com.example.uvemyproject.api.services.DocumentoServices;
 import com.example.uvemyproject.api.services.EstadisticaServices;
@@ -22,6 +23,7 @@ public class ApiClient {
     private AutenticacionServices autenticacionServices;
     private EtiquetaServices etiquetaServices;
     private PerfilServices perfilServices;
+    private ComentarioServices comentarioServices;
 
     private static final ApiClient apiClient = new ApiClient();
 
@@ -92,5 +94,12 @@ public class ApiClient {
             perfilServices = getRetrofit().create(PerfilServices.class);
         }
         return perfilServices;
+    }
+
+    public ComentarioServices getComentarioServices(){
+        if(comentarioServices == null) {
+            comentarioServices = getRetrofit().create(ComentarioServices.class);
+        }
+        return comentarioServices;
     }
 }
