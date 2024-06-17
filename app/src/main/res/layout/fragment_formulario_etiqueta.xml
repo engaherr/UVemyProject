@@ -90,5 +90,29 @@
                 </RelativeLayout>
             </ScrollView>
         </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/progress_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#20000000"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="300dp"
+                android:layout_height="100dp"
+                app:cardCornerRadius="100dp"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:backgroundTint="#8DBC92">
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"/>
+            </androidx.cardview.widget.CardView>
+        </RelativeLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

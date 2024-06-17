@@ -49,6 +49,7 @@ public class ConsultaEtiquetas extends Fragment {
 
         binding.btnEliminar.setOnClickListener(c -> {
             if (!idEtiquetasSeleccionadas.isEmpty()){
+                ponerEspera();
                 viewModel.eliminarEtiquetasSeleccionadas(idEtiquetasSeleccionadas);
                 idEtiquetasSeleccionadas.clear();
             }else{
@@ -64,11 +65,15 @@ public class ConsultaEtiquetas extends Fragment {
         viewModel.getStatus().observe(getViewLifecycleOwner(), status -> {
             switch (status) {
                 case ERROR:
-                    Toast.makeText(getContext(), "Ocurrió un error al procesar la solicitud.",
+                    Toast.makeText(getContext(), "Ocurrió un error al eliminar la(s) etiqueta(s).",
                             Toast.LENGTH_SHORT).show();
                     break;
                 case ERROR_CONEXION:
                     Toast.makeText(getContext(), "No hay conexión con el servidor.",
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                case NO_CONTENT:
+                    Toast.makeText(getContext(), "Etiqueta(s) eliminada(s) correctamente.",
                             Toast.LENGTH_SHORT).show();
                     break;
             }

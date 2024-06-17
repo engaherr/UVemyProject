@@ -34,14 +34,15 @@ public class FormularioEtiqueta extends Fragment {
         viewModel = new ViewModelProvider(this).get(FormularioEtiquetaViewModel.class);
 
         observarStatus();
+        quitarEspera();
 
         binding.btnRegistrar.setOnClickListener(v -> {
             String nombreEtiqueta = binding.regTextNombre.getText().toString().trim();
 
             if (!nombreEtiqueta.isEmpty()) {
+                ponerEspera();
                 viewModel.registrarEtiqueta(nombreEtiqueta);
             } else {
-                resetearCampos();
                 Toast.makeText(requireContext(), "Ingrese un nombre para la etiqueta", Toast.LENGTH_SHORT).show();
             }
         });
@@ -69,18 +70,26 @@ public class FormularioEtiqueta extends Fragment {
                     Toast.makeText(getContext(), "No hay conexión con el servidor.",
                             Toast.LENGTH_SHORT).show();
                     break;
+                case BAD_REQUEST:
+                    Toast.makeText(getContext(), "Nombre de etiqueta existente.",
+                            Toast.LENGTH_SHORT).show();
+                    break;
             }
+            quitarEspera();
         });
-    }
-
-    private void resetearCampos(){
-        binding.regTextNombre.setBackgroundResource(R.drawable.background_lightblue);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private void ponerEspera(){
+        binding.progressOverlay.setVisibility(View.VISIBLE);
+    }
+    private void quitarEspera() {
+        binding.progressOverlay.setVisibility(View.GONE);
     }
 
 }

@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.uvemyproject.api.ApiClient;
 import com.example.uvemyproject.api.services.EtiquetaServices;
 import com.example.uvemyproject.dto.EtiquetaDTO;
+import com.example.uvemyproject.utils.SingletonUsuario;
 import com.example.uvemyproject.utils.StatusRequest;
 
 import java.util.List;
@@ -33,9 +34,9 @@ public class ConsultaEtiquetasViewModel extends ViewModel {
 
     public void obtenerEtiquetas() {
         EtiquetaServices service = ApiClient.getInstance().getEtiquetaServices();
+        String auth = "Bearer " + SingletonUsuario.getJwt();
 
-        //TODO JWT
-        service.getEtiquetas().enqueue(new Callback<List<EtiquetaDTO>>() {
+        service.getEtiquetas(auth).enqueue(new Callback<List<EtiquetaDTO>>() {
             @Override
             public void onResponse(Call<List<EtiquetaDTO>> call, Response<List<EtiquetaDTO>> response) {
                 if(response.isSuccessful()) {
@@ -57,15 +58,15 @@ public class ConsultaEtiquetasViewModel extends ViewModel {
 
     public void eliminarEtiquetasSeleccionadas(List<Integer> idsEtiquetas) {
         EtiquetaServices service = ApiClient.getInstance().getEtiquetaServices();
+        String auth = "Bearer " + SingletonUsuario.getJwt();
 
-        //TODO JWT
         for (int idEtiqueta : idsEtiquetas) {
-            service.eliminarEtiqueta(idEtiqueta).enqueue(new Callback<Void>() {
+            service.eliminarEtiqueta(idEtiqueta, auth).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.isSuccessful()) {
                         Log.d("ConsultaEtiquetasViewModel", "Etiqueta eliminada exitosamente: " + idEtiqueta);
-                        status.setValue(StatusRequest.DONE);
+                        status.setValue(StatusRequest.NO_CONTENT);
                         obtenerEtiquetas();
                     } else {
                         Log.e("RetrofitError", "Error al eliminar etiqueta: " + idEtiqueta);

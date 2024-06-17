@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.example.uvemyproject.api.ApiClient;
 import com.example.uvemyproject.api.services.EtiquetaServices;
+import com.example.uvemyproject.utils.SingletonUsuario;
 import com.example.uvemyproject.utils.StatusRequest;
 
 import okhttp3.MediaType;
@@ -25,7 +26,9 @@ public class FormularioEtiquetaViewModel extends ViewModel {
 
     public void registrarEtiqueta(String nombreEtiqueta) {
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), "{\"nombre\": \"" + nombreEtiqueta + "\"}");
-        etiquetaServices.registrarEtiqueta(requestBody).enqueue(new Callback<Void>() {
+        String auth = "Bearer " + SingletonUsuario.getJwt();
+
+        etiquetaServices.registrarEtiqueta(requestBody, auth).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
@@ -33,7 +36,11 @@ public class FormularioEtiquetaViewModel extends ViewModel {
                     status.setValue(StatusRequest.DONE);
                 } else {
                     Log.e("FormularioEtiqueta", "Error al registrar etiqueta: " + response.code());
-                    status.setValue(StatusRequest.ERROR);
+                    if (response.code() == 400) {
+                        status.setValue(StatusRequest.BAD_REQUEST);
+                    } else {
+                        status.setValue(StatusRequest.ERROR);
+                    }
                 }
             }
 
