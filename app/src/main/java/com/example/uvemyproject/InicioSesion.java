@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -103,6 +104,7 @@ public class InicioSesion extends AppCompatActivity {
                 SingletonUsuario.setCorreoElectronico(usuario.getCorreoElectronico());
                 SingletonUsuario.setIdsEtiqueta(usuario.getIdsEtiqueta());
                 SingletonUsuario.setJwt(usuario.getJwt());
+                SingletonUsuario.setEsAdministrador(usuario.getEsAdministrador());
                 redireccionarMenuPrincipal();
             }
         });
@@ -123,7 +125,12 @@ public class InicioSesion extends AppCompatActivity {
     }
 
     private void redireccionarMenuPrincipal() {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent;
+        if (SingletonUsuario.getEsAdministrador() == 1) {
+            intent = new Intent(this, AdminMainActivity.class);
+        } else {
+            intent = new Intent(this, MainActivity.class);
+        }
         startActivity(intent);
         finish();
     }

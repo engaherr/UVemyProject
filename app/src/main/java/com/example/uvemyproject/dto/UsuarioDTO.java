@@ -13,6 +13,7 @@ public class UsuarioDTO implements Parcelable {
     private String contrasena;
     private int[] idsEtiqueta;
     private String jwt;
+    private int esAdministrador;
 
     public UsuarioDTO(){
     }
@@ -24,6 +25,7 @@ public class UsuarioDTO implements Parcelable {
         correoElectronico = in.readString();
         idsEtiqueta = in.createIntArray();
         jwt = in.readString();
+        esAdministrador = in.readInt();
     }
 
     @Override
@@ -34,6 +36,7 @@ public class UsuarioDTO implements Parcelable {
         dest.writeString(correoElectronico);
         dest.writeIntArray(idsEtiqueta);
         dest.writeString(jwt);
+        dest.writeInt(esAdministrador);
     }
 
     public static final Creator<UsuarioDTO> CREATOR = new Creator<UsuarioDTO>() {
@@ -108,4 +111,10 @@ public class UsuarioDTO implements Parcelable {
     public void setContrasena(String contrasena) {
         this.contrasena = contrasena;
     }
+
+    public int getEsAdministrador (){
+        return esAdministrador;
+    }
+
+    //Set no colocado ya que no es usado
 }

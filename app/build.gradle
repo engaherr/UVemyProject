@@ -62,6 +62,9 @@ dependencies {
     implementation 'io.grpc:grpc-okhttp:1.64.0'
     implementation 'io.grpc:grpc-protobuf-lite:1.64.0'
     implementation 'io.grpc:grpc-stub:1.64.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0'
     compileOnly 'org.apache.tomcat:annotations-api:6.0.53' // necessary for Java 9+
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
