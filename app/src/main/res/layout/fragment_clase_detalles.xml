@@ -199,19 +199,19 @@
                                         android:fontFamily="@font/nunito_regular"
                                         android:layout_weight="1"
                                         android:background="@drawable/background_rounded_border_white"
-                                        android:enabled="false"
                                         android:gravity="start|top"
                                         android:hint="Escribe un comentario..."
                                         android:importantForAutofill="no"
                                         android:inputType="textMultiLine"
                                         android:maxLines="4"
+                                        android:maxLength="300"
                                         android:minHeight="48dp"
                                         android:padding="10dp"
                                         android:textColor="@color/white"
                                         android:textColorHint="#E6DAFF" />
 
                                     <ImageButton
-                                        android:id="@+id/btn_send"
+                                        android:id="@+id/btnEnviarComentario"
                                         android:layout_width="48dp"
                                         android:layout_height="48dp"
                                         android:layout_gravity="bottom"

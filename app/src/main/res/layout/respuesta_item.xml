@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginBottom="10dp">
+
+    <data>
+
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/rltLayoutRespuesta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@drawable/background_commentary"
+        android:paddingStart="5dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="15dp"
+        android:paddingBottom="5dp">
+
+        <TextView
+            android:id="@+id/txtViewNombreUsuario"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="start|top"
+            android:paddingHorizontal="16dp"
+            android:textSize="12sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/nunito_bolditalic"
+            tools:text="John Wash" />
+
+
+        <TextView
+            android:id="@+id/txtViewRespuesta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtViewNombreUsuario"
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/nunito_regular"
+            android:gravity="start|top"
+            android:hint="Escribe una respuesta..."
+            android:importantForAutofill="no"
+            android:inputType="textMultiLine"
+            android:maxLines="4"
+            android:maxWidth="400dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:scrollbars="vertical"
+            tools:text="Hola Pedro!, Cuando usas el modificador public en un método, estás indicando que este es accesible desde cualquier parte del programa,Hola Pedro!, Cuando usas el modificador 'public' en un método, estás indicando que este es accesible desde cualquier parte del programa" />
+
+    </RelativeLayout>
+</layout>

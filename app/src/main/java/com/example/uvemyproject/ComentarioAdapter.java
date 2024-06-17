@@ -6,13 +6,19 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.uvemyproject.databinding.ComentarioItemBinding;
 import com.example.uvemyproject.dto.ComentarioDTO;
+import com.example.uvemyproject.dto.ComentarioEnvioDTO;
+import com.example.uvemyproject.utils.SingletonUsuario;
+import com.example.uvemyproject.viewmodels.ClaseDetallesViewModel;
 
 public class ComentarioAdapter extends ListAdapter<ComentarioDTO, ComentarioAdapter.ComentarioViewHolder> {
+
+    protected final ClaseDetallesViewModel viewModel;
 
     public static final DiffUtil.ItemCallback<ComentarioDTO> DIFF_CALLBACK =
             new DiffUtil.ItemCallback<ComentarioDTO>() {
@@ -27,8 +33,9 @@ public class ComentarioAdapter extends ListAdapter<ComentarioDTO, ComentarioAdap
         }
     };
 
-    protected ComentarioAdapter() {
+    protected ComentarioAdapter(ClaseDetallesViewModel claseDetallesViewModel) {
         super(DIFF_CALLBACK);
+        viewModel = claseDetallesViewModel;
     }
 
     @NonNull
@@ -45,7 +52,7 @@ public class ComentarioAdapter extends ListAdapter<ComentarioDTO, ComentarioAdap
         holder.bind(comentario);
     }
 
-    static class ComentarioViewHolder extends RecyclerView.ViewHolder {
+    class ComentarioViewHolder extends RecyclerView.ViewHolder {
 
         private final ComentarioItemBinding binding;
 
@@ -61,20 +68,49 @@ public class ComentarioAdapter extends ListAdapter<ComentarioDTO, ComentarioAdap
             if(comentario.getRespuestas().isEmpty()){
                 binding.txtViewTituloRespuestas.setVisibility(View.GONE);
                 binding.rcyViewRespuestas.setVisibility(View.GONE);
+            } else {
+                RespuestaAdapter respuestaAdapter = new RespuestaAdapter();
+                binding.rcyViewRespuestas.setLayoutManager(
+                        new LinearLayoutManager(binding.getRoot().getContext()));
+                binding.rcyViewRespuestas.setAdapter(respuestaAdapter);
+                respuestaAdapter.submitList(comentario.getRespuestas());
+                respuestaAdapter.notifyDataSetChanged();
             }
-            //TODO: Agregar lista de ComentarioDTO's a recyclerview
-            binding.btnResponder.setOnClickListener( v -> clickResponder());
+
+            binding.btnResponder.setOnClickListener( v -> clickResponder(comentario.getIdComentario()));
         }
 
-        private void clickResponder() {
+        private void clickResponder(int idComentario) {
             binding.lnrLayoutRespuestaNueva.setVisibility(View.VISIBLE);
             binding.btnResponder.setVisibility(View.GONE);
+            binding.edtTextRespuestaNueva.requestFocus();
 
-            binding.btnSend.setOnClickListener( v -> clickEnviar());
+            binding.btnEnviarRespuesta.setOnClickListener( v -> clickEnviar(idComentario));
         }
 
-        private void clickEnviar() {
-            //TODO: Enviar petición a la API para guardar respuesta
+        private void clickEnviar(int idComentario) {
+            String respuesta = binding.edtTextRespuestaNueva.getText().toString().trim();
+
+            if(respuesta.isEmpty()){
+                binding.edtTextRespuestaNueva.setError("Escribe algo para enviar una respuesta");
+            } else {
+                enviarRespuesta(respuesta, idComentario);
+            }
+        }
+
+        private void enviarRespuesta(String respuesta, int idComentario) {
+            binding.edtTextRespuestaNueva.setText("");
+            binding.lnrLayoutRespuestaNueva.setVisibility(View.GONE);
+            binding.btnResponder.setVisibility(View.VISIBLE);
+
+            ComentarioEnvioDTO comentarioEnvioDTO = new ComentarioEnvioDTO(
+                    viewModel.getClaseActual().getValue().getIdClase(),
+                    SingletonUsuario.getIdUsuario(),
+                    respuesta,
+                    idComentario
+            );
+
+            viewModel.enviarComentario(comentarioEnvioDTO);
         }
     }
 }

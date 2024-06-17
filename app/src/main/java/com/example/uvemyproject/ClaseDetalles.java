@@ -5,22 +5,20 @@ import static android.app.Activity.RESULT_OK;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
-
 import com.example.uvemyproject.databinding.FragmentClaseDetallesBinding;
-import com.example.uvemyproject.databinding.FragmentListadoClasesBinding;
+import com.example.uvemyproject.dto.ComentarioEnvioDTO;
+import com.example.uvemyproject.utils.SingletonUsuario;
 import com.example.uvemyproject.viewmodels.ClaseDetallesViewModel;
-import com.example.uvemyproject.viewmodels.EstadisticasCursoViewModel;
 
 public class ClaseDetalles extends Fragment {
     private FragmentClaseDetallesBinding binding;
@@ -52,22 +50,56 @@ public class ClaseDetalles extends Fragment {
         binding.rcyViewDocumentos.setAdapter(adapter);
         adapter.setOnItemClickListener((documento, posicion) -> descargarDocumento(posicion));
 
-        comentarioAdapter = new ComentarioAdapter();
-        binding.rcyViewComentarios.setLayoutManager(new LinearLayoutManager(getContext()));
-        binding.rcyViewComentarios.setAdapter(comentarioAdapter);
-        //TODO: comentarioAdapter.submitList(); de comentarios recuperados
-
         viewModel = new ViewModelProvider(this).get(ClaseDetallesViewModel.class);
 
         observarStatus();
         observarClase();
         observarComentarios();
+        observarStatusEnviarComentario();
 
         binding.lnrLayoutModificarClase.setOnClickListener(v -> cambiarFormularioClase());
+        binding.btnEnviarComentario.setOnClickListener(v -> enviarComentario());
 
         obtenerIdClase();
 
         return binding.getRoot();
+    }
+
+    private void enviarComentario() {
+        String comentario = binding.edtTextComentario.getText().toString();
+
+        if(comentario.isEmpty()){
+            binding.edtTextComentario.setError("Escribe algo para enviar el comentario");
+        } else {
+            binding.edtTextComentario.setText("");
+            ComentarioEnvioDTO comentarioEnvioDTO = new ComentarioEnvioDTO(
+                    viewModel.getClaseActual().getValue().getIdClase(),
+                    SingletonUsuario.getIdUsuario(),
+                    comentario,
+                    0
+            );
+            viewModel.enviarComentario(comentarioEnvioDTO);
+        }
+    }
+
+    private void observarStatusEnviarComentario() {
+        viewModel.getStatusEnviarComentario().observe(getViewLifecycleOwner(), status ->{
+            switch (status){
+                case DONE:
+                    Toast.makeText(getContext(),"Comentario enviado exitosamente",
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                case ERROR:
+                    Toast.makeText(getContext(),"Ocurrió un error al enviar el comentario." +
+                            " Intente de nuevo más tarde", Toast.LENGTH_SHORT).show();
+                    break;
+                case ERROR_CONEXION:
+                    Toast.makeText(getContext(),"No hay conexión con el servidor. " +
+                                    "Intente más tarde",
+                            Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        });
     }
 
     private void observarStatus(){
@@ -99,6 +131,11 @@ public class ClaseDetalles extends Fragment {
     private void observarComentarios() {
         viewModel.getComentarios().observe(getViewLifecycleOwner(), comentarios -> {
             if(comentarios != null && !comentarios.isEmpty()){
+                comentarioAdapter =
+                        new ComentarioAdapter(viewModel);
+                binding.rcyViewComentarios.setLayoutManager(new LinearLayoutManager(getContext()));
+                binding.rcyViewComentarios.setAdapter(comentarioAdapter);
+
                 comentarioAdapter.submitList(comentarios);
                 comentarioAdapter.notifyDataSetChanged();
             }
