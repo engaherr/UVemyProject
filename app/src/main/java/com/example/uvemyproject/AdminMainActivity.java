@@ -18,6 +18,7 @@ public class AdminMainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
 
     ConsultaEtiquetas consultaEtiquetas = new ConsultaEtiquetas();
+    ConsultaUsuarios consultaUsuarios = new ConsultaUsuarios();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +35,12 @@ public class AdminMainActivity extends AppCompatActivity {
                 if(itemId == ETIQUETAS_ID){
                     getSupportFragmentManager().beginTransaction().replace(
                             R.id.container, consultaEtiquetas).commit();
+                    return true;
+                }
+
+                if(itemId == USUARIOS_ID){
+                    getSupportFragmentManager().beginTransaction().replace(
+                            R.id.container, consultaUsuarios).commit();
                     return true;
                 }
 

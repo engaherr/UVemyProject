@@ -1,5 +1,6 @@
 package com.example.uvemyproject.dto;
 
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -11,6 +12,7 @@ public class UsuarioDTO implements Parcelable {
     private String apellidos;
     private String correoElectronico;
     private String contrasena;
+    private byte[] imagen;
     private int[] idsEtiqueta;
     private String jwt;
     private int esAdministrador;
@@ -23,6 +25,7 @@ public class UsuarioDTO implements Parcelable {
         nombres = in.readString();
         apellidos = in.readString();
         correoElectronico = in.readString();
+        imagen = in.createByteArray();
         idsEtiqueta = in.createIntArray();
         jwt = in.readString();
         esAdministrador = in.readInt();
@@ -34,6 +37,7 @@ public class UsuarioDTO implements Parcelable {
         dest.writeString(nombres);
         dest.writeString(apellidos);
         dest.writeString(correoElectronico);
+        dest.writeByteArray(imagen);
         dest.writeIntArray(idsEtiqueta);
         dest.writeString(jwt);
         dest.writeInt(esAdministrador);
@@ -81,6 +85,14 @@ public class UsuarioDTO implements Parcelable {
 
     public void setCorreoElectronico(String correoElectronico) {
         this.correoElectronico = correoElectronico;
+    }
+
+    public byte[] getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(byte[] imagen) {
+        this.imagen = imagen;
     }
 
     public int[] getIdsEtiqueta() {
