@@ -7,6 +7,7 @@ import com.example.uvemyproject.api.services.DocumentoServices;
 import com.example.uvemyproject.api.services.EstadisticaServices;
 import com.example.uvemyproject.api.services.EtiquetaServices;
 import com.example.uvemyproject.api.services.PerfilServices;
+import com.example.uvemyproject.api.services.UsuarioServices;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -22,6 +23,7 @@ public class ApiClient {
     private AutenticacionServices autenticacionServices;
     private EtiquetaServices etiquetaServices;
     private PerfilServices perfilServices;
+    private UsuarioServices usuarioServices;
 
     private static final ApiClient apiClient = new ApiClient();
 
@@ -40,7 +42,7 @@ public class ApiClient {
                     .build();
 
             retrofit = new Retrofit.Builder()
-                    .baseUrl("http://192.168.100.26:3000/api/").client(client)
+                    .baseUrl("http://192.168.1.73:3000/api/").client(client)
                     .addConverterFactory(MoshiConverterFactory.create())
                     .build();
         }
@@ -92,5 +94,12 @@ public class ApiClient {
             perfilServices = getRetrofit().create(PerfilServices.class);
         }
         return perfilServices;
+    }
+
+    public UsuarioServices getUsuarioServices(){
+        if(usuarioServices == null) {
+            usuarioServices = getRetrofit().create(UsuarioServices.class);
+        }
+        return usuarioServices;
     }
 }
