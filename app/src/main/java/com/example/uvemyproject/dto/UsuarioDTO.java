@@ -12,7 +12,8 @@ public class UsuarioDTO implements Parcelable {
     private String apellidos;
     private String correoElectronico;
     private String contrasena;
-    private byte[] imagen;
+    //private byte[] imagen;
+    private ImagenUsuarioDTO imagen;
     private int[] idsEtiqueta;
     private String jwt;
     private int esAdministrador;
@@ -25,7 +26,7 @@ public class UsuarioDTO implements Parcelable {
         nombres = in.readString();
         apellidos = in.readString();
         correoElectronico = in.readString();
-        imagen = in.createByteArray();
+        //imagen = in.createByteArray();
         idsEtiqueta = in.createIntArray();
         jwt = in.readString();
         esAdministrador = in.readInt();
@@ -37,7 +38,7 @@ public class UsuarioDTO implements Parcelable {
         dest.writeString(nombres);
         dest.writeString(apellidos);
         dest.writeString(correoElectronico);
-        dest.writeByteArray(imagen);
+        //dest.writeByteArray(imagen);
         dest.writeIntArray(idsEtiqueta);
         dest.writeString(jwt);
         dest.writeInt(esAdministrador);
@@ -87,13 +88,21 @@ public class UsuarioDTO implements Parcelable {
         this.correoElectronico = correoElectronico;
     }
 
-    public byte[] getImagen() {
+    /*public byte[] getImagen() {
         return imagen;
     }
 
     public void setImagen(byte[] imagen) {
         this.imagen = imagen;
+    }*/
+
+    /*public ImagenUsuario getImagen() {
+        return imagen;
     }
+
+    public void setImagen(ImagenUsuario imagen) {
+        this.imagen = imagen;
+    }*/
 
     public int[] getIdsEtiqueta() {
         return idsEtiqueta;
@@ -129,4 +138,5 @@ public class UsuarioDTO implements Parcelable {
     }
 
     //Set no colocado ya que no es usado
+
 }
