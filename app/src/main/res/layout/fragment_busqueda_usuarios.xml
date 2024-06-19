@@ -81,7 +81,7 @@
                 android:layout_marginBottom="20dp"
                 android:gravity="center"
                 android:maxWidth="480dp"
-                android:layout_marginStart="150dp"
+                android:layout_gravity="center_horizontal"
                 android:text="Buscar" />
 
             <androidx.recyclerview.widget.RecyclerView

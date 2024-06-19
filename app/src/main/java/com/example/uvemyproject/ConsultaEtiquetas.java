@@ -76,6 +76,9 @@ public class ConsultaEtiquetas extends Fragment {
                     Toast.makeText(getContext(), "Etiqueta(s) eliminada(s) correctamente.",
                             Toast.LENGTH_SHORT).show();
                     break;
+                case FORBIDDEN:
+                    Toast.makeText(getContext(), "La(s) etiqueta(s) tienen relacion con uno o varios usuarios o cursos.",
+                            Toast.LENGTH_SHORT).show();
             }
             quitarEspera();
         });
@@ -102,7 +105,6 @@ public class ConsultaEtiquetas extends Fragment {
         });
     }
 
-    //TODO JWT
     private void observarJwt(){
         viewModel.getJwt().observe(getViewLifecycleOwner(), jwt -> {
             if (jwt != null && !jwt.isEmpty()) {

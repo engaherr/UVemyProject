@@ -40,10 +40,16 @@ public class FormularioEtiqueta extends Fragment {
             String nombreEtiqueta = binding.regTextNombre.getText().toString().trim();
 
             if (!nombreEtiqueta.isEmpty()) {
-                ponerEspera();
-                viewModel.registrarEtiqueta(nombreEtiqueta);
+                if (nombreEtiqueta.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 ]+")) {
+                    ponerEspera();
+                    viewModel.registrarEtiqueta(nombreEtiqueta);
+                } else {
+                    Toast.makeText(requireContext(), "Solo se permiten letras y números.",
+                            Toast.LENGTH_SHORT).show();
+                }
             } else {
-                Toast.makeText(requireContext(), "Ingrese un nombre para la etiqueta", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Ingrese un nombre para la etiqueta",
+                        Toast.LENGTH_SHORT).show();
             }
         });
 

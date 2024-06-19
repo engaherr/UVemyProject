@@ -60,26 +60,52 @@ public class ConsultaEtiquetasViewModel extends ViewModel {
         EtiquetaServices service = ApiClient.getInstance().getEtiquetaServices();
         String auth = "Bearer " + SingletonUsuario.getJwt();
 
+        int totalEtiquetas = idsEtiquetas.size();
+        int[] eliminacionesExitosas = {0};
+        int[] eliminacionesFallidas = {0};
+        int[] forbidden = {0};
+
         for (int idEtiqueta : idsEtiquetas) {
             service.eliminarEtiqueta(idEtiqueta, auth).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.isSuccessful()) {
                         Log.d("ConsultaEtiquetasViewModel", "Etiqueta eliminada exitosamente: " + idEtiqueta);
-                        status.setValue(StatusRequest.NO_CONTENT);
-                        obtenerEtiquetas();
+                        eliminacionesExitosas[0]++;
+                    } else if (response.code() == 403) {
+                        Log.e("RetrofitError", "Bad Request al eliminar etiqueta: " + idEtiqueta);
+                        forbidden[0]++;
                     } else {
                         Log.e("RetrofitError", "Error al eliminar etiqueta: " + idEtiqueta);
-                        status.setValue(StatusRequest.ERROR);
+                        eliminacionesFallidas[0]++;
                     }
+                    verificarEliminacionesCompletas(totalEtiquetas, eliminacionesExitosas[0],
+                            eliminacionesFallidas[0], forbidden[0]);
                 }
 
                 @Override
                 public void onFailure(Call<Void> call, Throwable t) {
                     Log.e("RetrofitError", "Error de red o excepción al eliminar etiqueta: " + idEtiqueta, t);
-                    status.setValue(StatusRequest.ERROR_CONEXION);
+                    eliminacionesFallidas[0]++;
+                    verificarEliminacionesCompletas(totalEtiquetas, eliminacionesExitosas[0],
+                            eliminacionesFallidas[0], forbidden[0]);
                 }
             });
         }
     }
+
+    private void verificarEliminacionesCompletas(int totalEtiquetas, int eliminacionesExitosas,
+                                                 int eliminacionesFallidas, int forbidden) {
+        if (eliminacionesExitosas + eliminacionesFallidas + forbidden == totalEtiquetas) {
+            if (forbidden > 0) {
+                status.setValue(StatusRequest.FORBIDDEN);
+            } else if (eliminacionesFallidas > 0) {
+                status.setValue(StatusRequest.ERROR);
+            } else {
+                status.setValue(StatusRequest.NO_CONTENT);
+                obtenerEtiquetas();
+            }
+        }
+    }
+
 }

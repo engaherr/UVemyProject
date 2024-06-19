@@ -56,17 +56,23 @@ public class BusquedaUsuarios extends Fragment {
         binding.btnBuscarUsuario.setOnClickListener(v -> {
             String busqueda = binding.edtTextBusqueda.getText().toString().trim();
             if (!busqueda.isEmpty()) {
-                limpiarRecyclerView();
-                ponerEspera();
-                viewModel.setTerminoBusqueda(busqueda);
-                obtenerUsuarios();  // Mueve esta línea aquí para asegurar que se actualicen los usuarios.
+                if (busqueda.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+")) {
+                    ponerEspera();
+                    viewModel.setTerminoBusqueda(busqueda);
+                } else {
+                    Toast.makeText(getContext(), "Solo se permiten letras.",
+                            Toast.LENGTH_SHORT).show();
+                }
             } else {
-                Toast.makeText(getContext(), "Ingrese un término de búsqueda.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Ingrese un término de búsqueda.",
+                        Toast.LENGTH_SHORT).show();
             }
         });
 
         quitarEspera();
         observarStatus();
+        obtenerUsuarios();
+
 
         return binding.getRoot();
     }
@@ -112,7 +118,4 @@ public class BusquedaUsuarios extends Fragment {
         binding.progressOverlay.setVisibility(View.GONE);
     }
 
-    private void limpiarRecyclerView() {
-        adapter.submitList(null);
-    }
 }

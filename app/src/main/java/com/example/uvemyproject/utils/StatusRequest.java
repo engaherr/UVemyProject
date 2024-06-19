@@ -5,5 +5,6 @@ public enum StatusRequest {
     ERROR,
     DONE,
     NO_CONTENT,
-    BAD_REQUEST
+    BAD_REQUEST,
+    FORBIDDEN
 }
