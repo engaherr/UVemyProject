@@ -22,5 +22,5 @@ public interface UsuarioServices {
     @GET("usuarios/buscar/{pagina}")
     Call<UsuarioBusquedaDTO> buscarUsuarios(@Header("Authorization") String auth,
                                             @Path("pagina") int pagina,
-                                            @Query("buscar") String busqueda);
+                                            @Query("busqueda") String busqueda);
 }
