@@ -13,6 +13,8 @@ import com.example.uvemyproject.api.services.EstadisticaServices;
 import com.example.uvemyproject.api.services.EtiquetaServices;
 import com.example.uvemyproject.api.services.ListaCursos;
 import com.example.uvemyproject.api.services.PerfilServices;
+import com.example.uvemyproject.api.services.PerfilServices;
+import com.example.uvemyproject.api.services.UsuarioServices;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -25,12 +27,14 @@ public class ApiClient {
     private ClaseServices claseServices;
     private EstadisticaServices estadisticaServices;
     private DocumentoServices documentoServices;
-    private PerfilServices perfilServices;
     private AutenticacionServices autenticacionServices;
     private EtiquetaServices etiquetaServices;
     private ListaCursos listaCursos;
+    private PerfilServices perfilServices;
+    private UsuarioServices usuarioServices;
 
     private static final ApiClient apiClient = new ApiClient();
+
     public static ApiClient getInstance(){
         return apiClient;
     }
@@ -82,23 +86,16 @@ public class ApiClient {
         }
         return documentoServices;
     }
-
-    public PerfilServices getPerfilServices(){
-        if(perfilServices==null) {
-            perfilServices = getRetrofit().create(PerfilServices.class);
-        }
-        return perfilServices;
-    }
-
+    
     public AutenticacionServices getAutenticacionServices(){
-        if(autenticacionServices==null) {
+        if(autenticacionServices == null) {
             autenticacionServices = getRetrofit().create(AutenticacionServices.class);
         }
         return autenticacionServices;
     }
 
     public EtiquetaServices getEtiquetaServices(){
-        if(etiquetaServices==null) {
+        if(etiquetaServices == null) {
             etiquetaServices = getRetrofit().create(EtiquetaServices.class);
         }
         return etiquetaServices;
@@ -111,4 +108,17 @@ public class ApiClient {
         return listaCursos;
     }
 
+    public PerfilServices getPerfilServices(){
+        if(perfilServices == null) {
+            perfilServices = getRetrofit().create(PerfilServices.class);
+        }
+        return perfilServices;
+    }
+
+    public UsuarioServices getUsuarioServices(){
+        if(usuarioServices == null) {
+            usuarioServices = getRetrofit().create(UsuarioServices.class);
+        }
+        return usuarioServices;
+    }
 }

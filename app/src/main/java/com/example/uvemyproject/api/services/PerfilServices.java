@@ -27,8 +27,9 @@ public interface PerfilServices {
     Call<ResponseBody> obtenerFotoPerfil(@Header("Authorization") String auth);
     @Multipart
     @PUT("perfil/foto")
-    Call<Void> subirFotoPerfil(@Header("Authorization") String auth, @Part MultipartBody.Part imagen,
-                               @Part("idUsuario") RequestBody idUsuario);
+    Call<Void> subirFotoPerfil(@Header("Authorization") String auth,
+                               @Part("idUsuario") RequestBody idUsuario,
+                               @Part MultipartBody.Part imagen);
 
     @PUT("perfil")
     Call<Void> actualizarUsuario(@Header("Authorization") String auth,

@@ -18,9 +18,10 @@ import com.squareup.moshi.Moshi;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
+import java.io.File;
 
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -47,6 +48,9 @@ public class FormularioUsuarioViewModel extends ViewModel {
     }
     public MutableLiveData<StatusRequest> getstatusActualizarDatos() {
         return statusActualizarDatos;
+    }
+    public MutableLiveData<StatusRequest> getstatusSubirFoto() {
+        return statusSubirFoto;
     }
 
     public void setUsuario(MutableLiveData<UsuarioDTO> usuario) {
@@ -127,5 +131,48 @@ public class FormularioUsuarioViewModel extends ViewModel {
 
         return RequestBody.create(jsonEnviado,
                 MediaType.parse("application/json; charset=utf-8"));
+    }
+
+    public void subirImagenPerfil(File fileImagenPerfil) {
+        PerfilServices service = ApiClient.getInstance().getPerfilServices();
+        String auth = "Bearer " + SingletonUsuario.getJwt();
+
+        RequestBody request = RequestBody.create(fileImagenPerfil,
+                MediaType.parse("image/png"));
+        MultipartBody.Part bodyImagen = MultipartBody.Part.createFormData("imagen",
+                fileImagenPerfil.getName(), request);
+
+        RequestBody idUsuario = RequestBody.create(String.valueOf(SingletonUsuario.getIdUsuario()),
+                MediaType.parse("text/plain"));
+
+        service.subirFotoPerfil(auth, idUsuario, bodyImagen).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    imagenPerfil.postValue(
+                            new MutableLiveData<>(fileABitmap(fileImagenPerfil)).getValue());
+                    statusSubirFoto.postValue(StatusRequest.DONE);
+                } else {
+                    statusSubirFoto.postValue(StatusRequest.ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("ViewModel", "Error al subir la imagen", t);
+                statusSubirFoto.postValue(StatusRequest.ERROR_CONEXION);
+            }
+        });
+    }
+
+    private Bitmap fileABitmap(File file) {
+        if (file == null || !file.exists()) {
+            return null;
+        }
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+
+        return BitmapFactory.decodeFile(file.getAbsolutePath(), options);
     }
 }
