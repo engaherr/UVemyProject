@@ -1,5 +1,10 @@
 package com.example.uvemyproject.api;
 
+import android.content.Context;
+
+import com.example.uvemyproject.InicioSesion;
+import com.example.uvemyproject.MainActivity;
+import com.example.uvemyproject.R;
 import com.example.uvemyproject.api.services.ClaseServices;
 import com.example.uvemyproject.api.services.CursoServices;
 import com.example.uvemyproject.api.services.DocumentoServices;
@@ -24,22 +29,26 @@ public class ApiClient {
     }
     private static Retrofit getRetrofit(){
         if(retrofit == null){
+            Context context = InicioSesion.obtenerContexto();
+            String url_host = context.getString(R.string.url_host);
+
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
             OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(new TokenInterceptor())
                     .addInterceptor(loggingInterceptor)
                     .build();
 
             retrofit = new Retrofit.Builder()
-                    .baseUrl("http://192.168.100.38:3000/api/").client(client)
+                    .baseUrl(url_host).client(client)
                     .addConverterFactory(MoshiConverterFactory.create())
                     .build();
         }
         return retrofit;
     }
     public CursoServices getCursoServices(){
-        if(cursoServices ==null) {
+        if(cursoServices == null) {
             cursoServices = getRetrofit().create(CursoServices.class);
         }
         return cursoServices;
