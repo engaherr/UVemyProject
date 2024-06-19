@@ -32,7 +32,13 @@ import java.util.ArrayList;
 public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCursoClickListener{
     FragmentListadoCursosBinding binding;
     ListadoCursosViewModel viewModel;
-    int pagina;
+
+    int _paginaActual;
+    int _paginaAnterior;
+    private String _tituloCurso = "";
+    private int _calificacionCurso;
+    private int _idEtiqueta;
+    private int _idTipoCurso;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,14 +48,18 @@ public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCu
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         viewModel = new ViewModelProvider(this).get(ListadoCursosViewModel.class);
-        pagina = 0;
+        _paginaActual = 0;
+        _tituloCurso= "";
+        _calificacionCurso = 8;
+        _idTipoCurso = 0;
+        _idEtiqueta = 0;
         Log.d("Log", "Listado cursos: ");
         if (getArguments() != null) {
             Log.d("Log", "If: ");
         } else{
             Log.d("Log", "Else: ");
         }
-        viewModel.recuperarCursos(pagina);
+        viewModel.recuperarCursos(_paginaActual, _tituloCurso, _calificacionCurso, _idTipoCurso, _idEtiqueta);
         binding = FragmentListadoCursosBinding.inflate(inflater, container, false);
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(getContext());
         ponerEspera();
@@ -57,6 +67,12 @@ public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCu
         binding.txtViewCrearCurso.setOnClickListener(v -> {
             FormularioCurso formularioCurso = new FormularioCurso();
             ((MainActivity) getActivity()).cambiarFragmentoPrincipal(formularioCurso);
+        });
+        binding.btnAnterior.setOnClickListener(v -> {
+            anteriorPagina();
+        });
+        binding.btnSiguiente.setOnClickListener(v -> {
+            siguientePagina();
         });
         //Si tiene un argumento puede ser de etiquetas o de tipo
         viewModel.getStatus().observe(getViewLifecycleOwner(), new Observer<StatusRequest>() {
@@ -68,6 +84,7 @@ public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCu
                         break;
                     case ERROR:
                         Toast.makeText(requireContext(), "Error en la solicitud", Toast.LENGTH_LONG).show();
+                        quitarEspera();
                         break;
                     case ERROR_CONEXION:
                         Toast.makeText(requireContext(), "Error de conexión", Toast.LENGTH_LONG).show();
@@ -84,6 +101,29 @@ public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCu
             }
         });
         return binding.getRoot();
+    }
+
+    private void siguientePagina()
+    {
+        ponerEspera();
+        _paginaAnterior = _paginaActual;
+        _paginaActual = _paginaActual + 1;
+        viewModel.recuperarCursos(_paginaActual, _tituloCurso, _calificacionCurso, _idTipoCurso, _idEtiqueta);
+        //_ = CargarCursosPagina(_paginaActual, _tituloCurso, _calificacionCurso, _idTipoCurso, _idEtiqueta);
+    }
+    private void anteriorPagina()
+    {
+        if (_paginaActual <= 0)
+        {
+            _paginaActual = 0;
+        }
+        else
+        {
+            ponerEspera();
+            _paginaActual = _paginaActual - 1;
+            viewModel.recuperarCursos(_paginaActual, _tituloCurso, _calificacionCurso, _idTipoCurso, _idEtiqueta);
+            //_ = CargarCursosPagina(_paginaActual, _tituloCurso, _calificacionCurso, _idTipoCurso, _idEtiqueta);
+        }
     }
 
     private void cargarCursos(){

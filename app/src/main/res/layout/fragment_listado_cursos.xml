@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            tools:context=".ConfirmacionCorreo">
+            tools:context=".MainActivity">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -40,6 +40,11 @@
                     android:contentDescription="Regresar"
                     android:src="@drawable/previous" />
             </RelativeLayout>
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="45dp">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -85,19 +90,48 @@
                             android:layout_marginStart="5dp"
                             android:padding="5dp"/>
 
+
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center">
+
+                        <Button
+                            android:id="@+id/btnAnterior"
+                            style="@style/styleBtnDarkBlue"
+                            android:layout_width="140dp"
+                            android:layout_height="wrap_content"
+                            android:text="« Anterior"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="10dp"/>
+
+                        <Button
+                            android:id="@+id/btnSiguiente"
+                            style="@style/styleBtnDarkBlue"
+                            android:layout_width="140dp"
+                            android:layout_height="wrap_content"
+                            android:text="Siguiente »"
+                            android:layout_weight="1"
+                            android:visibility="visible"
+                            android:layout_gravity="center_horizontal"/>
+                    </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/lnrLayoutAgregarClase"
                         android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
                         android:layout_width="160dp"
                         android:layout_height="wrap_content"
                         android:background="@drawable/background_lightergreen"
                         android:paddingVertical="10dp"
                         android:orientation="horizontal"
                         android:layout_gravity="center"
-                        android:gravity="center_horizontal">
+                        android:gravity="center_horizontal"
+                        >
 
                         <TextView
                             android:id="@+id/txtViewCrearCurso"
@@ -106,10 +140,12 @@
                             android:layout_height="wrap_content"
                             android:text="Crear curso"/>
 
+
                     </LinearLayout>
                 </LinearLayout>
 
             </FrameLayout>
+            </ScrollView>
 
         </LinearLayout>
 
