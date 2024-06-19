@@ -34,8 +34,6 @@ import javax.security.auth.callback.Callback;
 public class FormularioCursoViewModel extends ViewModel {
     private final MutableLiveData<CrearCursoDTO> cursoActual = new MutableLiveData<CrearCursoDTO>();
     private final MutableLiveData<byte[]> arrayBites = new MutableLiveData<byte[]>();
-    private final MutableLiveData<ArrayList<Integer>> listIdEtiquetas = new MutableLiveData<ArrayList<Integer>>();
-
     private final MutableLiveData<StatusRequest> status = new MutableLiveData<>();
     public MutableLiveData<StatusRequest> getStatus() {
         return status;
@@ -51,38 +49,35 @@ public class FormularioCursoViewModel extends ViewModel {
     public void setArrayBites(byte[] arrayBites){
         this.arrayBites.setValue(arrayBites);
         CrearCursoDTO curso = cursoActual.getValue();
-        if (curso != null) {
+        if (curso == null) {
             curso.setArchivo(arrayBites);
             cursoActual.setValue(curso);
+        } else {
+            Log.d("Log","SetArray");
+            cursoActual.getValue().setArchivo(arrayBites);
         }
     }
 
-    public void setListEtiquetas(ArrayList<Integer> listIdEtiquetas){
-        this.listIdEtiquetas.setValue(listIdEtiquetas);
-        CrearCursoDTO curso = cursoActual.getValue();
-        if (curso != null) {
-            curso.setEtiquetas(listIdEtiquetas);
-            cursoActual.setValue(curso);
-        }
-    }
     public void setCursoActual(CrearCursoDTO cursoActual){
         this.cursoActual.setValue(cursoActual);
     }
 
     private MultipartBody.Part crearFilePeticion() {
-        byte[] fileBytes = arrayBites.getValue();
+        byte[] fileBytes = cursoActual.getValue().getArchivo();
+        if(fileBytes != null){
+            Log.d("Log","Array"+fileBytes.length);
+        }
         RequestBody requestFile = RequestBody.create(MediaType.parse("application/octet-stream"), fileBytes);
         return MultipartBody.Part.createFormData("file", "archivo.png", requestFile);
     }
     public void guardarCurso(CrearCursoDTO curso){
-        Log.d("Log", "Guardar");
         CursoServices service = ApiClient.getInstance().getCursoServices();
         String auth = "Bearer " + SingletonUsuario.getJwt();
         RequestBody tituloPart = createPartFromString(curso.getTitulo());
         RequestBody descripcionPart = createPartFromString(curso.getDescripcion());
         RequestBody objetivosPart = createPartFromString(curso.getObjetivos());
         RequestBody requisitosPart = createPartFromString(curso.getRequisitos());
-        ArrayList<RequestBody> etiquetasParts = createEtiquetasParts(listIdEtiquetas.getValue());
+        ArrayList<RequestBody> etiquetasParts = createEtiquetasParts(curso.getEtiquetas());
         MultipartBody.Part filePart = crearFilePeticion();
         service.crearCurso(auth, tituloPart, descripcionPart, objetivosPart, requisitosPart, etiquetasParts, filePart).enqueue(new retrofit2.Callback<CrearCursoDTO>(){@Override
             public void onResponse(Call<CrearCursoDTO> call, Response<CrearCursoDTO> response) {
@@ -112,7 +107,7 @@ public class FormularioCursoViewModel extends ViewModel {
         RequestBody objetivosPart = createPartFromString(curso.getObjetivos());
         RequestBody requisitosPart = createPartFromString(curso.getRequisitos());
         RequestBody idDocumentoPart = createPartFromString(String.valueOf(curso.getIdDocumento()));
-        ArrayList<RequestBody> etiquetasParts = createEtiquetasParts(listIdEtiquetas.getValue());
+        ArrayList<RequestBody> etiquetasParts = createEtiquetasParts(curso.getEtiquetas());
         MultipartBody.Part filePart = crearFilePeticion();
         service.modificarCurso(auth, curso.getIdCurso(), idCursoPart, idDocumentoPart, tituloPart, descripcionPart, objetivosPart, requisitosPart, etiquetasParts, filePart).enqueue(new retrofit2.Callback<CrearCursoDTO>(){@Override
         public void onResponse(Call<CrearCursoDTO> call, Response<CrearCursoDTO> response) {

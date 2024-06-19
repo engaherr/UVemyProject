@@ -63,4 +63,8 @@ public interface CursoServices {
     @DELETE("cursos/{idCurso}")
     Call<CrearCursoDTO> eliminarCurso(@Header("Authorization") String auth,
                                       @Path("idCurso") int idCursoPath);
+
+    @GET("cursos/{idCurso}")
+    Call<CursoDTO> recuperarCurso(@Header("Authorization") String auth,
+                                              @Path("idCurso") int idCurso);
 }

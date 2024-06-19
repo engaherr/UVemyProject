@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.uvemyproject.api.ApiClient;
 import com.example.uvemyproject.api.services.EtiquetaServices;
 import com.example.uvemyproject.api.services.PerfilServices;
+import com.example.uvemyproject.dto.CrearCursoDTO;
 import com.example.uvemyproject.dto.CredencialesDTO;
 import com.example.uvemyproject.dto.EtiquetaDTO;
 import com.example.uvemyproject.dto.JwtDTO;
@@ -35,6 +36,13 @@ public class SeleccionEtiquetasViewModel extends ViewModel {
     private final MutableLiveData<StatusRequest> statusActualizarUsuarioEtiquetas = new MutableLiveData<>();
     private final MutableLiveData<String> jwt = new MutableLiveData<>();
 
+    private final MutableLiveData<CrearCursoDTO> curso = new MutableLiveData<>();
+
+    public MutableLiveData<CrearCursoDTO> getCurso() {
+        return curso;
+    }
+
+
     public MutableLiveData<StatusRequest> getStatus() {
         return status;
     }
@@ -47,6 +55,10 @@ public class SeleccionEtiquetasViewModel extends ViewModel {
     }
     public MutableLiveData<StatusRequest> getStatusActualizarUsuarioEtiquetas() {
         return statusActualizarUsuarioEtiquetas;
+    }
+
+    public void setCursoActual(CrearCursoDTO cursoActual){
+        this.curso.setValue(cursoActual);
     }
 
     public MutableLiveData<String> getJwt() { return jwt; }

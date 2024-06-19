@@ -12,7 +12,6 @@
         tools:context=".ListadoClases"
         android:layout_marginBottom="30dp">
 
-        <!-- TODO: Update blank fragment layout -->
         <LinearLayout
             android:id="@+id/main"
             android:layout_width="match_parent"

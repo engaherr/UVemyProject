@@ -6,11 +6,17 @@ import androidx.fragment.app.Fragment;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
+import com.example.uvemyproject.api.services.ListaCursos;
 import com.example.uvemyproject.databinding.ActivityMainBinding;
+import com.example.uvemyproject.dto.CrearCursoDTO;
+import com.example.uvemyproject.dto.CursoDTO;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+
+import org.checkerframework.checker.units.qual.C;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
 
     FormularioUsuario formularioUsuario = new FormularioUsuario(true);
-    FormularioClase formularioCurso = new FormularioClase();
-    CursoDetallesInformacion cursoDetallesInformacion = new CursoDetallesInformacion();
+    CursoDetallesPrincipal cursoDetallesPrincipal = new CursoDetallesPrincipal();
+    ListadoCursos listadoCursos = new ListadoCursos();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +49,18 @@ public class MainActivity extends AppCompatActivity {
                 int itemId = item.getItemId();
 
                 if (itemId == CURSOS_ID) {
+                    Bundle bundle = new Bundle();
+                    listadoCursos = new ListadoCursos();
+                    int pagina = 0;
+                    bundle.putInt("clave_pagina", pagina);
+                    listadoCursos.setArguments(bundle);
                     getSupportFragmentManager().beginTransaction().replace(
-                            R.id.container, formularioCurso).commit();
+                            R.id.container, listadoCursos).commit();
                     return true;
                 } else if (itemId == BUSQUEDA_ID) {
+
                     getSupportFragmentManager().beginTransaction().replace(
-                            R.id.container, cursoDetallesInformacion).commit();
+                            R.id.container, cursoDetallesPrincipal).commit();
                     return true;
                 } else if (itemId == PERFIL_ID) {
                     getSupportFragmentManager().beginTransaction().replace(

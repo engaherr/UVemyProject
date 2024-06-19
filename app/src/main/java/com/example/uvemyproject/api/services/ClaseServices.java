@@ -5,6 +5,8 @@ import com.example.uvemyproject.dto.DocumentoDTO;
 
 import org.json.JSONStringer;
 
+import java.util.List;
+
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -33,7 +35,11 @@ public interface ClaseServices {
                                    @Path("idClase") int idClase,
                                    @Body RequestBody claseActualizada);
 
-    @DELETE("clases/{idClase}")
+    @DELETE("clases/curso/")
     Call<Void> eliminarClase(@Header("Authorization") String auth,
                              @Path("idClase") int idClase);
+
+    @GET("clases/curso/{idCurso}")
+    Call<List<ClaseDTO>> recuperarClasesCurso(@Header("Authorization") String auth,
+                                              @Path("idCurso") int idCurso);
 }

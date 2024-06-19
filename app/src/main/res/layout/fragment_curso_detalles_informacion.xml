@@ -106,6 +106,7 @@
                         android:layout_height="match_parent">
 
                         <TextView
+                            android:id="@+id/txtViewProfesor"
                             style="@style/styleEdtTextCamposDetallesCurso"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -131,6 +132,7 @@
                         android:layout_height="match_parent">
 
                         <TextView
+                            android:id="@+id/txtViewObjetivos"
                             style="@style/styleEdtTextCamposDetallesCurso"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -157,6 +159,7 @@
                         android:layout_height="match_parent">
 
                         <TextView
+                            android:id="@+id/txtViewEtiquetas"
                             style="@style/styleEdtTextCamposDetallesCurso"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -184,6 +187,7 @@
                         android:layout_height="match_parent">
 
                         <TextView
+                            android:id="@+id/txtViewDescripcion"
                             style="@style/styleEdtTextCamposDetallesCurso"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -201,7 +205,8 @@
                 <LinearLayout
                     style="@style/styleLnrLayoutCampoDetallesCurso"
                     android:layout_width="match_parent"
-                    android:layout_height="100dp">
+                    android:layout_height="100dp"
+                    android:orientation="horizontal">
 
                     <androidx.core.widget.NestedScrollView
                         style="@style/styleScrViewCampoDetallesCurso"
@@ -209,6 +214,7 @@
                         android:layout_height="match_parent">
 
                         <TextView
+                            android:id="@+id/txtViewRequisitos"
                             style="@style/styleEdtTextCamposDetallesCurso"
                             android:layout_width="match_parent"
                             android:layout_height="100dp"
