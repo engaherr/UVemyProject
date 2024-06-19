@@ -15,6 +15,7 @@ import com.example.uvemyproject.api.services.ClaseServices;
 import com.example.uvemyproject.api.services.DocumentoServices;
 import com.example.uvemyproject.api.services.EstadisticaServices;
 import com.example.uvemyproject.dto.ClaseDTO;
+import com.example.uvemyproject.dto.CursoDTO;
 import com.example.uvemyproject.dto.DocumentoDTO;
 import com.example.uvemyproject.utils.FileUtil;
 import com.example.uvemyproject.utils.SingletonUsuario;
@@ -32,7 +33,13 @@ import retrofit2.Response;
 public class ClaseDetallesViewModel extends ViewModel {
     private final MutableLiveData<StatusRequest> status = new MutableLiveData<>();
     private final MutableLiveData<ClaseDTO> claseActual = new MutableLiveData<>();
-
+    private final MutableLiveData<CursoDTO> cursoActual = new MutableLiveData<>();
+    public LiveData<CursoDTO> getCurso(){
+        return cursoActual;
+    }
+    public void setCurso (CursoDTO cursoNuevo){
+        cursoActual.setValue(cursoNuevo);
+    }
     public LiveData<StatusRequest> getStatus(){
         return status;
     }

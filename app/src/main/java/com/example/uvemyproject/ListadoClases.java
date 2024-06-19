@@ -28,7 +28,6 @@ public class ListadoClases extends Fragment {
     private FragmentListadoClasesBinding binding;
     private ListadoClasesViewModel viewModel;
     private INotificacionFragmentoClase notificacionFragmentoClase;
-    private RecyclerView recyclerView;
     private ClaseAdapter claseAdapter;
     public ListadoClases() {
     }
@@ -36,8 +35,6 @@ public class ListadoClases extends Fragment {
     public ListadoClases(INotificacionFragmentoClase notificacionVerClase) {
         this.notificacionFragmentoClase = notificacionVerClase;
     }
-
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,17 +50,18 @@ public class ListadoClases extends Fragment {
             viewModel.setNotificacion(notificacionFragmentoClase);
         }
 
-        ClaseAdapter adapter = new ClaseAdapter();
-        adapter.setOnItemClickListener( (clase, position) -> { cambiarFragmentoDetalles(clase, position); });
+        claseAdapter = new ClaseAdapter();
+        claseAdapter.setOnItemClickListener( (clase, position) -> { cambiarFragmentoDetalles(clase, position); });
         binding.rcyViewListadoClases.setLayoutManager(new LinearLayoutManager(getContext()));
-        binding.rcyViewListadoClases.setAdapter(adapter);
+        binding.rcyViewListadoClases.setAdapter(claseAdapter);
 
         viewModel.getClasesDelCurso().observe(getViewLifecycleOwner(), clases ->{
-            adapter.submitList(clases);
+            claseAdapter.submitList(clases);
         });
 
         binding.lnrLayoutAgregarClase.setOnClickListener(v -> viewModel.getNotificacion().getValue().cambiarFormularioClase());
         obtenerListadoClases();
+
         return binding.getRoot();
     }
 
@@ -75,30 +73,25 @@ public class ListadoClases extends Fragment {
         Bundle args = getArguments();
         if (args != null) {
             ArrayList<ClaseDTO> clases = args.getParcelableArrayList("clave_clases");
-            CursoDTO curso = args.getParcelable("clave_curso");
+            String rol = args.getString("clave_rol");
             viewModel.setClasesDelCurso(clases);
-            viewModel.setCurso(curso);
+            viewModel.setRol(rol);
             Log.d("Log", "Tamaño: " + clases.size());
             for (ClaseDTO clase : clases) {
                 Log.d("Log", "ID Clase2: " + clase.getIdClase() + ", Nombre: " + clase.getNombre());
             }
             cargarClases();
+            if(rol != null && rol.equals("Profesor")){
+                binding.lnrLayoutAgregarClase.setVisibility(View.VISIBLE);
+            }
         }
     }
 
     private void cargarClases(){
-        recyclerView = binding.rcyViewListadoClases;
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        claseAdapter = new ClaseAdapter();
-        recyclerView.setAdapter(claseAdapter);
-
         List<ClaseDTO> listaClases = viewModel.getClasesDelCurso().getValue();
-        String rolCurso = viewModel.getCurso().getValue().getRol();
+        String rolCurso = viewModel.getRol();
         claseAdapter.setRolCurso(rolCurso);
         claseAdapter.submitList(listaClases);
-
-
-
     }
 
 }

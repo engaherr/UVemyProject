@@ -1,7 +1,10 @@
 package com.example.uvemyproject.servicio;
 
+import android.content.Context;
 import android.util.Log;
 
+import com.example.uvemyproject.InicioSesion;
+import com.example.uvemyproject.R;
 import com.example.uvemyproject.dto.DocumentoDTO;
 import com.example.uvemyproject.interfaces.INotificacionEnvioVideo;
 import com.example.uvemyproject.utils.SingletonUsuario;
@@ -23,7 +26,9 @@ public class VideoGrpc {
 
     private static VideoServiceGrpc.VideoServiceStub obtenerStub(){
         if(stub == null){
-            String host = "192.168.100.23";
+            Context context = InicioSesion.obtenerContexto();
+            String host = context.getString(R.string.domain_ip);
+
             int puerto = 3001;
             channel = ManagedChannelBuilder.forAddress(host, puerto).usePlaintext().build();
             stub = VideoServiceGrpc.newStub(channel);

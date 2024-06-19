@@ -43,9 +43,14 @@ public class FormularioClase extends Fragment {
     private static final int PICK_PDF_FILE = 2;
     private static final int PICK_VIDEO_FILE = 1;
     private DocumentoAdapter adapter;
+    private boolean esModificar;
 
-    public FormularioClase() {
+    /*public FormularioClase() {
 
+    }*/
+
+    public FormularioClase(boolean esModificar) {
+        this.esModificar = esModificar;
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,7 +77,9 @@ public class FormularioClase extends Fragment {
 
         viewModelCompartido = new ViewModelProvider(requireActivity()).get(FormularioDetallesClaseViewModel.class);
 
-        cargarClaseModificar();
+        if(esModificar){
+            cargarClaseModificar();
+        }
 
         adapter = new DocumentoAdapter(true);
         binding.rcyViewListadoDocumentos.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -104,7 +111,7 @@ public class FormularioClase extends Fragment {
         binding.btnGuardarClase.setOnClickListener(v -> {
             resetearCampos();
             if(validarCampos()){
-                if(viewModel.getClaseActual().getValue() == null){
+                if(!esModificar){
                     guardarClase();
                 }else{
                     actualizarClase();
@@ -138,7 +145,10 @@ public class FormularioClase extends Fragment {
             ((MainActivity) getActivity()).cambiarFragmentoPrincipal(claseDetalles);
         }else{
             CursoDetallesPrincipal cursoDetalles = new CursoDetallesPrincipal();
-            //TO_DO Agregar Bundle
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("clave_curso", viewModelCompartido.obtenerCurso().getValue());
+            cursoDetalles.setArguments(bundle);
+
             ((MainActivity) getActivity()).cambiarFragmentoPrincipal(cursoDetalles);
         }
     }
@@ -147,7 +157,9 @@ public class FormularioClase extends Fragment {
             if(claseEliminada == null){
                 Toast.makeText(getContext(),"La clase se eliminó con éxito", Toast.LENGTH_SHORT).show();
                 CursoDetallesPrincipal cursoDetalles = new CursoDetallesPrincipal();
-                //TO_DO Agregar bundle
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("clave_curso", viewModelCompartido.obtenerCurso().getValue());
+                cursoDetalles.setArguments(bundle);
                 ((MainActivity) getActivity()).cambiarFragmentoPrincipal(cursoDetalles);
             }
         });

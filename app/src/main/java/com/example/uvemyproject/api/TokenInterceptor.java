@@ -20,8 +20,8 @@ public class TokenInterceptor implements Interceptor {
 
         if (response.header("Set-Authorization") != null) {
             String tokenNuevo = response.header("Set-Authorization").toString();
-            Log.i("TOKEEEEN", tokenNuevo);
-            //SingletonUsuario.setJwt();
+            SingletonUsuario.setJwt(tokenNuevo);
+            Log.i("Actualizar Token", "Se ha actualizado el token a " + tokenNuevo);
         }
 
         return response;

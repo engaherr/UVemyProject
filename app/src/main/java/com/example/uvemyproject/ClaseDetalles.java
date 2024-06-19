@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.example.uvemyproject.databinding.FragmentClaseDetallesBinding;
 import com.example.uvemyproject.databinding.FragmentListadoClasesBinding;
 import com.example.uvemyproject.viewmodels.ClaseDetallesViewModel;
+import com.example.uvemyproject.viewmodels.CursoClaseDetallesViewModel;
 import com.example.uvemyproject.viewmodels.EstadisticasCursoViewModel;
 import com.example.uvemyproject.viewmodels.FormularioDetallesClaseViewModel;
 
@@ -27,6 +28,7 @@ public class ClaseDetalles extends Fragment {
     private FragmentClaseDetallesBinding binding;
     private ClaseDetallesViewModel viewModel;
     private FormularioDetallesClaseViewModel viewModelCompartido;
+    private CursoClaseDetallesViewModel viewModelCompartidoCurso;
     private DocumentoAdapter adapter;
     private int documentoSeleccionado = -1;
     private static final int PICK_DIRECTORY_REQUEST_CODE = 1;
@@ -45,6 +47,9 @@ public class ClaseDetalles extends Fragment {
         binding = FragmentClaseDetallesBinding.inflate(getLayoutInflater());
         binding.imgViewRegresar.setOnClickListener( v -> {
             CursoDetallesPrincipal cursoDetalles = new CursoDetallesPrincipal();
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("clave_curso", viewModelCompartido.obtenerCurso().getValue());
+            cursoDetalles.setArguments(bundle);
             ((MainActivity) getActivity()).cambiarFragmentoPrincipal(cursoDetalles);
         });
 
@@ -56,6 +61,7 @@ public class ClaseDetalles extends Fragment {
         viewModel = new ViewModelProvider(this).get(ClaseDetallesViewModel.class);
 
         viewModelCompartido = new ViewModelProvider(requireActivity()).get(FormularioDetallesClaseViewModel.class);
+        viewModelCompartidoCurso = new ViewModelProvider(requireActivity()).get(CursoClaseDetallesViewModel.class);
 
         observarStatus();
         observarClase();
@@ -94,6 +100,11 @@ public class ClaseDetalles extends Fragment {
     }
 
     private void obtenerIdClase(){
+        if(viewModelCompartidoCurso.obtenerCurso().getValue() != null){
+            viewModel.setCurso(viewModelCompartidoCurso.obtenerCurso().getValue());
+            viewModelCompartido.setCurso(viewModelCompartidoCurso.obtenerCurso().getValue());
+        }
+
         Bundle args = getArguments();
         if (args != null) {
             int esEstudiante = args.getInt("es_estudiante");
@@ -107,10 +118,7 @@ public class ClaseDetalles extends Fragment {
     }
 
     private void cambiarFormularioClase(){
-        FormularioClase formularioClase = new FormularioClase();
-        /*Bundle bundle = new Bundle();
-        bundle.putParcelable("clave_clase_dto", viewModel.getClaseActual().getValue());
-        formularioClase.setArguments(bundle);*/
+        FormularioClase formularioClase = new FormularioClase(true);
         ((MainActivity) getActivity()).cambiarFragmentoPrincipal(formularioClase);
     }
 
