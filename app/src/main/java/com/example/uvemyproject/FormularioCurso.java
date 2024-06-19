@@ -58,9 +58,12 @@ public class FormularioCurso extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         viewModel = new ViewModelProvider(this).get(FormularioCursoViewModel.class);
+        _esCrearCurso = true;
         if (getArguments() != null) {
             _esCrearCurso = getArguments().getBoolean("clave_esCrearCurso", true);
             CrearCursoDTO _curso = getArguments().getParcelable("clave_curso");
+            Log.d("Log", "Objetivos1"+_curso.getObjetivos());
+
             ArrayList<Integer> listaEtiquetas = getArguments().getIntegerArrayList("clave_listaEtiquetas");
             ArrayList<String> listaEtiquetasNombre = getArguments().getStringArrayList("clave_listaEtiquetasNombre");
             if (listaEtiquetas != null) {
@@ -137,6 +140,7 @@ public class FormularioCurso extends Fragment {
     private void cargarCurso(){
         binding.edtTextDescripcion.setText(viewModel.getCursoActual().getValue().getDescripcion());
         binding.edtTextTitulo.setText(viewModel.getCursoActual().getValue().getTitulo());
+        Log.d("Log", "Objetivos2"+viewModel.getCursoActual().getValue().getObjetivos());
         binding.edtTextObjetivos.setText(viewModel.getCursoActual().getValue().getObjetivos());
         binding.edtTextRequisitos.setText(viewModel.getCursoActual().getValue().getRequisitos());
         byte[] _arrayImagen = viewModel.getCursoActual().getValue().getArchivo();

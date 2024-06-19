@@ -1,6 +1,8 @@
 package com.example.uvemyproject;
 
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -13,6 +15,7 @@ import com.example.uvemyproject.dto.ClaseDTO;
 
 public class ClaseAdapter extends ListAdapter<ClaseDTO, ClaseAdapter.ClaseViewHolder> {
 
+    private String rolCurso;
     private static final DiffUtil.ItemCallback<ClaseDTO> DIFF_CALLBACK = new DiffUtil.ItemCallback<ClaseDTO>() {
         @Override
         public boolean areItemsTheSame(@NonNull ClaseDTO oldItem, @NonNull ClaseDTO newItem) {
@@ -59,11 +62,32 @@ public class ClaseAdapter extends ListAdapter<ClaseDTO, ClaseAdapter.ClaseViewHo
         public void bindClase(ClaseDTO clase, int posicion){
             binding.txtViewNumeroClase.setText("Clase " + (posicion + 1));
             binding.txtViewNombreClase.setText(clase.getNombre());
-
+            switch (rolCurso){
+                case "Profesor":
+                    binding.btnVerMas.setVisibility(View.VISIBLE);
+                    Log.d("Log","Profesor");
+                    break;
+                case "Estudiante":
+                    binding.btnVerMas.setVisibility(View.VISIBLE);
+                    Log.d("Log","Estudiante");
+                    break;
+                case "Usuario":
+                    binding.btnVerMas.setVisibility(View.INVISIBLE);
+                    Log.d("Log","Usuario");
+                    break;
+                default:
+                    binding.btnVerMas.setVisibility(View.GONE);
+                    Log.d("Log","default");
+                    break;
+            }
             binding.btnVerMas.setOnClickListener( v ->{
                 onItemClickListener.onItemClickListener(clase, posicion);
             });
         }
+    }
+
+    public void setRolCurso(String rolCurso) {
+        this.rolCurso = rolCurso;
     }
 
 }

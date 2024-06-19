@@ -6,6 +6,7 @@ import com.example.uvemyproject.api.services.CursoServices;
 import com.example.uvemyproject.api.services.DocumentoServices;
 import com.example.uvemyproject.api.services.EstadisticaServices;
 import com.example.uvemyproject.api.services.EtiquetaServices;
+import com.example.uvemyproject.api.services.ListaCursos;
 import com.example.uvemyproject.api.services.PerfilServices;
 
 import okhttp3.OkHttpClient;
@@ -22,6 +23,7 @@ public class ApiClient {
     private PerfilServices perfilServices;
     private AutenticacionServices autenticacionServices;
     private EtiquetaServices etiquetaServices;
+    private ListaCursos listaCursos;
 
     private static final ApiClient apiClient = new ApiClient();
     public static ApiClient getInstance(){
@@ -91,6 +93,13 @@ public class ApiClient {
             etiquetaServices = getRetrofit().create(EtiquetaServices.class);
         }
         return etiquetaServices;
+    }
+
+    public ListaCursos getListaCursos(){
+        if(listaCursos==null) {
+            listaCursos = getRetrofit().create(ListaCursos.class);
+        }
+        return listaCursos;
     }
 
 }

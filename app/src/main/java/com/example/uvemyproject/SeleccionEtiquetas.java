@@ -228,10 +228,11 @@ public class SeleccionEtiquetas extends Fragment {
                     );
 
                     Chip chip = getChip(etiqueta, contextThemeWrapper);
-
-                    CrearCursoDTO curso = viewModel.getCurso().getValue();
-                    if (curso != null && curso.getEtiquetas() != null && curso.getEtiquetas().contains(etiqueta.getIdEtiqueta())) {
-                        chip.setChecked(true);
+                    if(_esFormularioCurso){
+                        CrearCursoDTO curso = viewModel.getCurso().getValue();
+                        if (curso != null && curso.getEtiquetas() != null && curso.getEtiquetas().contains(etiqueta.getIdEtiqueta())) {
+                            chip.setChecked(true);
+                        }
                     }
 
                     if(esActualizacionUsuario) {

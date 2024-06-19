@@ -58,6 +58,7 @@
                         android:src="@drawable/background_middleblue" />
 
                     <TextView
+                        android:id="@+id/txtViewTitulo"
                         style="@style/styleTxtViewTituloCurso"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -213,6 +214,7 @@
                             </LinearLayout>
 
                             <ImageView
+                                android:id="@+id/mgViewMiniatura"
                                 android:layout_width="300dp"
                                 android:layout_height="190dp"
                                 android:layout_below="@id/btnCambiarFragmento"
