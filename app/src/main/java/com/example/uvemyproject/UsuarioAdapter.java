@@ -1,6 +1,8 @@
 package com.example.uvemyproject;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -56,6 +58,14 @@ public class UsuarioAdapter extends ListAdapter<UsuarioDTO, UsuarioAdapter.Usuar
             binding.txtViewNombreUsuario.setText(usuario.getNombres());
             binding.txtViewApellidoUsuario.setText(usuario.getApellidos());
             binding.txtViewCorreoUsuario.setText(usuario.getCorreoElectronico());
+
+            if (usuario.getImagen() != null && usuario.getImagen().getData() != null) {
+                byte[] imageData = usuario.getImagen().getData();
+                Bitmap bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+                binding.imgPerfilUsuario.setImageBitmap(bitmap);
+            } else {
+                binding.imgPerfilUsuario.setImageResource(R.drawable.ic_users);
+            }
         }
     }
 }

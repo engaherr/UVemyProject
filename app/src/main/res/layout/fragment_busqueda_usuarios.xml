@@ -9,7 +9,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ConsultaUsuariosFragment">
+        tools:context=".BusquedaUsuarios">
 
         <LinearLayout
             android:id="@+id/main"
@@ -58,7 +58,6 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:text="Búsqueda de usuarios:"
-                android:visibility="gone"
                 tools:layout_editor_absoluteX="15dp" />
 
             <EditText
@@ -72,7 +71,6 @@
                 android:maxLength="600"
                 android:layout_marginHorizontal="15dp"
                 android:layout_marginBottom="10dp"
-                android:visibility="gone"
                 android:minHeight="48dp" />
 
             <Button
@@ -84,7 +82,6 @@
                 android:gravity="center"
                 android:maxWidth="480dp"
                 android:layout_marginStart="150dp"
-                android:visibility="gone"
                 android:text="Buscar" />
 
             <androidx.recyclerview.widget.RecyclerView

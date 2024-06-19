@@ -14,11 +14,13 @@ public class AdminMainActivity extends AppCompatActivity {
 
     final int ETIQUETAS_ID = R.id.etiquetas;
     final int USUARIOS_ID = R.id.usuarios;
+    final int BUSQUEDA_ID = R.id.busqueda;
 
     BottomNavigationView bottomNavigationView;
 
     ConsultaEtiquetas consultaEtiquetas = new ConsultaEtiquetas();
     ConsultaUsuarios consultaUsuarios = new ConsultaUsuarios();
+    BusquedaUsuarios busquedaUsuarios = new BusquedaUsuarios();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +43,12 @@ public class AdminMainActivity extends AppCompatActivity {
                 if(itemId == USUARIOS_ID){
                     getSupportFragmentManager().beginTransaction().replace(
                             R.id.container, consultaUsuarios).commit();
+                    return true;
+                }
+
+                if(itemId == BUSQUEDA_ID){
+                    getSupportFragmentManager().beginTransaction().replace(
+                            R.id.container, busquedaUsuarios).commit();
                     return true;
                 }
 
