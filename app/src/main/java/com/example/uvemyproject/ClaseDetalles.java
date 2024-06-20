@@ -35,7 +35,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class ClaseDetalles extends Fragment {
-    private boolean videoRecuperado = false;
     private FragmentClaseDetallesBinding binding;
     private ClaseDetallesViewModel viewModel;
     private FormularioDetallesClaseViewModel viewModelCompartido;
@@ -86,7 +85,6 @@ public class ClaseDetalles extends Fragment {
         obtenerIdClase();
         return binding.getRoot();
     }
-
     private void enviarComentario() {
         String comentario = binding.edtTextComentario.getText().toString();
 
@@ -151,6 +149,7 @@ public class ClaseDetalles extends Fragment {
                 }
                 
                 viewModelCompartido.setClase(claseDTO);
+                viewModelCompartido.setCurso(viewModelCompartidoCurso.obtenerCurso().getValue());
 
                 if(claseDTO.getVideoDocumento() != null) {
                     getActivity().runOnUiThread(new Runnable() {

@@ -6,6 +6,8 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import kotlin.jvm.Transient;
+
 public class UsuarioDTO implements Parcelable {
     private int idUsuario;
     private String nombres;

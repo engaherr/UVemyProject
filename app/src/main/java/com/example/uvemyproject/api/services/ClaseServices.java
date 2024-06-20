@@ -35,7 +35,7 @@ public interface ClaseServices {
                                    @Path("idClase") int idClase,
                                    @Body RequestBody claseActualizada);
 
-    @DELETE("clases/curso/")
+    @DELETE("clases/{idClase}")
     Call<Void> eliminarClase(@Header("Authorization") String auth,
                              @Path("idClase") int idClase);
 

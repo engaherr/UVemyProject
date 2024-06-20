@@ -36,6 +36,7 @@ import java.util.List;
 public class CursoDetallesPrincipal extends Fragment implements INotificacionFragmentoClase {
 
     private CursoClaseDetallesViewModel viewModelCompartido;
+    private FormularioDetallesClaseViewModel viewModelCompartidoFormulario;
     private CursoDetallesPrincipalViewModel viewModel;
     private FragmentCursoDetallesPrincipalBinding binding;
     private ListadoClases listadoClases;
@@ -55,6 +56,8 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
         binding = FragmentCursoDetallesPrincipalBinding.inflate(inflater, container, false);
 
         viewModelCompartido = new ViewModelProvider(requireActivity()).get(CursoClaseDetallesViewModel.class);
+        viewModelCompartidoFormulario = new ViewModelProvider(requireActivity()).get(FormularioDetallesClaseViewModel.class);
+
         viewModel = new ViewModelProvider(this).get(CursoDetallesPrincipalViewModel.class);
         if (getArguments() != null) {
             CursoDTO curso = getArguments().getParcelable("clave_curso");
@@ -83,6 +86,7 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
                 fragmento = 2;
 
                 viewModelCompartido.setCurso(curso);
+                viewModelCompartidoFormulario.setCurso(curso);
             }
         });
     }

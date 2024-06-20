@@ -240,7 +240,7 @@ public class FormularioClase extends Fragment {
         ClaseDTO claseNueva = new ClaseDTO();
         claseNueva.setNombre(String.valueOf(binding.dtTextNombreClase.getText()).trim());
         claseNueva.setDescripcion(String.valueOf(binding.dtTextDescripcion.getText()).trim());
-        claseNueva.setIdCurso(1);
+        claseNueva.setIdCurso(viewModelCompartido.obtenerCurso().getValue().getIdCurso());
 
         ponerEspera();
         viewModel.guardarClaseNueva(claseNueva);
