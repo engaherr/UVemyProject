@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 
-import com.example.uvemyproject.api.services.ListaCursos;
+import com.example.uvemyproject.api.services.ListaCursosServices;
 import com.example.uvemyproject.databinding.ActivityMainBinding;
 import com.example.uvemyproject.dto.CrearCursoDTO;
 import com.example.uvemyproject.dto.CursoDTO;
