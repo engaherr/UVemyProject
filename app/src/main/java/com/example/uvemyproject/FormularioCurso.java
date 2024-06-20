@@ -39,6 +39,7 @@ import org.checkerframework.checker.units.qual.C;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -257,8 +258,9 @@ public class FormularioCurso extends Fragment {
     }
 
     private void openGallery(){
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        galleryLauncher.launch(galleryIntent);
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK);
+        galleryIntent.setType("image/png");
+        galleryLauncher.launch(Intent.createChooser(galleryIntent, "Selecciona una imagen PNG"));
     }
 
     private ActivityResultLauncher<Intent> galleryLauncher =
@@ -267,14 +269,25 @@ public class FormularioCurso extends Fragment {
                     Intent data = result.getData();
                     if(data!=null){
                         Uri selectedImageUri = data.getData();
-                        try {
-                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImageUri);
-                            binding.imgView.setImageBitmap(bitmap);
-                            byte[] _arrayImagen = bitmapToByteArray(bitmap);
-                            viewModel.setArrayBites(_arrayImagen);
+                        if (selectedImageUri != null) {
+                            try {
+                                InputStream inputStream = getActivity().getContentResolver().openInputStream(selectedImageUri);
+                                int fileSize = inputStream.available();
+                                inputStream.close();
 
-                        } catch (IOException e) {
-                            Toast.makeText(getContext(), "Error al cargar la imagen", Toast.LENGTH_SHORT).show();
+                                if (fileSize > 1024 * 1024) {
+                                    Toast.makeText(getContext(), "La imagen seleccionada es demasiado grande (máximo 1MB)", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImageUri);
+                                    binding.imgView.setImageBitmap(bitmap);
+                                    byte[] _arrayImagen = bitmapToByteArray(bitmap);
+                                    viewModel.setArrayBites(_arrayImagen);
+                                }
+                            } catch (IOException e) {
+                                Toast.makeText(getContext(), "Error al cargar la imagen", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(getContext(), "No se pudo obtener la imagen seleccionada", Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         Toast.makeText(getContext(), "Error al cargar la imagen", Toast.LENGTH_SHORT).show();
