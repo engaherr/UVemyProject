@@ -61,6 +61,8 @@ public class SeleccionEtiquetasViewModel extends ViewModel {
         this.curso.setValue(cursoActual);
     }
 
+
+
     public MutableLiveData<String> getJwt() { return jwt; }
 
     public void obtenerEtiquetas() {

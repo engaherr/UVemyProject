@@ -65,6 +65,7 @@ public class SeleccionEtiquetas extends Fragment {
                 esActualizacionUsuario = false;
             }
             viewModel.setCursoActual(_curso);
+
         }
 
         observarStatus();
@@ -107,6 +108,18 @@ public class SeleccionEtiquetas extends Fragment {
             } else {
                 Toast.makeText(getContext(), "Debe seleccionar al menos una etiqueta.",
                         Toast.LENGTH_SHORT).show();
+            }
+        });
+        binding.imgViewRegresar.setOnClickListener(v -> {
+            if(_esFormularioCurso){
+                FormularioCurso formularioCurso = new FormularioCurso();
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("clave_esCrearCurso", _esCrearCurso);
+                bundle.putIntegerArrayList("clave_listaEtiquetas", (ArrayList<Integer>) idEtiquetasSeleccionadas);
+                bundle.putStringArrayList("clave_listaEtiquetasNombre", (ArrayList<String>) nombreEtiquetasSeleccionadas);
+                bundle.putParcelable("clave_curso", _curso);
+                formularioCurso.setArguments(bundle);
+                cambiarFragmentoPrincipal(formularioCurso);
             }
         });
         return binding.getRoot();

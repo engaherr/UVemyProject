@@ -2,8 +2,8 @@
     <string name="app_name">UVemyProject</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="domain_ip">192.168.100.23</string>
-    <string name="url_host">http://192.168.100.23:3000/api/</string>
+    <string name="domain_ip">192.168.100.38</string>
+    <string name="url_host">http://192.168.100.38:3000/api/</string>
     <string name="port">3001</string>
 
 </resources>
