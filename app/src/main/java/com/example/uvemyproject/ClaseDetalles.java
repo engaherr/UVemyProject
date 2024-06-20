@@ -20,13 +20,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.uvemyproject.databinding.FragmentClaseDetallesBinding;
 import com.example.uvemyproject.dto.ComentarioEnvioDTO;
 import com.example.uvemyproject.interfaces.INotificacionReciboVideo;
+import com.example.uvemyproject.servicio.VideoGrpc;
 import com.example.uvemyproject.utils.SingletonUsuario;
 import com.example.uvemyproject.viewmodels.ClaseDetallesViewModel;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 public class ClaseDetalles extends Fragment implements INotificacionReciboVideo {
     private FragmentClaseDetallesBinding binding;
@@ -35,6 +39,8 @@ public class ClaseDetalles extends Fragment implements INotificacionReciboVideo 
     private ComentarioAdapter comentarioAdapter;
     private int documentoSeleccionado = -1;
     private static final int PICK_DIRECTORY_REQUEST_CODE = 1;
+    private File videoTempFile;
+    private BufferedOutputStream bufferedOutputStream;
 
     public ClaseDetalles() {
     }
@@ -59,7 +65,6 @@ public class ClaseDetalles extends Fragment implements INotificacionReciboVideo 
         adapter.setOnItemClickListener((documento, posicion) -> descargarDocumento(posicion));
 
         viewModel = new ViewModelProvider(this).get(ClaseDetallesViewModel.class);
-        observarVideoStream();
 
         observarStatus();
         observarClase();
@@ -79,6 +84,8 @@ public class ClaseDetalles extends Fragment implements INotificacionReciboVideo 
             try {
                 Log.d("gRPC", "observarVideoStream: cargando video");
                 File tempFile = streamToFile(inputStream);
+                BufferedOutputStream bufferedOutputStream =
+                        new BufferedOutputStream(Files.newOutputStream(tempFile.toPath()));
 
                 Log.d("gRPC", tempFile.getAbsolutePath());
                 binding.videoView.setVideoURI(Uri.fromFile(tempFile));
@@ -180,8 +187,55 @@ public class ClaseDetalles extends Fragment implements INotificacionReciboVideo 
                     adapter.submitList(claseDTO.getDocumentos());
                     adapter.notifyDataSetChanged();
                 }
+
+                if(claseDTO.getVideoId() != 0) {
+
+                    new Thread(() -> {
+                        try {
+                            videoTempFile = File.createTempFile(
+                                    "video", ".mp4", getContext().getCacheDir());
+                            bufferedOutputStream = new BufferedOutputStream(
+                                    Files.newOutputStream(videoTempFile.toPath()));
+                            ByteArrayInputStream inputStream = VideoGrpc.descargarVideo(
+                                    claseDTO.getVideoId(),this);
+                            byte[] buffer = new byte[1024];
+                            int bytesRead;
+                            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                                byte[] chunk = new byte[bytesRead];
+                                System.arraycopy(buffer, 0, chunk, 0, bytesRead);
+
+                                getActivity().runOnUiThread(() ->{
+                                    anadirChunkVideo(chunk);
+                                });
+                            }
+                        } catch (IOException e) {
+                            Log.e("gRPC", "Error al descargar el video", e);
+                        } finally {
+                            try {
+                                bufferedOutputStream.close();
+                            } catch (IOException e) {
+                                Log.e("gRPC", "Error al cerrar el stream", e);
+                            }
+                        }
+                    }).start();
+                }
             }
         });
+    }
+
+    private void anadirChunkVideo(byte[] chunk){
+        if(chunk != null && chunk.length > 0) {
+            try {
+                bufferedOutputStream.write(chunk);
+                bufferedOutputStream.flush();
+                if(!binding.videoView.isPlaying() && binding.videoView.getCurrentPosition() == 0) {
+                    binding.videoView.setVideoPath(videoTempFile.getAbsolutePath());
+                    binding.videoView.start();
+                }
+            } catch (IOException e) {
+                Log.e("gRPC", "Error al escribir el chunk de video", e);
+            }
+        }
     }
 
     private void observarComentarios() {
