@@ -44,7 +44,7 @@ public class ConsultaEtiquetasViewModel extends ViewModel {
                     status.setValue(StatusRequest.DONE);
                 } else {
                     Log.e("RetrofitError", "Error al obtener etiquetas");
-                    status.setValue(StatusRequest.ERROR);
+                    status.setValue(StatusRequest.ERROR_CONSULTA);
                 }
             }
 
@@ -73,10 +73,11 @@ public class ConsultaEtiquetasViewModel extends ViewModel {
                         Log.d("ConsultaEtiquetasViewModel", "Etiqueta eliminada exitosamente: " + idEtiqueta);
                         eliminacionesExitosas[0]++;
                     } else if (response.code() == 403) {
-                        Log.e("RetrofitError", "Bad Request al eliminar etiqueta: " + idEtiqueta);
+                        Log.e("RetrofitError", "Forbidden al eliminar etiqueta: " + idEtiqueta);
                         forbidden[0]++;
                     } else {
                         Log.e("RetrofitError", "Error al eliminar etiqueta: " + idEtiqueta);
+                        status.setValue(StatusRequest.ERROR_ELIMINACION);
                         eliminacionesFallidas[0]++;
                     }
                     verificarEliminacionesCompletas(totalEtiquetas, eliminacionesExitosas[0],
@@ -87,6 +88,7 @@ public class ConsultaEtiquetasViewModel extends ViewModel {
                 public void onFailure(Call<Void> call, Throwable t) {
                     Log.e("RetrofitError", "Error de red o excepción al eliminar etiqueta: " + idEtiqueta, t);
                     eliminacionesFallidas[0]++;
+                    status.setValue(StatusRequest.ERROR_CONEXION);
                     verificarEliminacionesCompletas(totalEtiquetas, eliminacionesExitosas[0],
                             eliminacionesFallidas[0], forbidden[0]);
                 }

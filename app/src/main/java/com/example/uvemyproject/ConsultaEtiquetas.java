@@ -64,10 +64,13 @@ public class ConsultaEtiquetas extends Fragment {
     private void observarStatus() {
         viewModel.getStatus().observe(getViewLifecycleOwner(), status -> {
             switch (status) {
-                case ERROR:
-                    Toast.makeText(getContext(), "Ocurrió un error al eliminar la(s) etiqueta(s).",
+                case ERROR_CONSULTA:
+                    Toast.makeText(getContext(), "Ocurrió un error al recuperar la(s) etiqueta(s).",
                             Toast.LENGTH_SHORT).show();
                     break;
+                case ERROR_ELIMINACION:
+                    Toast.makeText(getContext(), "Ocurrió un error al eliminar la(s) etiqueta(s).",
+                            Toast.LENGTH_SHORT).show();
                 case ERROR_CONEXION:
                     Toast.makeText(getContext(), "No hay conexión con el servidor.",
                             Toast.LENGTH_SHORT).show();
