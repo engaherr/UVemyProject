@@ -9,5 +9,6 @@ public enum StatusRequest {
     FORBIDDEN,
     ESPERA,
     ERROR_CONSULTA,
-    ERROR_ELIMINACION
+    ERROR_ELIMINACION,
+    NOT_FOUND
 }

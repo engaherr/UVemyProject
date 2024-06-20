@@ -38,7 +38,7 @@ public class ListadoCursosViewModel extends ViewModel {
     public void recuperarCursos(int pagina, String tituloCurso, int calificacionCurso, int idTipoCurso, int idEtiqueta){
         ListaCursosServices services = ApiClient.getInstance().getListaCursos();
         String auth = "Bearer " + SingletonUsuario.getJwt();
-        if(!tituloCurso.isEmpty()){
+        if(tituloCurso != null && !tituloCurso.isEmpty()){
             recuperarCursosPorTitulo(pagina, tituloCurso);
         } else if(calificacionCurso != 0){
             recuperarCursosPorCalificacion(pagina,calificacionCurso);
@@ -145,8 +145,13 @@ public class ListadoCursosViewModel extends ViewModel {
             setCursos(cursos);
             status.setValue(StatusRequest.DONE);
         } else {
-            Log.d("Log", "Error en la solicitud: " + response.code());
-            status.setValue(StatusRequest.ERROR);
+            if (response.code() == 404) {
+                Log.d("Log", "Error 404: Recurso no encontrado");
+                status.setValue(StatusRequest.NOT_FOUND);
+            } else {
+                Log.d("Log", "Error en la solicitud: " + response.code());
+                status.setValue(StatusRequest.ERROR);
+            }
         }
     }
 }

@@ -9,25 +9,16 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.viewmodel.CreationExtras;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.uvemyproject.databinding.FragmentFormularioCursoBinding;
 import com.example.uvemyproject.databinding.FragmentListadoCursosBinding;
-import com.example.uvemyproject.dto.CrearCursoDTO;
 import com.example.uvemyproject.dto.CursoDTO;
 import com.example.uvemyproject.utils.StatusRequest;
-import com.example.uvemyproject.viewmodels.FormularioCursoViewModel;
-import com.example.uvemyproject.viewmodels.ListadoCursosAdapter;
 import com.example.uvemyproject.viewmodels.ListadoCursosViewModel;
-
-import org.checkerframework.checker.units.qual.C;
-
-import java.util.ArrayList;
 
 public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCursoClickListener{
     FragmentListadoCursosBinding binding;
@@ -39,6 +30,8 @@ public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCu
     private int _calificacionCurso;
     private int _idEtiqueta;
     private int _idTipoCurso;
+    private String _nombreEtiqueta;
+    private String _nombreTipoCurso;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,21 +42,23 @@ public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCu
                              Bundle savedInstanceState) {
         viewModel = new ViewModelProvider(this).get(ListadoCursosViewModel.class);
         _paginaActual = 0;
+        _paginaAnterior = 0;
         _tituloCurso= "";
-        _calificacionCurso = 8;
+        _calificacionCurso = 0;
         _idTipoCurso = 0;
         _idEtiqueta = 0;
-        Log.d("Log", "Listado cursos: ");
         if (getArguments() != null) {
-            Log.d("Log", "If: ");
-        } else{
-            Log.d("Log", "Else: ");
+            _idEtiqueta = getArguments().getInt("clave_idEtiqueta");
+            _idTipoCurso = getArguments().getInt("clave_idTipoCurso");
+            _nombreEtiqueta =getArguments().getString("clave_nombreEtiqueta");
+            _nombreTipoCurso = getArguments().getString("clave_nombreTipoCurso");
+            _tituloCurso = getArguments().getString("clave_titulo");
+            _calificacionCurso = getArguments().getInt("clave_calificacion");
         }
-        viewModel.recuperarCursos(_paginaActual, _tituloCurso, _calificacionCurso, _idTipoCurso, _idEtiqueta);
         binding = FragmentListadoCursosBinding.inflate(inflater, container, false);
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(getContext());
         ponerEspera();
-        binding.rcyViewListadoCursos2.setLayoutManager(layoutManager2);
+        binding.rcyViewListadoCursos.setLayoutManager(layoutManager2);
         binding.txtViewCrearCurso.setOnClickListener(v -> {
             FormularioCurso formularioCurso = new FormularioCurso();
             ((MainActivity) getActivity()).cambiarFragmentoPrincipal(formularioCurso);
@@ -74,7 +69,6 @@ public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCu
         binding.btnSiguiente.setOnClickListener(v -> {
             siguientePagina();
         });
-        //Si tiene un argumento puede ser de etiquetas o de tipo
         viewModel.getStatus().observe(getViewLifecycleOwner(), new Observer<StatusRequest>() {
             @Override
             public void onChanged(StatusRequest status) {
@@ -89,6 +83,9 @@ public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCu
                     case ERROR_CONEXION:
                         Toast.makeText(requireContext(), "Error de conexión", Toast.LENGTH_LONG).show();
                         break;
+                    case NOT_FOUND:
+                        Toast.makeText(requireContext(), "No existen cursos", Toast.LENGTH_LONG).show();
+                        break;
                     default:
                         break;
                 }
@@ -100,6 +97,8 @@ public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCu
                 cargarCursos();
             }
         });
+        recuperarCursos(_paginaActual, _tituloCurso, _calificacionCurso, _idTipoCurso, _idEtiqueta);
+
         return binding.getRoot();
     }
 
@@ -108,8 +107,23 @@ public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCu
         ponerEspera();
         _paginaAnterior = _paginaActual;
         _paginaActual = _paginaActual + 1;
-        viewModel.recuperarCursos(_paginaActual, _tituloCurso, _calificacionCurso, _idTipoCurso, _idEtiqueta);
-        //_ = CargarCursosPagina(_paginaActual, _tituloCurso, _calificacionCurso, _idTipoCurso, _idEtiqueta);
+        recuperarCursos(_paginaActual, _tituloCurso, _calificacionCurso, _idTipoCurso, _idEtiqueta);
+    }
+
+    private void recuperarCursos(int pagina, String tituloCurso, int calificacionCurso, int idTipoCurso, int idEtiqueta){
+        viewModel.recuperarCursos(pagina, tituloCurso, calificacionCurso, idTipoCurso, idEtiqueta);
+        /*
+        if(tituloCurso != null && !tituloCurso.isEmpty()){
+            binding.txtViewTitulo.setText("Pagina "+pagina+1+" titulo="+tituloCurso);
+        } else if(calificacionCurso != 0){
+            binding.txtViewTitulo.setText("Pagina "+pagina+1+" calificacion="+calificacionCurso);
+        } else if(idTipoCurso != 0){
+            binding.txtViewTitulo.setText("Pagina "+pagina+1+" tipoCurso="+_nombreTipoCurso);
+        } else if(idEtiqueta != 0){
+            binding.txtViewTitulo.setText("Pagina "+pagina+1+" etiqueta="+_nombreEtiqueta);
+        } else{
+            binding.txtViewTitulo.setText("Pagina "+pagina+1);
+        }*/
     }
     private void anteriorPagina()
     {
@@ -122,20 +136,16 @@ public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCu
             ponerEspera();
             _paginaActual = _paginaActual - 1;
             viewModel.recuperarCursos(_paginaActual, _tituloCurso, _calificacionCurso, _idTipoCurso, _idEtiqueta);
-            //_ = CargarCursosPagina(_paginaActual, _tituloCurso, _calificacionCurso, _idTipoCurso, _idEtiqueta);
         }
     }
 
     private void cargarCursos(){
         Log.d("Log","Tamaño: "+viewModel.getCursos().getValue().size());
         ListadoCursosAdapter cursoAdapter = new ListadoCursosAdapter(getContext(), viewModel.getCursos().getValue(),this);
-        //binding.rcyViewListadoCursos1.setAdapter(cursoAdapter);
-        binding.rcyViewListadoCursos2.setAdapter(cursoAdapter);
+        binding.rcyViewListadoCursos.setAdapter(cursoAdapter);
         cursoAdapter.notifyDataSetChanged();
 
-        RecyclerView.Adapter adapter2 = binding.rcyViewListadoCursos2.getAdapter();
-        //RecyclerView.Adapter adapter1 = binding.rcyViewListadoCursos1.getAdapter();
-        //Log.d("Log", "Número de elementos en rcyViewListadoCursos1: " + adapter1.getItemCount());
+        RecyclerView.Adapter adapter2 = binding.rcyViewListadoCursos.getAdapter();
         Log.d("Log", "Número de elementos en rcyViewListadoCursos2: " + adapter2.getItemCount());
         cursoAdapter.notifyDataSetChanged();
 
@@ -151,7 +161,6 @@ public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCu
 
     @Override
     public void onCursoClick(int idCurso, String titulo, byte[] archivo) {
-        Log.d("Log", "Click: "+idCurso);
         CursoDetallesPrincipal cursoDetallesPrincipal = new CursoDetallesPrincipal();
         Bundle bundle = new Bundle();
         CursoDTO curso = new CursoDTO();
