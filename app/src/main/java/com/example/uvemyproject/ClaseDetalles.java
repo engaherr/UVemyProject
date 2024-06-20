@@ -2,6 +2,7 @@ package com.example.uvemyproject;
 
 import static android.app.Activity.RESULT_OK;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.MediaController;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -26,6 +28,7 @@ import com.example.uvemyproject.viewmodels.ClaseDetallesViewModel;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -75,42 +78,7 @@ public class ClaseDetalles extends Fragment implements INotificacionReciboVideo 
         binding.btnEnviarComentario.setOnClickListener(v -> enviarComentario());
 
         obtenerIdClase();
-
         return binding.getRoot();
-    }
-
-    private void observarVideoStream() {
-        viewModel.getStreamVideo().observe(getViewLifecycleOwner(), inputStream -> {
-            try {
-                Log.d("gRPC", "observarVideoStream: cargando video");
-                File tempFile = streamToFile(inputStream);
-                BufferedOutputStream bufferedOutputStream =
-                        new BufferedOutputStream(Files.newOutputStream(tempFile.toPath()));
-
-                Log.d("gRPC", tempFile.getAbsolutePath());
-                binding.videoView.setVideoURI(Uri.fromFile(tempFile));
-                MediaController mediaController = new MediaController(getContext());
-
-                binding.videoView.setMediaController(mediaController);
-                mediaController.setAnchorView(binding.videoView);
-
-                binding.videoView.setOnPreparedListener(mp -> {
-                    Log.d("gRPC", "observarVideoStream: video preparado, iniciando reproducción");
-                    binding.videoView.start();
-                });
-
-                binding.videoView.setOnErrorListener((mp, what, extra) -> {
-                    Log.e("gRPC", "Error al preparar el video: " + what + ", extra: " + extra);
-                    Toast.makeText(getContext(), "Error al preparar el video", Toast.LENGTH_SHORT).show();
-                    return true;
-                });
-
-                Log.d("gRPC", "observarVideoStream: carga video completada");
-            } catch (IOException e) {
-                Log.e("gRPC", "Error al reproducir el video", e);
-                Toast.makeText(getContext(), "Error al cargar el video", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private File streamToFile(InputStream inputStream) throws IOException {
@@ -179,6 +147,7 @@ public class ClaseDetalles extends Fragment implements INotificacionReciboVideo 
         });
     }
 
+    private boolean videoRecuperado = false;
     private void observarClase(){
         viewModel.getClaseActual().observe(getViewLifecycleOwner(), claseDTO -> {
             if(claseDTO != null){
@@ -188,54 +157,13 @@ public class ClaseDetalles extends Fragment implements INotificacionReciboVideo 
                     adapter.notifyDataSetChanged();
                 }
 
-                if(claseDTO.getVideoId() != 0) {
-
-                    new Thread(() -> {
-                        try {
-                            videoTempFile = File.createTempFile(
-                                    "video", ".mp4", getContext().getCacheDir());
-                            bufferedOutputStream = new BufferedOutputStream(
-                                    Files.newOutputStream(videoTempFile.toPath()));
-                            ByteArrayInputStream inputStream = VideoGrpc.descargarVideo(
-                                    claseDTO.getVideoId(),this);
-                            byte[] buffer = new byte[1024];
-                            int bytesRead;
-                            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                                byte[] chunk = new byte[bytesRead];
-                                System.arraycopy(buffer, 0, chunk, 0, bytesRead);
-
-                                getActivity().runOnUiThread(() ->{
-                                    anadirChunkVideo(chunk);
-                                });
-                            }
-                        } catch (IOException e) {
-                            Log.e("gRPC", "Error al descargar el video", e);
-                        } finally {
-                            try {
-                                bufferedOutputStream.close();
-                            } catch (IOException e) {
-                                Log.e("gRPC", "Error al cerrar el stream", e);
-                            }
-                        }
-                    }).start();
+                if(!videoRecuperado && claseDTO.getVideoId() != 0) {
+                    ponerEspera();
+                    videoRecuperado = true;
+                    VideoGrpc.descargarVideo(claseDTO.getVideoId(), this);
                 }
             }
         });
-    }
-
-    private void anadirChunkVideo(byte[] chunk){
-        if(chunk != null && chunk.length > 0) {
-            try {
-                bufferedOutputStream.write(chunk);
-                bufferedOutputStream.flush();
-                if(!binding.videoView.isPlaying() && binding.videoView.getCurrentPosition() == 0) {
-                    binding.videoView.setVideoPath(videoTempFile.getAbsolutePath());
-                    binding.videoView.start();
-                }
-            } catch (IOException e) {
-                Log.e("gRPC", "Error al escribir el chunk de video", e);
-            }
-        }
     }
 
     private void observarComentarios() {
@@ -302,7 +230,9 @@ public class ClaseDetalles extends Fragment implements INotificacionReciboVideo 
     }
 
     @Override
-    public void notificarReciboExitoso() {
+    public void notificarReciboExitoso(ByteArrayOutputStream outputStream) {
+        byte[] byteArray = outputStream.toByteArray();
+        writeByteArrayToCacheAndPlay(getContext(), byteArray, binding.videoView);
         Toast.makeText(getContext(),"Video cargado correctamente", Toast.LENGTH_SHORT).show();
     }
 
@@ -310,5 +240,54 @@ public class ClaseDetalles extends Fragment implements INotificacionReciboVideo 
     public void notificarReciboFallido() {
         Toast.makeText(getContext(),"Hubo un problema al cargar el video",
                 Toast.LENGTH_SHORT).show();
+    }
+
+    public void writeByteArrayToCacheAndPlay(Context context, byte[] byteArray, VideoView videoView) {
+        FileOutputStream fileOutputStream = null;
+        try {
+            File cacheDir = context.getCacheDir();
+            File videoFile = new File(cacheDir, "video.mp4");
+            fileOutputStream = new FileOutputStream(videoFile);
+
+            fileOutputStream.write(byteArray);
+            fileOutputStream.flush();
+
+            Log.v("FileWrite", "Archivo escrito con éxito: " + videoFile.getAbsolutePath());
+
+            if (videoFile.exists()) {
+                Log.d("FileWrite", "El archivo existe: " + videoFile.getAbsolutePath());
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        playVideo(videoView, videoFile);
+                    }
+                });
+
+            } else {
+                Log.e("FileWrite", "El archivo no se ha creado.");
+            }
+        } catch (IOException e) {
+            Log.e("FileWrite", "Error escribiendo el archivo: " + e.getMessage(), e);
+        } finally {
+            if (fileOutputStream != null) {
+                try {
+                    fileOutputStream.close();
+                } catch (IOException e) {
+                    Log.e("FileWrite", "Error cerrando FileOutputStream: " + e.getMessage(), e);
+                }
+            }
+        }
+    }
+
+    private void playVideo(VideoView videoView, File videoFile) {
+        videoView.setVideoURI(Uri.fromFile(videoFile));
+
+        MediaController mediaController = new MediaController(videoView.getContext());
+        mediaController.setAnchorView(videoView);
+        videoView.setMediaController(mediaController);
+
+        videoView.start();
+        quitarEspera();
     }
 }

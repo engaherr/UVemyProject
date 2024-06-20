@@ -117,7 +117,6 @@ public class VideoGrpc {
                     try {
                         Log.i("gRPC", mensaje.getChunks().toStringUtf8());
                         stream.write(mensaje.getChunks().toByteArray());
-                        notificacion.notificarReciboExitoso();
                     } catch (IOException e) {
                         Log.i("gRPC", e.getMessage());
                         notificacion.notificarReciboFallido();
@@ -135,13 +134,14 @@ public class VideoGrpc {
 
             @Override
             public void onCompleted() {
+                notificacion.notificarReciboExitoso(stream);
                 Log.i("Uvemy.grpc", "Envio Exitoso");
                 try {
                     stream.close();
                 } catch (IOException e) {
                     Log.e("gRPC", "Error al cerrar el stream", e);
                 }
-                notificacion.notificarReciboExitoso();
+
             }
         });
 
