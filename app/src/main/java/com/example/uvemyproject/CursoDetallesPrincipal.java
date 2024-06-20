@@ -53,7 +53,7 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentCursoDetallesPrincipalBinding.inflate(inflater, container, false);
-
+        ponerEspera();
         viewModelCompartido = new ViewModelProvider(requireActivity()).get(CursoClaseDetallesViewModel.class);
         viewModel = new ViewModelProvider(this).get(CursoDetallesPrincipalViewModel.class);
         if (getArguments() != null) {
@@ -63,8 +63,19 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
             observarClases();
             obtenerIdCurso(curso);
         }
-
+        binding.imgViewRegresar.setOnClickListener(v -> {
+            regresar();
+        });
         return binding.getRoot();
+    }
+
+    private void regresar(){
+        ListadoCursos listadoCursos = new ListadoCursos();
+        int pagina = 0;
+        Bundle bundle = new Bundle();
+        bundle.putInt("clave_pagina", pagina);
+        listadoCursos.setArguments(bundle);
+        cambiarFragmentoPrincipal(listadoCursos);
     }
 
     private void observarCurso(){
@@ -92,30 +103,31 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
         binding.txtViewTitulo.setText(viewModel.getCursoActual().getValue().getTitulo());
         byte[] miniatura = viewModel.getCursoActual().getValue().getArchivo();
         Bitmap bitmap = BitmapFactory.decodeByteArray(miniatura, 0, miniatura.length);
-        binding.mgViewMiniatura.setImageBitmap(bitmap);
+        binding.imgViewMiniatura.setImageBitmap(bitmap);
+
     }
 
     private void observarStatus(){
         viewModel.getStatus().observe(getViewLifecycleOwner(), status ->{
             switch (status){
-                //Done y poner los datos
                 case ERROR:
                     Toast.makeText(getContext(),"Ocurrió un error en el servidor", Toast.LENGTH_SHORT).show();
+                    regresar();
                     break;
                 case ERROR_CONEXION:
                     Toast.makeText(getContext(),"No hay conexión con el servidor", Toast.LENGTH_SHORT).show();
+                    regresar();
                     break;
             }
-            quitarEspera();
         });
     }
 
     private void observarClases(){
         viewModel.getClases().observe(getViewLifecycleOwner(), clases ->{
             if(clases != null){
+                quitarEspera();
                 binding.btnCambiarFragmento.setOnClickListener(v -> cambiarFragmento());
             }
-            quitarEspera();
         });
     }
 

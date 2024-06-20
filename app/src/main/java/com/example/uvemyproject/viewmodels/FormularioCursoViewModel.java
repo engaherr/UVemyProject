@@ -33,6 +33,7 @@ import javax.security.auth.callback.Callback;
 
 public class FormularioCursoViewModel extends ViewModel {
     private final MutableLiveData<CrearCursoDTO> cursoActual = new MutableLiveData<CrearCursoDTO>();
+    private final MutableLiveData<CrearCursoDTO> cursoAnterior = new MutableLiveData<CrearCursoDTO>();
     private final MutableLiveData<byte[]> arrayBites = new MutableLiveData<byte[]>();
     private final MutableLiveData<StatusRequest> status = new MutableLiveData<>();
     public MutableLiveData<StatusRequest> getStatus() {
@@ -44,6 +45,13 @@ public class FormularioCursoViewModel extends ViewModel {
             cursoActual.setValue(new CrearCursoDTO());
         }
         return cursoActual;
+    }
+
+    public LiveData<CrearCursoDTO> getCursoAnterior(){
+        if (cursoAnterior.getValue() == null) {
+            cursoAnterior.setValue(new CrearCursoDTO());
+        }
+        return cursoAnterior;
     }
 
     public void setArrayBites(byte[] arrayBites){
@@ -62,6 +70,10 @@ public class FormularioCursoViewModel extends ViewModel {
         this.cursoActual.setValue(cursoActual);
     }
 
+    public void setCursoAnterior(CrearCursoDTO cursoAnterior){
+        this.cursoAnterior.setValue(cursoAnterior);
+    }
+
     private MultipartBody.Part crearFilePeticion() {
         byte[] fileBytes = cursoActual.getValue().getArchivo();
         if(fileBytes != null){
@@ -77,7 +89,8 @@ public class FormularioCursoViewModel extends ViewModel {
         RequestBody descripcionPart = createPartFromString(curso.getDescripcion());
         RequestBody objetivosPart = createPartFromString(curso.getObjetivos());
         RequestBody requisitosPart = createPartFromString(curso.getRequisitos());
-        ArrayList<RequestBody> etiquetasParts = createEtiquetasParts(curso.getEtiquetas());
+        List<MultipartBody.Part> etiquetasParts = createEtiquetasParts(curso.getEtiquetas());
+
         MultipartBody.Part filePart = crearFilePeticion();
         service.crearCurso(auth, tituloPart, descripcionPart, objetivosPart, requisitosPart, etiquetasParts, filePart).enqueue(new retrofit2.Callback<CrearCursoDTO>(){@Override
             public void onResponse(Call<CrearCursoDTO> call, Response<CrearCursoDTO> response) {
@@ -107,15 +120,19 @@ public class FormularioCursoViewModel extends ViewModel {
         RequestBody objetivosPart = createPartFromString(curso.getObjetivos());
         RequestBody requisitosPart = createPartFromString(curso.getRequisitos());
         RequestBody idDocumentoPart = createPartFromString(String.valueOf(curso.getIdDocumento()));
-        ArrayList<RequestBody> etiquetasParts = createEtiquetasParts(curso.getEtiquetas());
+        List<MultipartBody.Part> etiquetasParts = createEtiquetasParts(curso.getEtiquetas());
         MultipartBody.Part filePart = crearFilePeticion();
         service.modificarCurso(auth, curso.getIdCurso(), idCursoPart, idDocumentoPart, tituloPart, descripcionPart, objetivosPart, requisitosPart, etiquetasParts, filePart).enqueue(new retrofit2.Callback<CrearCursoDTO>(){@Override
         public void onResponse(Call<CrearCursoDTO> call, Response<CrearCursoDTO> response) {
             if (response.isSuccessful()) {
                 status.setValue(StatusRequest.DONE);
-                Log.d("Log", response.message()+" "+response.code()+" "+response.body());
-            }else{
-                Log.d("Log", response.message()+" "+response.code()+" "+response.body());
+                Log.d("Log1", response.message()+" "+response.code()+" "+response.body());
+            } else if(response.code()==404){
+                status.setValue(StatusRequest.DONE);
+                Log.d("Log3", response.message()+" "+response.code()+" "+response.body());
+            }
+            else{
+                Log.d("Log2", response.message()+" "+response.code()+" "+response.body());
                 status.setValue(StatusRequest.ERROR);
             }
         }
@@ -135,9 +152,13 @@ public class FormularioCursoViewModel extends ViewModel {
         public void onResponse(Call<CrearCursoDTO> call, Response<CrearCursoDTO> response) {
             if (response.isSuccessful()) {
                 status.setValue(StatusRequest.DONE);
-                Log.d("Log", response.message()+" "+response.code()+" "+response.body());
-            }else{
-                Log.d("Log", response.message()+" "+response.code()+" "+response.body());
+                Log.d("Log1", response.message()+" "+response.code()+" "+response.body());
+            }else if(response.code()==404){
+                status.setValue(StatusRequest.DONE);
+                Log.d("Log3", response.message()+" "+response.code()+" "+response.body());
+            }
+            else{
+                Log.d("Log2", response.message()+" "+response.code()+" "+response.body());
                 status.setValue(StatusRequest.ERROR);
             }
         }
@@ -153,13 +174,15 @@ public class FormularioCursoViewModel extends ViewModel {
         return RequestBody.create(value,MediaType.parse("text/plain"));
     }
 
-    private ArrayList<RequestBody> createEtiquetasParts(List<Integer> listIdEtiquetas) {
-        ArrayList<RequestBody> etiquetasParts = new ArrayList<>();
-        for (Integer etiqueta : Objects.requireNonNull(listIdEtiquetas)) {
-            RequestBody etiquetaPart = createPartFromString(String.valueOf(etiqueta));
-            etiquetasParts.add(etiquetaPart);
+    private List<MultipartBody.Part> createEtiquetasParts(List<Integer> listIdEtiquetas) {
+        List<MultipartBody.Part> etiquetasParts = new ArrayList<>();
+        for (Integer etiquetaId : listIdEtiquetas) {
+            RequestBody etiquetaPart = createPartFromString(String.valueOf(etiquetaId));
+            MultipartBody.Part part = MultipartBody.Part.createFormData("etiquetas[]", null, etiquetaPart);
+            etiquetasParts.add(part);
         }
         return etiquetasParts;
     }
+
 
 }

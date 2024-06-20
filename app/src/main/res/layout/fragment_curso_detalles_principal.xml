@@ -38,6 +38,7 @@
                         android:text="Curso" />
 
                     <ImageView
+                        android:id="@+id/imgViewRegresar"
                         android:layout_width="35dp"
                         android:layout_height="35dp"
                         android:layout_centerVertical="true"
@@ -213,7 +214,7 @@
                             </LinearLayout>
 
                             <ImageView
-                                android:id="@+id/mgViewMiniatura"
+                                android:id="@+id/imgViewMiniatura"
                                 android:layout_width="300dp"
                                 android:layout_height="190dp"
                                 android:layout_below="@id/btnCambiarFragmento"
@@ -234,34 +235,28 @@
                 </ScrollView>
 
             </LinearLayout>
-
             <RelativeLayout
                 android:id="@+id/progress_overlay"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#20000000"
-                android:clickable="true"
-                android:focusable="true"
                 android:gravity="center"
-                android:visibility="gone">
+                android:clickable="true"
+                android:focusable="true">
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="300dp"
                     android:layout_height="100dp"
-                    android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
-                    android:backgroundTint="#8DBC92"
-                    app:cardCornerRadius="100dp">
+                    android:layout_centerHorizontal="true"
+                    android:backgroundTint="#8DBC92">
 
                     <ProgressBar
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center" />
-
+                        android:layout_gravity="center"/>
                 </androidx.cardview.widget.CardView>
-
             </RelativeLayout>
         </RelativeLayout>
-
     </FrameLayout>
 </layout>

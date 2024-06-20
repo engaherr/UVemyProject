@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.uvemyproject.databinding.FragmentSeleccionEtiquetasBinding;
@@ -114,12 +116,11 @@ public class SeleccionEtiquetas extends Fragment {
             if(_esFormularioCurso){
                 FormularioCurso formularioCurso = new FormularioCurso();
                 Bundle bundle = new Bundle();
-                bundle.putBoolean("clave_esCrearCurso", _esCrearCurso);
-                bundle.putIntegerArrayList("clave_listaEtiquetas", (ArrayList<Integer>) idEtiquetasSeleccionadas);
-                bundle.putStringArrayList("clave_listaEtiquetasNombre", (ArrayList<String>) nombreEtiquetasSeleccionadas);
-                bundle.putParcelable("clave_curso", _curso);
+                bundle.putParcelable("clave_curso", viewModel.getCurso().getValue());
                 formularioCurso.setArguments(bundle);
                 cambiarFragmentoPrincipal(formularioCurso);
+            } else {
+                //TODO Regresar para
             }
         });
         return binding.getRoot();
