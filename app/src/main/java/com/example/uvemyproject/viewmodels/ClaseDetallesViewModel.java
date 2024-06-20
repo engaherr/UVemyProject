@@ -29,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -56,7 +57,6 @@ public class ClaseDetallesViewModel extends ViewModel implements INotificacionRe
     public LiveData<List<ComentarioDTO>> getComentarios() { return comentarios; }
     public LiveData<StatusRequest> getStatusEnviarComentario() { return statusEnviarComentario; }
     public LiveData<ByteArrayInputStream> getStreamVideo() { return streamVideo; }
-
     public void recuperarDetallesClase(int idClase){
         ClaseServices service = ApiClient.getInstance().getClaseServices();
         String auth = "Bearer " + SingletonUsuario.getJwt();
@@ -184,8 +184,6 @@ public class ClaseDetallesViewModel extends ViewModel implements INotificacionRe
                                 ClaseDTO clase = claseActual.getValue();
                                 clase.setDocumentos(documentosRecuperados);
                                 claseActual.setValue(clase);
-
-                                recuperarVideo();
                             }
                         } else {
                             status.setValue(StatusRequest.ERROR);
@@ -203,15 +201,6 @@ public class ClaseDetallesViewModel extends ViewModel implements INotificacionRe
                 break;
             }
         }
-    }
-
-    private void recuperarVideo(){
-        Log.d("gRPC", "Recuperando video");
-        ByteArrayInputStream enStream = VideoGrpc.descargarVideo(claseActual.getValue()
-                .getVideoId(), this);
-        Log.d("gRPC", "Video recibido");
-
-        streamVideo.setValue(enStream);
     }
 
     public int descargarDocumento(Context context, Uri treeUri, int posicionDocumento) {
@@ -244,14 +233,14 @@ public class ClaseDetallesViewModel extends ViewModel implements INotificacionRe
 
 
     @Override
-    public void notificarReciboExitoso() {
+    public void notificarReciboExitoso(ByteArrayOutputStream output) {
         Log.d("gRPC", "Video recibido desde interfaz");
-        status.setValue(StatusRequest.DONE);
+        status.postValue(StatusRequest.DONE);
     }
 
     @Override
     public void notificarReciboFallido() {
         Log.d("gRPC", "Video recibo fallido desde interfaz");
-        status.setValue(StatusRequest.ERROR);
+        status.postValue(StatusRequest.ERROR);
     }
 }
