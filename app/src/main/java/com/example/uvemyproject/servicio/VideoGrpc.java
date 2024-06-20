@@ -121,7 +121,6 @@ public class VideoGrpc {
                 Log.i("gRPC", "Recibiendo chunk" + mensaje);
                 if (mensaje.getEnvioCase() == Documento.VideoPartesEnvio.EnvioCase.CHUNKS) {
                     try {
-                        Log.i("gRPC", mensaje.getChunks().toStringUtf8());
                         stream.write(mensaje.getChunks().toByteArray());
                     } catch (IOException e) {
                         Log.i("gRPC", e.getMessage());
