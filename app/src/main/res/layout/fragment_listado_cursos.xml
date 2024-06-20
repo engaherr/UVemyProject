@@ -32,14 +32,7 @@
                     android:layout_centerHorizontal="true"
                     android:text="Consultar Cursos" />
 
-                <ImageView
-                    android:id="@+id/imgViewRegresar"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="15dp"
-                    android:contentDescription="Regresar"
-                    android:src="@drawable/previous" />
+
             </RelativeLayout>
             <ScrollView
                 android:layout_width="match_parent"
@@ -82,13 +75,17 @@
                         android:background="@drawable/background_middleblue">
 
                         <TextView
+                            android:id="@+id/txtViewCurso"
                             style="@style/styleTxtViewTitulo"
-                            android:fontFamily="@font/nunito_italic"
                             android:layout_width="wrap_content"
-                            android:layout_height="50dp"
-                            android:layout_margin="10dp"
+                            android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
-                            android:text="Cursos disponibles"/>
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:fontFamily="@font/nunito_italic"
+                            android:text="Cursos disponibles" />
 
                     </RelativeLayout>
                     <LinearLayout

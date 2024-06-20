@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -90,8 +91,24 @@ public class BuscarCursos extends Fragment implements TipoCursoAdapter.OntipoCur
             ((MainActivity) getActivity()).cambiarFragmentoPrincipal(formularioCurso);
         });
         viewModel.obtenerEtiquetas();
+        observarStatus();
         observarEtiquetas();
         return binding.getRoot();
+    }
+
+    private void observarStatus(){
+        viewModel.getStatus().observe(getViewLifecycleOwner(), status ->{
+            switch (status){
+                case ERROR:
+                    Toast.makeText(getContext(),"Ocurrió un error en el servidor", Toast.LENGTH_SHORT).show();
+                    quitarEspera();
+                    break;
+                case ERROR_CONEXION:
+                    Toast.makeText(getContext(),"No hay conexión con el servidor", Toast.LENGTH_SHORT).show();
+                    quitarEspera();
+                    break;
+            }
+        });
     }
 
     private void cargarTiposCursos(){

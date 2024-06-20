@@ -44,7 +44,7 @@ public interface CursoServices {
                                    @Part("descripcion") RequestBody descripcion,
                                    @Part("objetivos") RequestBody objetivos,
                                    @Part("requisitos") RequestBody requisitos,
-                                   @Part("etiquetas") List<RequestBody> etiquetas,
+                                   @Part List<MultipartBody.Part> etiquetas,
                                    @Part MultipartBody.Part file);
 
     @Multipart
@@ -57,7 +57,7 @@ public interface CursoServices {
                                        @Part("descripcion") RequestBody descripcion,
                                        @Part("objetivos") RequestBody objetivos,
                                        @Part("requisitos") RequestBody requisitos,
-                                       @Part("etiquetas") List<RequestBody> etiquetas,
+                                       @Part List<MultipartBody.Part> etiquetas,
                                        @Part MultipartBody.Part file);
 
     @DELETE("cursos/{idCurso}")

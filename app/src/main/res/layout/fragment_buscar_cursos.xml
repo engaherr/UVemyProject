@@ -31,14 +31,6 @@
                     android:layout_centerHorizontal="true"
                     android:text="Buscar Cursos" />
 
-                <ImageView
-                    android:id="@+id/imgViewRegresar"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="15dp"
-                    android:contentDescription="Regresar"
-                    android:src="@drawable/previous" />
             </RelativeLayout>
             <ScrollView
                 android:layout_width="match_parent"

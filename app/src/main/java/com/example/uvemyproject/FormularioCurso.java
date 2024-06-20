@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.example.uvemyproject.databinding.FragmentCursoDetallesPrincipalBinding;
 import com.example.uvemyproject.databinding.FragmentFormularioCursoBinding;
 import com.example.uvemyproject.dto.CrearCursoDTO;
+import com.example.uvemyproject.dto.CursoDTO;
 import com.example.uvemyproject.dto.DocumentoDTO;
 import com.example.uvemyproject.utils.StatusRequest;
 import com.example.uvemyproject.utils.TamanioDocumentos;
@@ -46,6 +47,7 @@ import java.util.List;
 
 public class FormularioCurso extends Fragment {
     private boolean _esCrearCurso = true;
+    private boolean _esEliminar = false;
     private FragmentFormularioCursoBinding binding;
     private FormularioCursoViewModel viewModel;
     public FormularioCurso() {
@@ -61,6 +63,7 @@ public class FormularioCurso extends Fragment {
                              Bundle savedInstanceState) {
         viewModel = new ViewModelProvider(this).get(FormularioCursoViewModel.class);
         _esCrearCurso = true;
+        _esEliminar = false;
         if (getArguments() != null) {
             _esCrearCurso = getArguments().getBoolean("clave_esCrearCurso", true);
             CrearCursoDTO _curso = getArguments().getParcelable("clave_curso");
@@ -70,11 +73,14 @@ public class FormularioCurso extends Fragment {
             ArrayList<String> listaEtiquetasNombre = getArguments().getStringArrayList("clave_listaEtiquetasNombre");
             if (listaEtiquetas != null) {
                 _curso.setEtiquetas(listaEtiquetas);
+
                 _curso.setNombreEtiquetas(listaEtiquetasNombre);
             }
             viewModel.setCursoActual(_curso);
+            viewModel.setCursoAnterior(_curso);
         }
         binding = FragmentFormularioCursoBinding.inflate(inflater, container, false);
+        quitarEspera();
         if (_esCrearCurso == false) {
             binding.btnGuardarCurso.setText("Modificar curso");
             binding.btnEliminarCurso.setVisibility(View.VISIBLE);
@@ -119,12 +125,16 @@ public class FormularioCurso extends Fragment {
                 switch (status) {
                     case DONE:
                         Toast.makeText(requireContext(), "Solicitud exitosa", Toast.LENGTH_LONG).show();
+                        quitarEspera();
+                        limpiarCampos();
                         break;
                     case ERROR:
                         Toast.makeText(requireContext(), "Error en la solicitud", Toast.LENGTH_LONG).show();
+                        quitarEspera();
                         break;
                     case ERROR_CONEXION:
                         Toast.makeText(requireContext(), "Error de conexión", Toast.LENGTH_LONG).show();
+                        quitarEspera();
                         break;
                     default:
                         break;
@@ -132,7 +142,54 @@ public class FormularioCurso extends Fragment {
             }
         });
         cargarCurso();
+        binding.imgViewRegresar.setOnClickListener(v -> {
+            if(!_esCrearCurso){
+                CursoDetallesPrincipal cursoDetallesPrincipal = new CursoDetallesPrincipal();
+                Bundle bundle = new Bundle();
+                CrearCursoDTO crearCurso = viewModel.getCursoAnterior().getValue();
+                CursoDTO curso = new CursoDTO();
+                curso.setIdCurso(crearCurso.getIdCurso());
+                curso.setTitulo(crearCurso.getTitulo());
+                curso.setArchivo(crearCurso.getArchivo());
+                bundle.putParcelable("clave_curso", curso);
+                cursoDetallesPrincipal.setArguments(bundle);
+                cambiarFragmentoPrincipal(cursoDetallesPrincipal);
+            } else {
+                BuscarCursos buscarCursos = new BuscarCursos();
+                cambiarFragmentoPrincipal(buscarCursos);
+            }
+        });
         return binding.getRoot();
+    }
+
+    private void limpiarCampos(){
+        CrearCursoDTO curso = new CrearCursoDTO();
+        viewModel.setCursoActual(curso);
+        viewModel.setArrayBites(null);
+        binding.edtTextDescripcion.setText("");
+        binding.edtTextTitulo.setText("");
+        binding.edtTextObjetivos.setText("");
+        binding.edtTextRequisitos.setText("");
+        binding.imgView.setImageResource(android.R.drawable.ic_menu_upload);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, new ArrayList<>());
+        binding.lstView.setAdapter(adapter);
+        if(!_esCrearCurso){
+            if (_esEliminar){
+                BuscarCursos buscarCursos = new BuscarCursos();
+                cambiarFragmentoPrincipal(buscarCursos);
+            } else {
+                CursoDetallesPrincipal cursoDetallesPrincipal = new CursoDetallesPrincipal();
+                Bundle bundle = new Bundle();
+                CrearCursoDTO crearCurso = viewModel.getCursoAnterior().getValue();
+                CursoDTO cursoM = new CursoDTO();
+                cursoM.setIdCurso(crearCurso.getIdCurso());
+                cursoM.setTitulo(crearCurso.getTitulo());
+                cursoM.setArchivo(crearCurso.getArchivo());
+                bundle.putParcelable("clave_curso", cursoM);
+                cursoDetallesPrincipal.setArguments(bundle);
+                cambiarFragmentoPrincipal(cursoDetallesPrincipal);
+            }
+        }
     }
 
     private void cambiarFragmentoPrincipal(Fragment fragmento){
@@ -142,7 +199,6 @@ public class FormularioCurso extends Fragment {
     private void cargarCurso(){
         binding.edtTextDescripcion.setText(viewModel.getCursoActual().getValue().getDescripcion());
         binding.edtTextTitulo.setText(viewModel.getCursoActual().getValue().getTitulo());
-        Log.d("Log", "Objetivos2"+viewModel.getCursoActual().getValue().getObjetivos());
         binding.edtTextObjetivos.setText(viewModel.getCursoActual().getValue().getObjetivos());
         binding.edtTextRequisitos.setText(viewModel.getCursoActual().getValue().getRequisitos());
         byte[] _arrayImagen = viewModel.getCursoActual().getValue().getArchivo();
@@ -154,6 +210,8 @@ public class FormularioCurso extends Fragment {
     }
 
     private void eliminarCurso(){
+        ponerEspera();
+        _esEliminar = true;
         viewModel.eliminarCurso();
     }
 
@@ -167,10 +225,13 @@ public class FormularioCurso extends Fragment {
     }
 
     private void guardarCurso(){
+        ponerEspera();
+        Log.d("Log","ID Etiqueta "+viewModel.getCursoActual().getValue().getEtiquetas().get(0));
         viewModel.guardarCurso(viewModel.getCursoActual().getValue());
     }
 
     private void modificarCurso(){
+        ponerEspera();
         viewModel.modificarCurso(viewModel.getCursoActual().getValue());
     }
 
@@ -256,6 +317,14 @@ public class FormularioCurso extends Fragment {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
         return stream.toByteArray();
+    }
+
+    private void ponerEspera() {
+        binding.progressOverlay.setVisibility(View.VISIBLE);
+    }
+
+    private void quitarEspera() {
+        binding.progressOverlay.setVisibility(View.GONE);
     }
 
     private void openGallery(){

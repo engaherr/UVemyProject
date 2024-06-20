@@ -75,16 +75,28 @@ public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCu
                 switch (status) {
                     case DONE:
                         Toast.makeText(requireContext(), "Solicitud exitosa", Toast.LENGTH_LONG).show();
+                        quitarEspera();
                         break;
                     case ERROR:
                         Toast.makeText(requireContext(), "Error en la solicitud", Toast.LENGTH_LONG).show();
+                        _paginaActual = _paginaAnterior;
+                        binding.txtViewPagina.setText("Pagina "+(_paginaActual+1));
                         quitarEspera();
                         break;
                     case ERROR_CONEXION:
                         Toast.makeText(requireContext(), "Error de conexión", Toast.LENGTH_LONG).show();
+                        _paginaActual = _paginaAnterior;
+                        binding.txtViewPagina.setText("Pagina "+(_paginaActual+1));
+                        quitarEspera();
                         break;
                     case NOT_FOUND:
                         Toast.makeText(requireContext(), "No existen cursos", Toast.LENGTH_LONG).show();
+                        _paginaActual = _paginaAnterior;
+                        if(_paginaActual > 0){
+                            anteriorPagina();
+                        }
+                        binding.txtViewPagina.setText("Pagina "+(_paginaActual+1));
+                        quitarEspera();
                         break;
                     default:
                         break;
@@ -114,16 +126,16 @@ public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCu
         viewModel.recuperarCursos(pagina, tituloCurso, calificacionCurso, idTipoCurso, idEtiqueta);
 
         if(tituloCurso != null && !tituloCurso.isEmpty()){
-            binding.txtViewPagina.setText("Pagina "+pagina+1+" titulo="+tituloCurso);
+            binding.txtViewCurso.setText("Cursos con titulo "+tituloCurso);
         } else if(calificacionCurso != 0){
-            binding.txtViewPagina.setText("Pagina "+pagina+1+" calificacion="+calificacionCurso);
+            binding.txtViewCurso.setText("Cursos con calificación mayor a "+calificacionCurso);
         } else if(idTipoCurso != 0){
-            binding.txtViewPagina.setText("Pagina "+pagina+1+" tipoCurso="+_nombreTipoCurso);
+            binding.txtViewCurso.setText(_nombreTipoCurso);
         } else if(idEtiqueta != 0){
-            binding.txtViewPagina.setText("Pagina "+pagina+1+" etiqueta="+_nombreEtiqueta);
-        } else{
-            binding.txtViewPagina.setText("Pagina "+pagina+1);
+            binding.txtViewCurso.setText("Cursos con etiqueta "+_nombreEtiqueta);
         }
+        binding.txtViewPagina.setText("Pagina "+(pagina+1));
+
     }
     private void anteriorPagina()
     {
