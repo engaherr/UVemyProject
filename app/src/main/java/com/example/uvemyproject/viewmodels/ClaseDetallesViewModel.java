@@ -17,6 +17,8 @@ import com.example.uvemyproject.dto.ClaseDTO;
 import com.example.uvemyproject.dto.ComentarioDTO;
 import com.example.uvemyproject.dto.ComentarioEnvioDTO;
 import com.example.uvemyproject.dto.DocumentoDTO;
+import com.example.uvemyproject.interfaces.INotificacionReciboVideo;
+import com.example.uvemyproject.servicio.VideoGrpc;
 import com.example.uvemyproject.utils.FileUtil;
 import com.example.uvemyproject.utils.SingletonUsuario;
 import com.example.uvemyproject.utils.StatusRequest;
@@ -26,6 +28,8 @@ import com.squareup.moshi.Moshi;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -38,11 +42,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ClaseDetallesViewModel extends ViewModel {
+public class ClaseDetallesViewModel extends ViewModel implements INotificacionReciboVideo {
     private final MutableLiveData<StatusRequest> status = new MutableLiveData<>();
     private final MutableLiveData<ClaseDTO> claseActual = new MutableLiveData<>();
     private final MutableLiveData<List<ComentarioDTO>> comentarios = new MutableLiveData<>();
     private final MutableLiveData<StatusRequest> statusEnviarComentario = new MutableLiveData<>();
+    private final MutableLiveData<ByteArrayInputStream> streamVideo = new MutableLiveData<>();
 
     public LiveData<StatusRequest> getStatus(){
         return status;
@@ -50,6 +55,7 @@ public class ClaseDetallesViewModel extends ViewModel {
     public LiveData<ClaseDTO> getClaseActual() { return claseActual; }
     public LiveData<List<ComentarioDTO>> getComentarios() { return comentarios; }
     public LiveData<StatusRequest> getStatusEnviarComentario() { return statusEnviarComentario; }
+    public LiveData<ByteArrayInputStream> getStreamVideo() { return streamVideo; }
 
     public void recuperarDetallesClase(int idClase){
         ClaseServices service = ApiClient.getInstance().getClaseServices();
@@ -200,8 +206,12 @@ public class ClaseDetallesViewModel extends ViewModel {
     }
 
     private void recuperarVideo(){
-        //Al final debería de recuperar y poner el vide, se debe poner el status done para quitar el progress bar
-        status.setValue(StatusRequest.DONE);
+        Log.d("gRPC", "Recuperando video");
+        ByteArrayInputStream enStream = VideoGrpc.descargarVideo(claseActual.getValue()
+                .getVideoId(), this);
+        Log.d("gRPC", "Video recibido");
+
+        streamVideo.setValue(enStream);
     }
 
     public int descargarDocumento(Context context, Uri treeUri, int posicionDocumento) {
@@ -233,4 +243,15 @@ public class ClaseDetallesViewModel extends ViewModel {
     }
 
 
+    @Override
+    public void notificarReciboExitoso() {
+        Log.d("gRPC", "Video recibido desde interfaz");
+        status.setValue(StatusRequest.DONE);
+    }
+
+    @Override
+    public void notificarReciboFallido() {
+        Log.d("gRPC", "Video recibo fallido desde interfaz");
+        status.setValue(StatusRequest.ERROR);
+    }
 }

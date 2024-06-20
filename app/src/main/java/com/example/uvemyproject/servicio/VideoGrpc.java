@@ -4,11 +4,15 @@ import android.util.Log;
 
 import com.example.uvemyproject.dto.DocumentoDTO;
 import com.example.uvemyproject.interfaces.INotificacionEnvioVideo;
+import com.example.uvemyproject.interfaces.INotificacionReciboVideo;
 import com.example.uvemyproject.utils.SingletonUsuario;
 import com.google.protobuf.ByteString;
 import com.proto.uvemyproject.Documento;
 import com.proto.uvemyproject.VideoServiceGrpc;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 
@@ -93,5 +97,54 @@ public class VideoGrpc {
             Log.i("Error GRPC en catch", e.getMessage());
             requestObserver.onError(e);
         }
+    }
+
+    public static ByteArrayInputStream descargarVideo(int idVideo, INotificacionReciboVideo notificacion) {
+        Log.i("gRPC", "Recibiendo");
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+        VideoServiceGrpc.VideoServiceStub stub = obtenerStub();
+
+        Documento.DocumentoVideo request = Documento.DocumentoVideo.newBuilder()
+                .setIdVideo(idVideo).setJwt(SingletonUsuario.getJwt()).build();
+
+        Log.i("gRPC", request.toString());
+        stub.recibirVideoClase(request, new StreamObserver<Documento.VideoPartesEnvio>() {
+            @Override
+            public void onNext(Documento.VideoPartesEnvio mensaje) {
+                Log.i("gRPC", "Recibiendo chunk" + mensaje);
+                if (mensaje.getEnvioCase() == Documento.VideoPartesEnvio.EnvioCase.CHUNKS) {
+                    try {
+                        Log.i("gRPC", mensaje.getChunks().toStringUtf8());
+                        stream.write(mensaje.getChunks().toByteArray());
+                        notificacion.notificarReciboExitoso();
+                    } catch (IOException e) {
+                        Log.i("gRPC", e.getMessage());
+                        notificacion.notificarReciboFallido();
+                    }
+                } else {
+                    Log.i("gRPC", "No es un chunk");
+                }
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                Log.i("Error GRPC en envio", t.getMessage());
+                notificacion.notificarReciboFallido();
+            }
+
+            @Override
+            public void onCompleted() {
+                Log.i("Uvemy.grpc", "Envio Exitoso");
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    Log.e("gRPC", "Error al cerrar el stream", e);
+                }
+                notificacion.notificarReciboExitoso();
+            }
+        });
+
+        return new ByteArrayInputStream(stream.toByteArray());
     }
 }

@@ -5,9 +5,11 @@ import static android.app.Activity.RESULT_OK;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.MediaController;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -17,10 +19,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.uvemyproject.databinding.FragmentClaseDetallesBinding;
 import com.example.uvemyproject.dto.ComentarioEnvioDTO;
+import com.example.uvemyproject.interfaces.INotificacionReciboVideo;
 import com.example.uvemyproject.utils.SingletonUsuario;
 import com.example.uvemyproject.viewmodels.ClaseDetallesViewModel;
 
-public class ClaseDetalles extends Fragment {
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+public class ClaseDetalles extends Fragment implements INotificacionReciboVideo {
     private FragmentClaseDetallesBinding binding;
     private ClaseDetallesViewModel viewModel;
     private DocumentoAdapter adapter;
@@ -51,6 +59,7 @@ public class ClaseDetalles extends Fragment {
         adapter.setOnItemClickListener((documento, posicion) -> descargarDocumento(posicion));
 
         viewModel = new ViewModelProvider(this).get(ClaseDetallesViewModel.class);
+        observarVideoStream();
 
         observarStatus();
         observarClase();
@@ -63,6 +72,53 @@ public class ClaseDetalles extends Fragment {
         obtenerIdClase();
 
         return binding.getRoot();
+    }
+
+    private void observarVideoStream() {
+        viewModel.getStreamVideo().observe(getViewLifecycleOwner(), inputStream -> {
+            try {
+                Log.d("gRPC", "observarVideoStream: cargando video");
+                File tempFile = streamToFile(inputStream);
+
+                Log.d("gRPC", tempFile.getAbsolutePath());
+                binding.videoView.setVideoURI(Uri.fromFile(tempFile));
+                MediaController mediaController = new MediaController(getContext());
+
+                binding.videoView.setMediaController(mediaController);
+                mediaController.setAnchorView(binding.videoView);
+
+                binding.videoView.setOnPreparedListener(mp -> {
+                    Log.d("gRPC", "observarVideoStream: video preparado, iniciando reproducción");
+                    binding.videoView.start();
+                });
+
+                binding.videoView.setOnErrorListener((mp, what, extra) -> {
+                    Log.e("gRPC", "Error al preparar el video: " + what + ", extra: " + extra);
+                    Toast.makeText(getContext(), "Error al preparar el video", Toast.LENGTH_SHORT).show();
+                    return true;
+                });
+
+                Log.d("gRPC", "observarVideoStream: carga video completada");
+            } catch (IOException e) {
+                Log.e("gRPC", "Error al reproducir el video", e);
+                Toast.makeText(getContext(), "Error al cargar el video", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private File streamToFile(InputStream inputStream) throws IOException {
+        Log.d("gRPC", "streamToFile: creando archivo temporal");
+        File tempFile = new File(getContext().getCacheDir(), "video.mp4");
+        try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+
+            Log.d("gRPC", "streamToFile: archivo temporal creado" + tempFile.getAbsolutePath());
+            return tempFile;
+        }
     }
 
     private void enviarComentario() {
@@ -189,5 +245,16 @@ public class ClaseDetalles extends Fragment {
             documentoSeleccionado = -1;
         }
 
+    }
+
+    @Override
+    public void notificarReciboExitoso() {
+        Toast.makeText(getContext(),"Video cargado correctamente", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void notificarReciboFallido() {
+        Toast.makeText(getContext(),"Hubo un problema al cargar el video",
+                Toast.LENGTH_SHORT).show();
     }
 }
