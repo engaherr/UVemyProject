@@ -193,4 +193,11 @@ public class InicioSesion extends AppCompatActivity {
     public static Context obtenerContexto(){
         return contexto;
     }
+    
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(binding.cnsLayoutInicioSesion.getVisibility() == View.GONE)
+            redireccionarRegistroUsuario();
+    }
 }

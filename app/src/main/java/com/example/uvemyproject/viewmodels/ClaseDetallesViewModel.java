@@ -3,7 +3,6 @@ package com.example.uvemyproject.viewmodels;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.LiveData;
@@ -12,39 +11,60 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.uvemyproject.api.ApiClient;
 import com.example.uvemyproject.api.services.ClaseServices;
+import com.example.uvemyproject.api.services.ComentarioServices;
 import com.example.uvemyproject.api.services.DocumentoServices;
-import com.example.uvemyproject.api.services.EstadisticaServices;
 import com.example.uvemyproject.dto.ClaseDTO;
 import com.example.uvemyproject.dto.CursoDTO;
+import com.example.uvemyproject.dto.ComentarioDTO;
+import com.example.uvemyproject.dto.ComentarioEnvioDTO;
 import com.example.uvemyproject.dto.DocumentoDTO;
+import com.example.uvemyproject.interfaces.INotificacionReciboVideo;
+import com.example.uvemyproject.servicio.VideoGrpc;
 import com.example.uvemyproject.utils.FileUtil;
 import com.example.uvemyproject.utils.SingletonUsuario;
 import com.example.uvemyproject.utils.StatusRequest;
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.Moshi;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ClaseDetallesViewModel extends ViewModel {
+public class ClaseDetallesViewModel extends ViewModel implements INotificacionReciboVideo {
     private final MutableLiveData<StatusRequest> status = new MutableLiveData<>();
     private final MutableLiveData<ClaseDTO> claseActual = new MutableLiveData<>();
     private final MutableLiveData<CursoDTO> cursoActual = new MutableLiveData<>();
+    private final MutableLiveData<List<ComentarioDTO>> comentarios = new MutableLiveData<>();
+    private final MutableLiveData<StatusRequest> statusEnviarComentario = new MutableLiveData<>();
+    private final MutableLiveData<ByteArrayInputStream> streamVideo = new MutableLiveData<>();
+
+    public LiveData<StatusRequest> getStatus(){
+        return status;
+    }
     public LiveData<CursoDTO> getCurso(){
         return cursoActual;
     }
     public void setCurso (CursoDTO cursoNuevo){
         cursoActual.setValue(cursoNuevo);
     }
-    public LiveData<StatusRequest> getStatus(){
-        return status;
-    }
     public LiveData<ClaseDTO> getClaseActual() { return claseActual; }
-
+    public LiveData<List<ComentarioDTO>> getComentarios() { return comentarios; }
+    public LiveData<StatusRequest> getStatusEnviarComentario() { return statusEnviarComentario; }
+    public LiveData<ByteArrayInputStream> getStreamVideo() { return streamVideo; }
     public void recuperarDetallesClase(int idClase){
         ClaseServices service = ApiClient.getInstance().getClaseServices();
         String auth = "Bearer " + SingletonUsuario.getJwt();
@@ -55,6 +75,7 @@ public class ClaseDetallesViewModel extends ViewModel {
                 if(response.isSuccessful()){
                     claseActual.setValue(response.body());
                     obtenerDocumentosClase();
+                    obtenerComentariosClase();
                 }else{
                     status.setValue(StatusRequest.ERROR);
                 }
@@ -64,6 +85,74 @@ public class ClaseDetallesViewModel extends ViewModel {
                 status.setValue(StatusRequest.ERROR_CONEXION);
             }
         });
+    }
+
+    private void obtenerComentariosClase() {
+        String auth = "Bearer " + SingletonUsuario.getJwt();
+        ComentarioServices service = ApiClient.getInstance().getComentarioServices();
+
+        service.obtenerComentariosClase(auth, claseActual.getValue().getIdClase())
+                .enqueue(new Callback<List<ComentarioDTO>>() {
+            @Override
+            public void onResponse(Call<List<ComentarioDTO>> call, Response<List<ComentarioDTO>> response) {
+                if (response.isSuccessful()) {
+                    comentarios.setValue(response.body());
+                    status.setValue(StatusRequest.DONE);
+                } else {
+                    status.setValue(StatusRequest.ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ComentarioDTO>> call, Throwable t) {
+                Log.e("RetrofitErrorComentarios", t.getMessage(), t);
+                status.setValue(StatusRequest.ERROR_CONEXION);
+            }
+        });
+    }
+
+    public void enviarComentario(ComentarioEnvioDTO comentario) {
+        String auth = "Bearer " + SingletonUsuario.getJwt();
+        ComentarioServices service = ApiClient.getInstance().getComentarioServices();
+
+        String campoEliminar = comentario.getRespondeAComentario() == 0 ? "respondeAComentario" : null;
+        service.crearComentario(auth, convertirResponseBody(comentario, campoEliminar))
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()) {
+                            statusEnviarComentario.setValue(StatusRequest.DONE);
+                            obtenerComentariosClase();
+                        } else {
+                            statusEnviarComentario.setValue(StatusRequest.ERROR);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.e("RetrofitError", t.getMessage(), t);
+                        statusEnviarComentario.setValue(StatusRequest.ERROR_CONEXION);
+                    }
+                });
+    }
+
+    private RequestBody convertirResponseBody(ComentarioEnvioDTO comentario, String campoEliminar) {
+        Moshi moshi = new Moshi.Builder().build();
+        JsonAdapter<ComentarioEnvioDTO> jsonAdapter = moshi.adapter(ComentarioEnvioDTO.class);
+
+        String jsonEnviado = "";
+        try {
+            String json = jsonAdapter.toJson(comentario);
+            JSONObject jsonObject = new JSONObject(json);
+            jsonObject.remove(campoEliminar);
+
+            jsonEnviado = jsonObject.toString();
+        } catch (JSONException e) {
+            Log.e("RetrofitError", "Error al convertir el comentario a JSON", e);
+        }
+
+        return RequestBody.create(jsonEnviado,
+                MediaType.parse("application/json; charset=utf-8"));
     }
 
     private void obtenerDocumentosClase(){
@@ -101,12 +190,9 @@ public class ClaseDetallesViewModel extends ViewModel {
                             documentosRecuperados.add(documento);
 
                             if((idDocumentos.length - 1) == finalI){
-                                //Recuperar video y comentarios
                                 ClaseDTO clase = claseActual.getValue();
                                 clase.setDocumentos(documentosRecuperados);
                                 claseActual.setValue(clase);
-
-                                recuperarVideo();
                             }
                         } else {
                             status.setValue(StatusRequest.ERROR);
@@ -129,11 +215,6 @@ public class ClaseDetallesViewModel extends ViewModel {
             recuperarVideo();
             Log.e("Error BD", "No tiene asociados documentos");
         }
-    }
-
-    private void recuperarVideo(){
-        //Al final debería de recuperar y poner el vide, se debe poner el status done para quitar el progress bar
-        status.setValue(StatusRequest.DONE);
     }
 
     public int descargarDocumento(Context context, Uri treeUri, int posicionDocumento) {
@@ -162,5 +243,17 @@ public class ClaseDetallesViewModel extends ViewModel {
         }
 
         return 0;
+    }
+
+    @Override
+    public void notificarReciboExitoso(ByteArrayOutputStream output) {
+        Log.d("gRPC", "Video recibido desde interfaz");
+        status.postValue(StatusRequest.DONE);
+    }
+
+    @Override
+    public void notificarReciboFallido() {
+        Log.d("gRPC", "Video recibo fallido desde interfaz");
+        status.postValue(StatusRequest.ERROR);
     }
 }

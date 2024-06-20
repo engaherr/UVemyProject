@@ -1,5 +1,6 @@
 package com.example.uvemyproject;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -34,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class FormularioUsuario extends Fragment {
@@ -261,6 +263,10 @@ public class FormularioUsuario extends Fragment {
         binding.txtViewYaTienesCuenta.setVisibility(View.GONE);
         binding.txtViewIniciarSesion.setVisibility(View.GONE);
         binding.btnModificar.setVisibility(View.VISIBLE);
+        binding.imgViewRegresar.setVisibility(View.GONE);
+        binding.imgViewCerrarSesion.setVisibility(View.VISIBLE);
+
+        binding.imgViewCerrarSesion.setOnClickListener(c -> cerrarSesion());
 
         binding.edtTextNombre.setEnabled(false);
         binding.edtTextApellidos.setEnabled(false);
@@ -271,6 +277,23 @@ public class FormularioUsuario extends Fragment {
         binding.edtTextCorreoElectronico.setText(SingletonUsuario.getCorreoElectronico());
 
         binding.btnModificar.setOnClickListener(c -> setUIModificar());
+    }
+
+    private void cerrarSesion() {
+        SingletonUsuario.setNombres("");
+        SingletonUsuario.setApellidos("");
+        SingletonUsuario.setCorreoElectronico("");
+        SingletonUsuario.setIdsEtiqueta(new int[0]);
+        SingletonUsuario.setIdUsuario(0);
+        SingletonUsuario.setJwt("");
+
+        Intent intent = new Intent(getActivity(), InicioSesion.class);
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        startActivity(intent);
+
+        getActivity().finish();
     }
 
     private void setUIModificar() {
@@ -300,9 +323,9 @@ public class FormularioUsuario extends Fragment {
 
     private void clickSubirImagen() {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requestPermissionLauncher.launch(android.Manifest.permission.READ_MEDIA_IMAGES);
+            requestPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES);
         } else {
-            requestPermissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE);
+            requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
         }
     }
 

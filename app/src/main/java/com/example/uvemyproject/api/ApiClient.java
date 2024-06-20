@@ -7,6 +7,7 @@ import com.example.uvemyproject.MainActivity;
 import com.example.uvemyproject.R;
 import com.example.uvemyproject.api.services.AutenticacionServices;
 import com.example.uvemyproject.api.services.ClaseServices;
+import com.example.uvemyproject.api.services.ComentarioServices;
 import com.example.uvemyproject.api.services.CursoServices;
 import com.example.uvemyproject.api.services.DocumentoServices;
 import com.example.uvemyproject.api.services.EstadisticaServices;
@@ -32,6 +33,7 @@ public class ApiClient {
     private PerfilServices perfilServices;
     private UsuarioServices usuarioServices;
     private ListaCursosServices listaCursos;
+    private ComentarioServices comentarioServices;
 
     private static final ApiClient apiClient = new ApiClient();
 
@@ -120,5 +122,10 @@ public class ApiClient {
             usuarioServices = getRetrofit().create(UsuarioServices.class);
         }
         return usuarioServices;
+    public ComentarioServices getComentarioServices(){
+        if(comentarioServices == null) {
+            comentarioServices = getRetrofit().create(ComentarioServices.class);
+        }
+        return comentarioServices;
     }
 }

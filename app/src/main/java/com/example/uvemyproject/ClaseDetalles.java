@@ -2,36 +2,53 @@ package com.example.uvemyproject;
 
 import static android.app.Activity.RESULT_OK;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.MediaController;
+import android.widget.Toast;
+import android.widget.VideoView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
-
 import com.example.uvemyproject.databinding.FragmentClaseDetallesBinding;
-import com.example.uvemyproject.databinding.FragmentListadoClasesBinding;
+import com.example.uvemyproject.dto.ComentarioEnvioDTO;
+import com.example.uvemyproject.interfaces.INotificacionReciboVideo;
+import com.example.uvemyproject.servicio.VideoGrpc;
+import com.example.uvemyproject.utils.SingletonUsuario;
 import com.example.uvemyproject.viewmodels.ClaseDetallesViewModel;
 import com.example.uvemyproject.viewmodels.CursoClaseDetallesViewModel;
 import com.example.uvemyproject.viewmodels.EstadisticasCursoViewModel;
 import com.example.uvemyproject.viewmodels.FormularioDetallesClaseViewModel;
 
-public class ClaseDetalles extends Fragment {
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+
+public class ClaseDetalles extends Fragment implements INotificacionReciboVideo {
     private FragmentClaseDetallesBinding binding;
     private ClaseDetallesViewModel viewModel;
     private FormularioDetallesClaseViewModel viewModelCompartido;
     private CursoClaseDetallesViewModel viewModelCompartidoCurso;
     private DocumentoAdapter adapter;
+    private ComentarioAdapter comentarioAdapter;
     private int documentoSeleccionado = -1;
     private static final int PICK_DIRECTORY_REQUEST_CODE = 1;
+    private File videoTempFile;
+    private BufferedOutputStream bufferedOutputStream;
 
     public ClaseDetalles() {
     }
@@ -65,13 +82,68 @@ public class ClaseDetalles extends Fragment {
 
         observarStatus();
         observarClase();
+        observarComentarios();
+        observarStatusEnviarComentario();
 
         binding.lnrLayoutModificarClase.setOnClickListener(v -> cambiarFormularioClase());
+        binding.btnEnviarComentario.setOnClickListener(v -> enviarComentario());
 
         obtenerIdClase();
-
         return binding.getRoot();
     }
+
+    private File streamToFile(InputStream inputStream) throws IOException {
+        Log.d("gRPC", "streamToFile: creando archivo temporal");
+        File tempFile = new File(getContext().getCacheDir(), "video.mp4");
+        try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+
+            Log.d("gRPC", "streamToFile: archivo temporal creado" + tempFile.getAbsolutePath());
+            return tempFile;
+        }
+    }
+
+    private void enviarComentario() {
+        String comentario = binding.edtTextComentario.getText().toString();
+
+        if(comentario.isEmpty()){
+            binding.edtTextComentario.setError("Escribe algo para enviar el comentario");
+        } else {
+            binding.edtTextComentario.setText("");
+            ComentarioEnvioDTO comentarioEnvioDTO = new ComentarioEnvioDTO(
+                    viewModel.getClaseActual().getValue().getIdClase(),
+                    SingletonUsuario.getIdUsuario(),
+                    comentario,
+                    0
+            );
+            viewModel.enviarComentario(comentarioEnvioDTO);
+        }
+    }
+
+    private void observarStatusEnviarComentario() {
+        viewModel.getStatusEnviarComentario().observe(getViewLifecycleOwner(), status ->{
+            switch (status){
+                case DONE:
+                    Toast.makeText(getContext(),"Comentario enviado exitosamente",
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                case ERROR:
+                    Toast.makeText(getContext(),"Ocurrió un error al enviar el comentario." +
+                            " Intente de nuevo más tarde", Toast.LENGTH_SHORT).show();
+                    break;
+                case ERROR_CONEXION:
+                    Toast.makeText(getContext(),"No hay conexión con el servidor. " +
+                                    "Intente más tarde",
+                            Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        });
+    }
+
     private void observarStatus(){
         viewModel.getStatus().observe(getViewLifecycleOwner(), status ->{
             switch (status){
@@ -86,6 +158,7 @@ public class ClaseDetalles extends Fragment {
         });
     }
 
+    private boolean videoRecuperado = false;
     private void observarClase(){
         viewModel.getClaseActual().observe(getViewLifecycleOwner(), claseDTO -> {
             if(claseDTO != null){
@@ -94,7 +167,28 @@ public class ClaseDetalles extends Fragment {
                     adapter.submitList(claseDTO.getDocumentos());
                     adapter.notifyDataSetChanged();
                 }
+                
                 viewModelCompartido.setClase(claseDTO);
+
+                if(!videoRecuperado && claseDTO.getVideoId() != 0) {
+                    ponerEspera();
+                    videoRecuperado = true;
+                    VideoGrpc.descargarVideo(claseDTO.getVideoId(), this);
+                }
+            }
+        });
+    }
+
+    private void observarComentarios() {
+        viewModel.getComentarios().observe(getViewLifecycleOwner(), comentarios -> {
+            if(comentarios != null && !comentarios.isEmpty()){
+                comentarioAdapter =
+                        new ComentarioAdapter(viewModel);
+                binding.rcyViewComentarios.setLayoutManager(new LinearLayoutManager(getContext()));
+                binding.rcyViewComentarios.setAdapter(comentarioAdapter);
+
+                comentarioAdapter.submitList(comentarios);
+                comentarioAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -152,5 +246,67 @@ public class ClaseDetalles extends Fragment {
             documentoSeleccionado = -1;
         }
 
+    }
+
+    @Override
+    public void notificarReciboExitoso(ByteArrayOutputStream outputStream) {
+        byte[] byteArray = outputStream.toByteArray();
+        writeByteArrayToCacheAndPlay(getContext(), byteArray, binding.videoView);
+        Toast.makeText(getContext(),"Video cargado correctamente", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void notificarReciboFallido() {
+        Toast.makeText(getContext(),"Hubo un problema al cargar el video",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    public void writeByteArrayToCacheAndPlay(Context context, byte[] byteArray, VideoView videoView) {
+        FileOutputStream fileOutputStream = null;
+        try {
+            File cacheDir = context.getCacheDir();
+            File videoFile = new File(cacheDir, "video.mp4");
+            fileOutputStream = new FileOutputStream(videoFile);
+
+            fileOutputStream.write(byteArray);
+            fileOutputStream.flush();
+
+            Log.v("FileWrite", "Archivo escrito con éxito: " + videoFile.getAbsolutePath());
+
+            if (videoFile.exists()) {
+                Log.d("FileWrite", "El archivo existe: " + videoFile.getAbsolutePath());
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        playVideo(videoView, videoFile);
+                    }
+                });
+
+            } else {
+                Log.e("FileWrite", "El archivo no se ha creado.");
+            }
+        } catch (IOException e) {
+            Log.e("FileWrite", "Error escribiendo el archivo: " + e.getMessage(), e);
+        } finally {
+            if (fileOutputStream != null) {
+                try {
+                    fileOutputStream.close();
+                } catch (IOException e) {
+                    Log.e("FileWrite", "Error cerrando FileOutputStream: " + e.getMessage(), e);
+                }
+            }
+        }
+    }
+
+    private void playVideo(VideoView videoView, File videoFile) {
+        videoView.setVideoURI(Uri.fromFile(videoFile));
+
+        MediaController mediaController = new MediaController(videoView.getContext());
+        mediaController.setAnchorView(videoView);
+        videoView.setMediaController(mediaController);
+
+        videoView.start();
+        quitarEspera();
     }
 }
