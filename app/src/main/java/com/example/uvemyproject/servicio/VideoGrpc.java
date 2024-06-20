@@ -33,7 +33,7 @@ public class VideoGrpc {
             Context context = InicioSesion.obtenerContexto();
             String host = context.getString(R.string.domain_ip);
 
-            int puerto = 3001;
+            int puerto = Integer.parseInt(context.getString(R.string.port));
             channel = ManagedChannelBuilder.forAddress(host, puerto).usePlaintext().build();
             stub = VideoServiceGrpc.newStub(channel);
         }
