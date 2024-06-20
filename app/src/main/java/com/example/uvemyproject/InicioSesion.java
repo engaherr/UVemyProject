@@ -178,4 +178,11 @@ public class InicioSesion extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(
                 R.id.frmLayoutInicioSesion, fragmentoMostrar).addToBackStack(null).commit();
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(binding.cnsLayoutInicioSesion.getVisibility() == View.GONE)
+            redireccionarRegistroUsuario();
+    }
 }
