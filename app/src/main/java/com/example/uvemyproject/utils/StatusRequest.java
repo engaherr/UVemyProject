@@ -7,5 +7,7 @@ public enum StatusRequest {
     NO_CONTENT,
     BAD_REQUEST,
     FORBIDDEN,
-    ESPERA
+    ESPERA,
+    ERROR_CONSULTA,
+    ERROR_ELIMINACION
 }
