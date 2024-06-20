@@ -105,7 +105,7 @@ public class VideoGrpc {
         }
     }
 
-    public static ByteArrayInputStream descargarVideo(int idVideo, INotificacionReciboVideo notificacion) {
+    public static void descargarVideo(int idVideo, INotificacionReciboVideo notificacion) {
         Log.i("gRPC", "Recibiendo");
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
@@ -150,7 +150,5 @@ public class VideoGrpc {
 
             }
         });
-
-        return new ByteArrayInputStream(stream.toByteArray());
     }
 }

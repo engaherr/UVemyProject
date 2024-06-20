@@ -3,6 +3,7 @@ package com.example.uvemyproject.utils;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.VideoView;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -50,5 +51,32 @@ public class FileUtil {
 
         String extPattern = "(?<!^)[.]" + ".*";
         return filename.replaceAll(extPattern, "");
+    }
+
+    public static File convertirAFileArrayByte(Context context, byte[] byteArray) {
+        FileOutputStream fileOutputStream = null;
+        File videoFile = null;
+        try {
+            File cacheDir = context.getCacheDir();
+            videoFile = new File(cacheDir, "video.mp4");
+            fileOutputStream = new FileOutputStream(videoFile);
+
+            fileOutputStream.write(byteArray);
+            fileOutputStream.flush();
+
+            Log.v("FileWrite", "Archivo escrito con éxito: " + videoFile.getAbsolutePath());
+
+        } catch (IOException e) {
+            Log.e("FileWrite", "Error escribiendo el archivo: " + e.getMessage(), e);
+        } finally {
+            if (fileOutputStream != null) {
+                try {
+                    fileOutputStream.close();
+                } catch (IOException e) {
+                    Log.e("FileWrite", "Error cerrando FileOutputStream: " + e.getMessage(), e);
+                }
+            }
+        }
+        return videoFile;
     }
 }

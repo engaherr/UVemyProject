@@ -24,21 +24,17 @@ import com.example.uvemyproject.dto.ComentarioEnvioDTO;
 import com.example.uvemyproject.interfaces.INotificacionReciboVideo;
 import com.example.uvemyproject.servicio.VideoGrpc;
 import com.example.uvemyproject.utils.SingletonUsuario;
+import com.example.uvemyproject.utils.StatusRequest;
 import com.example.uvemyproject.viewmodels.ClaseDetallesViewModel;
 import com.example.uvemyproject.viewmodels.CursoClaseDetallesViewModel;
-import com.example.uvemyproject.viewmodels.EstadisticasCursoViewModel;
 import com.example.uvemyproject.viewmodels.FormularioDetallesClaseViewModel;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 
-public class ClaseDetalles extends Fragment implements INotificacionReciboVideo {
+public class ClaseDetalles extends Fragment {
     private boolean videoRecuperado = false;
     private FragmentClaseDetallesBinding binding;
     private ClaseDetallesViewModel viewModel;
@@ -139,6 +135,9 @@ public class ClaseDetalles extends Fragment implements INotificacionReciboVideo 
                     break;
             }
             quitarEspera();
+            if(status.equals(StatusRequest.ESPERA)){
+                ponerEspera();
+            }
         });
     }
 
@@ -153,10 +152,13 @@ public class ClaseDetalles extends Fragment implements INotificacionReciboVideo 
                 
                 viewModelCompartido.setClase(claseDTO);
 
-                if(!videoRecuperado && claseDTO.getVideoId() != 0) {
-                    ponerEspera();
-                    videoRecuperado = true;
-                    VideoGrpc.descargarVideo(claseDTO.getVideoId(), this);
+                if(claseDTO.getVideoDocumento() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            iniciarVideo(binding.videoView, claseDTO.getVideoDocumento().getFile());
+                        }
+                    });
                 }
             }
         });
@@ -231,58 +233,8 @@ public class ClaseDetalles extends Fragment implements INotificacionReciboVideo 
 
     }
 
-    @Override
-    public void notificarReciboExitoso(ByteArrayOutputStream outputStream) {
-        byte[] byteArray = outputStream.toByteArray();
-        writeByteArrayToCacheAndPlay(getContext(), byteArray, binding.videoView);
-        Toast.makeText(getContext(),"Video cargado correctamente", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void notificarReciboFallido() {
-        Toast.makeText(getContext(),"Hubo un problema al cargar el video",
-                Toast.LENGTH_SHORT).show();
-    }
-
-    public void writeByteArrayToCacheAndPlay(Context context, byte[] byteArray, VideoView videoView) {
-        FileOutputStream fileOutputStream = null;
-        try {
-            File cacheDir = context.getCacheDir();
-            File videoFile = new File(cacheDir, "video.mp4");
-            fileOutputStream = new FileOutputStream(videoFile);
-
-            fileOutputStream.write(byteArray);
-            fileOutputStream.flush();
-
-            Log.v("FileWrite", "Archivo escrito con éxito: " + videoFile.getAbsolutePath());
-
-            if (videoFile.exists()) {
-                Log.d("FileWrite", "El archivo existe: " + videoFile.getAbsolutePath());
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        playVideo(videoView, videoFile);
-                    }
-                });
-
-            } else {
-                Log.e("FileWrite", "El archivo no se ha creado.");
-            }
-        } catch (IOException e) {
-            Log.e("FileWrite", "Error escribiendo el archivo: " + e.getMessage(), e);
-        } finally {
-            if (fileOutputStream != null) {
-                try {
-                    fileOutputStream.close();
-                } catch (IOException e) {
-                    Log.e("FileWrite", "Error cerrando FileOutputStream: " + e.getMessage(), e);
-                }
-            }
-        }
-    }
-
-    private void playVideo(VideoView videoView, File videoFile) {
+    private void iniciarVideo(VideoView videoView, File videoFile) {
+        ponerEspera();
         videoView.setVideoURI(Uri.fromFile(videoFile));
 
         MediaController mediaController = new MediaController(videoView.getContext());

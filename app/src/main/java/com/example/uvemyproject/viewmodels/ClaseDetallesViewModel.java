@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.uvemyproject.InicioSesion;
 import com.example.uvemyproject.api.ApiClient;
 import com.example.uvemyproject.api.services.ClaseServices;
 import com.example.uvemyproject.api.services.ComentarioServices;
@@ -191,6 +192,7 @@ public class ClaseDetallesViewModel extends ViewModel implements INotificacionRe
                                 ClaseDTO clase = claseActual.getValue();
                                 clase.setDocumentos(documentosRecuperados);
                                 claseActual.setValue(clase);
+                                recuperarVideo();
                             }
                         } else {
                             status.setValue(StatusRequest.ERROR);
@@ -211,6 +213,7 @@ public class ClaseDetallesViewModel extends ViewModel implements INotificacionRe
         if(idDocumentos == null || idDocumentos.length == 0){
             status.setValue(StatusRequest.ERROR);
             Log.e("Error BD", "No tiene asociados documentos");
+            recuperarVideo();
         }
     }
 
@@ -242,10 +245,27 @@ public class ClaseDetallesViewModel extends ViewModel implements INotificacionRe
         return 0;
     }
 
+    public void recuperarVideo(){
+        status.setValue(StatusRequest.ESPERA);
+        VideoGrpc.descargarVideo(claseActual.getValue().getVideoId(), this);
+    }
+
     @Override
     public void notificarReciboExitoso(ByteArrayOutputStream output) {
-        Log.d("gRPC", "Video recibido desde interfaz");
-        status.postValue(StatusRequest.DONE);
+        byte[] video = output.toByteArray();
+        File archivoVideo = FileUtil.convertirAFileArrayByte(InicioSesion.obtenerContexto(), video);
+        if(archivoVideo != null){
+            status.postValue(StatusRequest.DONE);
+            DocumentoDTO documentoDTO = new DocumentoDTO();
+            documentoDTO.setFile(archivoVideo);
+            documentoDTO.setIdClase(claseActual.getValue().getIdClase());
+
+            ClaseDTO claseModificada = claseActual.getValue();
+            claseModificada.setVideoDocumento(documentoDTO);
+            claseActual.postValue(claseModificada);
+        }else{
+            status.postValue(StatusRequest.ERROR);
+        }
     }
 
     @Override

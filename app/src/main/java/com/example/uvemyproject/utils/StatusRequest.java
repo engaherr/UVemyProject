@@ -6,5 +6,6 @@ public enum StatusRequest {
     DONE,
     NO_CONTENT,
     BAD_REQUEST,
-    FORBIDDEN
+    FORBIDDEN,
+    ESPERA
 }
