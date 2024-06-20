@@ -32,6 +32,7 @@ import com.example.uvemyproject.databinding.FragmentFormularioCursoBinding;
 import com.example.uvemyproject.dto.CrearCursoDTO;
 import com.example.uvemyproject.dto.DocumentoDTO;
 import com.example.uvemyproject.utils.StatusRequest;
+import com.example.uvemyproject.utils.TamanioDocumentos;
 import com.example.uvemyproject.viewmodels.FormularioClaseViewModel;
 import com.example.uvemyproject.viewmodels.FormularioCursoViewModel;
 
@@ -259,8 +260,8 @@ public class FormularioCurso extends Fragment {
 
     private void openGallery(){
         Intent galleryIntent = new Intent(Intent.ACTION_PICK);
-        galleryIntent.setType("image/png");
-        galleryLauncher.launch(Intent.createChooser(galleryIntent, "Selecciona una imagen PNG"));
+        galleryIntent.setType("image/*");
+        galleryLauncher.launch(Intent.createChooser(galleryIntent, "Selecciona una imagen"));
     }
 
     private ActivityResultLauncher<Intent> galleryLauncher =
@@ -270,21 +271,25 @@ public class FormularioCurso extends Fragment {
                     if(data!=null){
                         Uri selectedImageUri = data.getData();
                         if (selectedImageUri != null) {
-                            try {
-                                InputStream inputStream = getActivity().getContentResolver().openInputStream(selectedImageUri);
-                                int fileSize = inputStream.available();
-                                inputStream.close();
-
-                                if (fileSize > 1024 * 1024) {
-                                    Toast.makeText(getContext(), "La imagen seleccionada es demasiado grande (máximo 1MB)", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImageUri);
-                                    binding.imgView.setImageBitmap(bitmap);
-                                    byte[] _arrayImagen = bitmapToByteArray(bitmap);
-                                    viewModel.setArrayBites(_arrayImagen);
+                            String mimeType = getActivity().getContentResolver().getType(selectedImageUri);
+                            if (mimeType != null && mimeType.startsWith("image/") && mimeType.equals("image/png")) {
+                                try {
+                                    InputStream inputStream = getActivity().getContentResolver().openInputStream(selectedImageUri);
+                                    int fileSize = inputStream.available();
+                                    inputStream.close();
+                                    if (fileSize > (1024 * 1024)/2) {
+                                        Toast.makeText(getContext(), "La imagen seleccionada es demasiado grande (máximo 0.5MB)", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImageUri);
+                                        binding.imgView.setImageBitmap(bitmap);
+                                        byte[] _arrayImagen = bitmapToByteArray(bitmap);
+                                        viewModel.setArrayBites(_arrayImagen);
+                                    }
+                                } catch (IOException e) {
+                                    Toast.makeText(getContext(), "Error al cargar la imagen", Toast.LENGTH_SHORT).show();
                                 }
-                            } catch (IOException e) {
-                                Toast.makeText(getContext(), "Error al cargar la imagen", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getContext(), "Selecciona una imagen PNG", Toast.LENGTH_SHORT).show();
                             }
                         } else {
                             Toast.makeText(getContext(), "No se pudo obtener la imagen seleccionada", Toast.LENGTH_SHORT).show();
