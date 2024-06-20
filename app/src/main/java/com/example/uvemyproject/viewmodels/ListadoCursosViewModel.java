@@ -136,7 +136,7 @@ public class ListadoCursosViewModel extends ViewModel {
             List<ListaCursoDTO> cursos = response.body();
             if (cursos != null && !cursos.isEmpty()) {
                 for (ListaCursoDTO curso : cursos) {
-                    Log.d("Log", "ID Curso: " + curso.getIdCurso() + ", Nombre: " + curso.getTitulo() + " ID: " + curso.getDocumentos().get(0).getIdDocumento());
+                    Log.d("Log", "ID Curso: " + curso.getIdCurso() + ", Nombre: " + curso.getTitulo() + " ID: ");
                 }
             } else {
                 Log.d("Log", "No se encontraron clases");

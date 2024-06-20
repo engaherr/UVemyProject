@@ -79,19 +79,16 @@ public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCu
                         break;
                     case ERROR:
                         Toast.makeText(requireContext(), "Error en la solicitud", Toast.LENGTH_LONG).show();
-                        _paginaActual = _paginaAnterior;
                         binding.txtViewPagina.setText("Pagina "+(_paginaActual+1));
                         quitarEspera();
                         break;
                     case ERROR_CONEXION:
                         Toast.makeText(requireContext(), "Error de conexión", Toast.LENGTH_LONG).show();
-                        _paginaActual = _paginaAnterior;
                         binding.txtViewPagina.setText("Pagina "+(_paginaActual+1));
                         quitarEspera();
                         break;
                     case NOT_FOUND:
                         Toast.makeText(requireContext(), "No existen cursos", Toast.LENGTH_LONG).show();
-                        _paginaActual = _paginaAnterior;
                         if(_paginaActual > 0){
                             anteriorPagina();
                         }
@@ -124,7 +121,7 @@ public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCu
 
     private void recuperarCursos(int pagina, String tituloCurso, int calificacionCurso, int idTipoCurso, int idEtiqueta){
         viewModel.recuperarCursos(pagina, tituloCurso, calificacionCurso, idTipoCurso, idEtiqueta);
-
+        Log.d("Log","pagina"+pagina+" tituloCurso"+tituloCurso+" calificacion"+calificacionCurso+" idTipoCurso"+idTipoCurso+" idEtiqueta"+idEtiqueta );
         if(tituloCurso != null && !tituloCurso.isEmpty()){
             binding.txtViewCurso.setText("Cursos con titulo "+tituloCurso);
         } else if(calificacionCurso != 0){
