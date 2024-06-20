@@ -67,12 +67,11 @@
                         tools:context=".MainActivity">
 
                         <TextView
-                            android:id="@id/txtViewTitulo"
+                            android:id="@+id/txtViewPagina"
                             style="@style/styleTxtViewTitulo"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@android:color/black"
-                            android:layout_centerHorizontal="true"
                              />
 
                     </LinearLayout>

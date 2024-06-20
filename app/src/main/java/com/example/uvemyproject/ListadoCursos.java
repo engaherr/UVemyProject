@@ -112,18 +112,18 @@ public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCu
 
     private void recuperarCursos(int pagina, String tituloCurso, int calificacionCurso, int idTipoCurso, int idEtiqueta){
         viewModel.recuperarCursos(pagina, tituloCurso, calificacionCurso, idTipoCurso, idEtiqueta);
-        /*
+
         if(tituloCurso != null && !tituloCurso.isEmpty()){
-            binding.txtViewTitulo.setText("Pagina "+pagina+1+" titulo="+tituloCurso);
+            binding.txtViewPagina.setText("Pagina "+pagina+1+" titulo="+tituloCurso);
         } else if(calificacionCurso != 0){
-            binding.txtViewTitulo.setText("Pagina "+pagina+1+" calificacion="+calificacionCurso);
+            binding.txtViewPagina.setText("Pagina "+pagina+1+" calificacion="+calificacionCurso);
         } else if(idTipoCurso != 0){
-            binding.txtViewTitulo.setText("Pagina "+pagina+1+" tipoCurso="+_nombreTipoCurso);
+            binding.txtViewPagina.setText("Pagina "+pagina+1+" tipoCurso="+_nombreTipoCurso);
         } else if(idEtiqueta != 0){
-            binding.txtViewTitulo.setText("Pagina "+pagina+1+" etiqueta="+_nombreEtiqueta);
+            binding.txtViewPagina.setText("Pagina "+pagina+1+" etiqueta="+_nombreEtiqueta);
         } else{
-            binding.txtViewTitulo.setText("Pagina "+pagina+1);
-        }*/
+            binding.txtViewPagina.setText("Pagina "+pagina+1);
+        }
     }
     private void anteriorPagina()
     {
