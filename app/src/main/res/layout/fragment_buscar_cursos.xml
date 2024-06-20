@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_darkblue"
+                android:paddingHorizontal="0dp"
+                android:layout_marginBottom="-11dp"
+                android:paddingVertical="10dp">
+
+                <TextView
+                    style="@style/styleTxtViewTitulo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="Buscar Cursos" />
+
+                <ImageView
+                    android:id="@+id/imgViewRegresar"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="15dp"
+                    android:contentDescription="Regresar"
+                    android:src="@drawable/previous" />
+            </RelativeLayout>
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="45dp">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="30dp">
+
+                    <LinearLayout
+                        android:id="@+id/main"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/white"
+                        android:orientation="vertical"
+                        >
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginHorizontal="16dp"
+                            android:padding="10dp">
+
+                            <ImageView
+                                android:id="@+id/imgBuscar"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_search"
+                                android:contentDescription="Buscar"
+                                android:layout_gravity="center_vertical"
+                                android:padding="8dp"
+                                android:onClick="onBuscarClick"/>
+
+                            <EditText
+                                android:id="@+id/edtBuscarCursos"
+                                android:layout_width="match_parent"
+                                android:layout_height="50dp"
+                                android:hint="Buscar cursos..."
+                                android:paddingStart="8dp"
+                                android:textColor="@android:color/black"
+                                android:textColorHint="@android:color/darker_gray"/>
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/white"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:gravity="center_vertical">
+
+                            <Spinner
+                                android:id="@+id/spinnerCalificacion"
+                                android:layout_width="0dp"
+                                android:layout_height="50dp"
+                                android:layout_weight="1"
+                                style="@style/styleSpinnerCalificaciones"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginEnd="10dp" />
+
+                            <LinearLayout
+                                android:id="@+id/lnrLayoutAgregarClase"
+                                android:layout_width="wrap_content"
+                                android:layout_height="45dp"
+                                android:background="@drawable/background_lightergreen"
+                                android:paddingVertical="10dp"
+                                android:orientation="horizontal"
+                                android:layout_gravity="center"
+                                android:gravity="center">
+
+                                <TextView
+                                    android:id="@+id/txtViewCrearCurso"
+                                    style="@style/styleTxtViewBotonesCurso"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Crear curso" />
+
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/background_middleblue">
+
+                            <TextView
+                                android:id="@+id/txtViewTituloTiposCursos"
+                                style="@style/styleTxtViewTitulo"
+                                android:layout_width="wrap_content"
+                                android:layout_height="40dp"
+                                android:layout_centerHorizontal="true"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginTop="10dp"
+                                android:layout_marginEnd="10dp"
+                                android:layout_marginBottom="10dp"
+                                android:fontFamily="@font/nunito_italic"
+                                android:text="Tipos de cursos" />
+
+                        </RelativeLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp"
+                            android:orientation="horizontal"
+                            android:padding="10dp"
+                            android:background="@drawable/background_lightblue">
+
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/rcyViewListaTiposCursos"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:layout_marginStart="5dp"
+                                android:padding="5dp"/>
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/background_middleblue">
+
+                            <TextView
+                                android:id="@+id/txtViewTituloEtiquetas"
+                                style="@style/styleTxtViewTitulo"
+                                android:layout_width="wrap_content"
+                                android:layout_height="40dp"
+                                android:layout_centerHorizontal="true"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginTop="10dp"
+                                android:layout_marginEnd="10dp"
+                                android:layout_marginBottom="10dp"
+                                android:fontFamily="@font/nunito_italic"
+                                android:text="Navegar por las categorias" />
+
+                        </RelativeLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="10dp"
+                            android:background="@drawable/background_lightblue">
+
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/rcyViewListaEtiquetas"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:layout_marginStart="5dp"
+                                android:padding="5dp"/>
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </FrameLayout>
+            </ScrollView>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/progress_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#20000000"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="300dp"
+                android:layout_height="100dp"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:backgroundTint="#8DBC92">
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"/>
+            </androidx.cardview.widget.CardView>
+        </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     FormularioUsuario formularioUsuario = new FormularioUsuario(true);
     CursoDetallesPrincipal cursoDetallesPrincipal = new CursoDetallesPrincipal();
+    BuscarCursos buscarCursos = new BuscarCursos();
     ListadoCursos listadoCursos = new ListadoCursos();
 
     @Override
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (itemId == BUSQUEDA_ID) {
 
                     getSupportFragmentManager().beginTransaction().replace(
-                            R.id.container, cursoDetallesPrincipal).commit();
+                            R.id.container, buscarCursos).commit();
                     return true;
                 } else if (itemId == PERFIL_ID) {
                     getSupportFragmentManager().beginTransaction().replace(

@@ -1,4 +1,4 @@
-package com.example.uvemyproject.viewmodels;
+package com.example.uvemyproject;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -10,11 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.uvemyproject.R;
-import com.example.uvemyproject.databinding.FragmentListadoCursosBinding;
 import com.example.uvemyproject.databinding.ListaCursosItemBinding;
 import com.example.uvemyproject.dto.ListaCursoDTO;
 import com.example.uvemyproject.dto.ListaDocumentoDTO;
@@ -22,12 +19,9 @@ import com.example.uvemyproject.dto.ListaDocumentoDTO;
 import java.util.List;
 
 public class ListadoCursosAdapter extends RecyclerView.Adapter<ListadoCursosAdapter.CursoViewHolder> {
-
     private List<ListaCursoDTO> cursos;
     private Context context;
     private OnCursoClickListener onCursoClickListener;
-
-
     public static class CursoViewHolder extends RecyclerView.ViewHolder {
         ListaCursosItemBinding binding;
         ImageView imageView;
@@ -41,7 +35,6 @@ public class ListadoCursosAdapter extends RecyclerView.Adapter<ListadoCursosAdap
 
         }
     }
-
     @Override
     public CursoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.lista_cursos_item, parent, false);
