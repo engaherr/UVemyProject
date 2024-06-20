@@ -89,9 +89,9 @@ public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCu
                         break;
                     case NOT_FOUND:
                         Toast.makeText(requireContext(), "No existen cursos", Toast.LENGTH_LONG).show();
-                        if(_paginaActual > 0){
+                        /*if(_paginaActual > 0){
                             anteriorPagina();
-                        }
+                        }*/
                         binding.txtViewPagina.setText("Pagina "+(_paginaActual+1));
                         quitarEspera();
                         break;
