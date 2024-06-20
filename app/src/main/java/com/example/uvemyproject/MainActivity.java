@@ -31,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
     FormularioUsuario formularioUsuario = new FormularioUsuario(true);
     CursoDetallesPrincipal cursoDetallesPrincipal = new CursoDetallesPrincipal();
     ListadoCursos listadoCursos = new ListadoCursos();
-    FormularioClase formularioCurso = new FormularioClase();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

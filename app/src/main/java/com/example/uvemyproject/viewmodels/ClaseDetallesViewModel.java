@@ -50,7 +50,6 @@ public class ClaseDetallesViewModel extends ViewModel implements INotificacionRe
     private final MutableLiveData<CursoDTO> cursoActual = new MutableLiveData<>();
     private final MutableLiveData<List<ComentarioDTO>> comentarios = new MutableLiveData<>();
     private final MutableLiveData<StatusRequest> statusEnviarComentario = new MutableLiveData<>();
-    private final MutableLiveData<ByteArrayInputStream> streamVideo = new MutableLiveData<>();
 
     public LiveData<StatusRequest> getStatus(){
         return status;
@@ -64,7 +63,6 @@ public class ClaseDetallesViewModel extends ViewModel implements INotificacionRe
     public LiveData<ClaseDTO> getClaseActual() { return claseActual; }
     public LiveData<List<ComentarioDTO>> getComentarios() { return comentarios; }
     public LiveData<StatusRequest> getStatusEnviarComentario() { return statusEnviarComentario; }
-    public LiveData<ByteArrayInputStream> getStreamVideo() { return streamVideo; }
     public void recuperarDetallesClase(int idClase){
         ClaseServices service = ApiClient.getInstance().getClaseServices();
         String auth = "Bearer " + SingletonUsuario.getJwt();
@@ -212,7 +210,6 @@ public class ClaseDetallesViewModel extends ViewModel implements INotificacionRe
         }
         if(idDocumentos == null || idDocumentos.length == 0){
             status.setValue(StatusRequest.ERROR);
-            recuperarVideo();
             Log.e("Error BD", "No tiene asociados documentos");
         }
     }

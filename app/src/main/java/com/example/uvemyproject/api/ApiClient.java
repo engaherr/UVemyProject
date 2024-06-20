@@ -117,11 +117,13 @@ public class ApiClient {
         return perfilServices;
     }
 
-    public UsuarioServices getUsuarioServices(){
-        if(usuarioServices == null) {
+    public UsuarioServices getUsuarioServices() {
+        if (usuarioServices == null) {
             usuarioServices = getRetrofit().create(UsuarioServices.class);
         }
         return usuarioServices;
+    }
+
     public ComentarioServices getComentarioServices(){
         if(comentarioServices == null) {
             comentarioServices = getRetrofit().create(ComentarioServices.class);

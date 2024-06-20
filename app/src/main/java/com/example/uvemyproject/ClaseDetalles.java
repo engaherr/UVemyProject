@@ -39,6 +39,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 
 public class ClaseDetalles extends Fragment implements INotificacionReciboVideo {
+    private boolean videoRecuperado = false;
     private FragmentClaseDetallesBinding binding;
     private ClaseDetallesViewModel viewModel;
     private FormularioDetallesClaseViewModel viewModelCompartido;
@@ -47,8 +48,6 @@ public class ClaseDetalles extends Fragment implements INotificacionReciboVideo 
     private ComentarioAdapter comentarioAdapter;
     private int documentoSeleccionado = -1;
     private static final int PICK_DIRECTORY_REQUEST_CODE = 1;
-    private File videoTempFile;
-    private BufferedOutputStream bufferedOutputStream;
 
     public ClaseDetalles() {
     }
@@ -90,21 +89,6 @@ public class ClaseDetalles extends Fragment implements INotificacionReciboVideo 
 
         obtenerIdClase();
         return binding.getRoot();
-    }
-
-    private File streamToFile(InputStream inputStream) throws IOException {
-        Log.d("gRPC", "streamToFile: creando archivo temporal");
-        File tempFile = new File(getContext().getCacheDir(), "video.mp4");
-        try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-
-            Log.d("gRPC", "streamToFile: archivo temporal creado" + tempFile.getAbsolutePath());
-            return tempFile;
-        }
     }
 
     private void enviarComentario() {
@@ -158,7 +142,6 @@ public class ClaseDetalles extends Fragment implements INotificacionReciboVideo 
         });
     }
 
-    private boolean videoRecuperado = false;
     private void observarClase(){
         viewModel.getClaseActual().observe(getViewLifecycleOwner(), claseDTO -> {
             if(claseDTO != null){
