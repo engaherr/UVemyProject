@@ -118,7 +118,6 @@ public class VideoGrpc {
         stub.recibirVideoClase(request, new StreamObserver<Documento.VideoPartesEnvio>() {
             @Override
             public void onNext(Documento.VideoPartesEnvio mensaje) {
-                Log.i("gRPC", "Recibiendo chunk" + mensaje);
                 if (mensaje.getEnvioCase() == Documento.VideoPartesEnvio.EnvioCase.CHUNKS) {
                     try {
                         stream.write(mensaje.getChunks().toByteArray());

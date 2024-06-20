@@ -40,6 +40,7 @@ public class FormularioClaseViewModel extends ViewModel implements INotificacion
     private final MutableLiveData<ClaseDTO> claseActual = new MutableLiveData<>();
     private MutableLiveData<List<DocumentoDTO>> documentosClase = new MutableLiveData<>();
     private MutableLiveData<DocumentoDTO> videoClase = new MutableLiveData<>();
+    private boolean haSidoModificadoVideo = false;
 
     public LiveData<StatusRequest> getStatus(){
         return status;
@@ -161,7 +162,11 @@ public class FormularioClaseViewModel extends ViewModel implements INotificacion
         if(esActualizar){
             video.setIdDocumento(claseActual.getValue().getVideoId());
         }
-        VideoGrpc.enviarVideo(video, idClase, this);
+        if(haSidoModificadoVideo){
+            VideoGrpc.enviarVideo(video, idClase, this);
+        }else{
+            envioExitosoVideo();
+        }
     }
 
     public void actualizarClase(ClaseDTO claseActualizada){
@@ -337,7 +342,10 @@ public class FormularioClaseViewModel extends ViewModel implements INotificacion
         documentosClase.setValue(listaActual);
     }
 
-    public void agregarVideo(File video){
+    public void agregarVideo(File video, boolean esCargaInicial){
+        if(!esCargaInicial){
+            haSidoModificadoVideo = true;
+        }
         String fileName = obtenerNombreSinExtension(video.getName());
         DocumentoDTO documento = new DocumentoDTO();
         documento.setFile(video);

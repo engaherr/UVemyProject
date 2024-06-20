@@ -180,7 +180,7 @@ public class FormularioClase extends Fragment {
         }
 
         if(clase.getVideoDocumento() != null){
-            iniciarVideo(clase.getVideoDocumento().getFile(), Uri.fromFile(clase.getVideoDocumento().getFile()));
+            iniciarVideo(clase.getVideoDocumento().getFile(), Uri.fromFile(clase.getVideoDocumento().getFile()), true);
         }
         quitarEspera();
     }
@@ -351,15 +351,15 @@ public class FormularioClase extends Fragment {
         if(file != null){
             int tamanioArchivo = Integer.parseInt(String.valueOf(file.length()/1024));
             if(tamanioArchivo < TamanioDocumentos.TAMANIO_MAXIMO_VIDEOS_KB){
-                iniciarVideo(file, uri);
+                iniciarVideo(file, uri, false);
             }else{
                 Toast.makeText(getContext(),"El video supera el tamaño máximo de " + TamanioDocumentos.TAMANIO_MAXIMO_VIDEOS_KB + "KB", Toast.LENGTH_SHORT).show();
             }
 
         }
     }
-    private void iniciarVideo(File file, Uri uri){
-        viewModel.agregarVideo(file);
+    private void iniciarVideo(File file, Uri uri, boolean esCargaInicial){
+        viewModel.agregarVideo(file, esCargaInicial);
 
         binding.videoView.setVideoURI(uri);
         MediaController mediaController = new MediaController(binding.videoView.getContext());
