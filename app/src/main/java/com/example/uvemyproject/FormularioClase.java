@@ -43,9 +43,14 @@ public class FormularioClase extends Fragment {
     private static final int PICK_PDF_FILE = 2;
     private static final int PICK_VIDEO_FILE = 1;
     private DocumentoAdapter adapter;
+    private boolean esModificar;
 
     public FormularioClase() {
 
+    }
+
+    public FormularioClase(boolean esModificar) {
+        this.esModificar = esModificar;
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,7 +77,9 @@ public class FormularioClase extends Fragment {
 
         viewModelCompartido = new ViewModelProvider(requireActivity()).get(FormularioDetallesClaseViewModel.class);
 
-        cargarClaseModificar();
+        if(esModificar){
+            cargarClaseModificar();
+        }
 
         adapter = new DocumentoAdapter(true);
         binding.rcyViewListadoDocumentos.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -104,7 +111,7 @@ public class FormularioClase extends Fragment {
         binding.btnGuardarClase.setOnClickListener(v -> {
             resetearCampos();
             if(validarCampos()){
-                if(viewModel.getClaseActual().getValue() == null){
+                if(!esModificar){
                     guardarClase();
                 }else{
                     actualizarClase();
@@ -116,7 +123,7 @@ public class FormularioClase extends Fragment {
         binding.btnAgregarVideo.setOnClickListener(v -> mostrarFileChooserVideo());
         binding.btnEliminarVideo.setOnClickListener(v -> eliminarVideo());
 
-        if(viewModel.getClaseActual().getValue() != null){
+        if(viewModel.getClaseActual().getValue() != null && esModificar){
             cargarDatosClaseActual(viewModel.getClaseActual().getValue());
         }
 
@@ -138,16 +145,22 @@ public class FormularioClase extends Fragment {
             ((MainActivity) getActivity()).cambiarFragmentoPrincipal(claseDetalles);
         }else{
             CursoDetallesPrincipal cursoDetalles = new CursoDetallesPrincipal();
-            //TO_DO Agregar Bundle
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("clave_curso", viewModelCompartido.obtenerCurso().getValue());
+            cursoDetalles.setArguments(bundle);
+
             ((MainActivity) getActivity()).cambiarFragmentoPrincipal(cursoDetalles);
         }
     }
     private void cargarDatosClaseActual(ClaseDTO clase){
+        ponerEspera();
         viewModel.getClaseActual().observe(getViewLifecycleOwner(), claseEliminada ->{
             if(claseEliminada == null){
                 Toast.makeText(getContext(),"La clase se eliminó con éxito", Toast.LENGTH_SHORT).show();
                 CursoDetallesPrincipal cursoDetalles = new CursoDetallesPrincipal();
-                //TO_DO Agregar bundle
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("clave_curso", viewModelCompartido.obtenerCurso().getValue());
+                cursoDetalles.setArguments(bundle);
                 ((MainActivity) getActivity()).cambiarFragmentoPrincipal(cursoDetalles);
             }
         });
@@ -161,11 +174,17 @@ public class FormularioClase extends Fragment {
             mostrarConfirmacionEliminacion();
         });
 
-        adapter.submitList(clase.getDocumentos());
-        adapter.notifyDataSetChanged();
+        if(clase.getDocumentos() != null){
+            adapter.submitList(clase.getDocumentos());
+            adapter.notifyDataSetChanged();
+        }
 
-        //Falta video
+        if(clase.getVideoDocumento() != null){
+            iniciarVideo(clase.getVideoDocumento().getFile(), Uri.fromFile(clase.getVideoDocumento().getFile()));
+        }
+        quitarEspera();
     }
+
     private void mostrarConfirmacionEliminacion(){
         new AlertDialog.Builder(getContext()).setTitle("Confirmar eliminar clase")
                 .setMessage("¿Desea eliminar la clase?").setIcon(android.R.drawable.ic_dialog_alert)
@@ -332,25 +351,28 @@ public class FormularioClase extends Fragment {
         if(file != null){
             int tamanioArchivo = Integer.parseInt(String.valueOf(file.length()/1024));
             if(tamanioArchivo < TamanioDocumentos.TAMANIO_MAXIMO_VIDEOS_KB){
-                viewModel.agregarVideo(file);
-                binding.videoView.setVideoURI(uri);
-                MediaController mediaController = new MediaController(getContext());
-
-                binding.videoView.setMediaController(mediaController);
-                mediaController.setAnchorView(binding.videoView);
-                binding.videoView.setVisibility(View.VISIBLE);
-
-                binding.btnAgregarVideo.setEnabled(false);
-                binding.btnEliminarVideo.setEnabled(true);
-                setDarkBlueStyle(binding.btnEliminarVideo);
-                setLightBlueStyle(binding.btnAgregarVideo);
+                iniciarVideo(file, uri);
             }else{
                 Toast.makeText(getContext(),"El video supera el tamaño máximo de " + TamanioDocumentos.TAMANIO_MAXIMO_VIDEOS_KB + "KB", Toast.LENGTH_SHORT).show();
             }
 
         }
     }
+    private void iniciarVideo(File file, Uri uri){
+        viewModel.agregarVideo(file);
 
+        binding.videoView.setVideoURI(uri);
+        MediaController mediaController = new MediaController(binding.videoView.getContext());
+
+        binding.videoView.setMediaController(mediaController);
+        mediaController.setAnchorView(binding.videoView);
+        binding.videoView.setVisibility(View.VISIBLE);
+
+        binding.btnAgregarVideo.setEnabled(false);
+        binding.btnEliminarVideo.setEnabled(true);
+        setDarkBlueStyle(binding.btnEliminarVideo);
+        setLightBlueStyle(binding.btnAgregarVideo);
+    }
     private void eliminarVideo(){
         viewModel.eliminarVideo();
         binding.videoView.stopPlayback();
@@ -380,4 +402,6 @@ public class FormularioClase extends Fragment {
     private void quitarEspera(){
         binding.progressOverlay.setVisibility(View.GONE);
     }
+
+
 }

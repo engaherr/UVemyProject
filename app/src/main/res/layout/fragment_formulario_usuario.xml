@@ -39,6 +39,15 @@
                     android:layout_centerVertical="true"
                     android:layout_marginStart="15dp"
                     android:src="@drawable/previous" />
+                <ImageView
+                    android:id="@+id/imgViewCerrarSesion"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:contentDescription="Cerrar sesión"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="15dp"
+                    android:visibility="gone"
+                    android:src="@drawable/ic_logout_door" />
 
             </RelativeLayout>
 

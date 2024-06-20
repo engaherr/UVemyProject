@@ -175,7 +175,7 @@
                                 android:text="Comentarios:" />
 
                             <androidx.constraintlayout.widget.ConstraintLayout
-                                android:id="@+id/comments_section"
+                                android:id="@+id/cnsLayoutComentarios"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/background_rounded_border"
@@ -183,7 +183,7 @@
                                 android:padding="3dp">
 
                                 <LinearLayout
-                                    android:id="@+id/comment"
+                                    android:id="@+id/lnrLayoutAgregarComentario"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@drawable/background_middleblue"
@@ -193,24 +193,25 @@
                                     tools:layout_editor_absoluteX="3dp">
 
                                     <EditText
-                                        android:id="@+id/txt_message"
+                                        android:id="@+id/edtTextComentario"
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
+                                        android:fontFamily="@font/nunito_regular"
                                         android:layout_weight="1"
                                         android:background="@drawable/background_rounded_border_white"
-                                        android:enabled="false"
                                         android:gravity="start|top"
                                         android:hint="Escribe un comentario..."
                                         android:importantForAutofill="no"
                                         android:inputType="textMultiLine"
                                         android:maxLines="4"
+                                        android:maxLength="300"
                                         android:minHeight="48dp"
                                         android:padding="10dp"
                                         android:textColor="@color/white"
                                         android:textColorHint="#E6DAFF" />
 
                                     <ImageButton
-                                        android:id="@+id/btn_send"
+                                        android:id="@+id/btnEnviarComentario"
                                         android:layout_width="48dp"
                                         android:layout_height="48dp"
                                         android:layout_gravity="bottom"
@@ -222,14 +223,16 @@
                                 </LinearLayout>
 
                                 <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/rcyViewComentarios"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:maxHeight="500dp"
                                     android:background="@drawable/background_whitegradend"
                                     android:padding="2dp"
-                                    app:layout_constraintTop_toBottomOf="@+id/comment"
+                                    app:layout_constraintTop_toBottomOf="@+id/lnrLayoutAgregarComentario"
                                     tools:itemCount="2"
                                     tools:layout_editor_absoluteX="3dp"
-                                    tools:listitem="@layout/commentary_item" />
+                                    tools:listitem="@layout/comentario_item" />
 
 
                             </androidx.constraintlayout.widget.ConstraintLayout>

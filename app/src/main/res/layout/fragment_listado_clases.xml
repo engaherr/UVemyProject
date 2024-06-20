@@ -9,8 +9,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ListadoClases"
-        android:layout_marginBottom="30dp">
+        tools:context=".ListadoClases">
 
         <LinearLayout
             android:id="@+id/main"
@@ -28,11 +27,11 @@
                 <TextView
                     android:id="@+id/txtViewTitulo"
                     style="@style/styleTxtViewTituloCurso"
-                    android:fontFamily="@font/nunito_italic"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:text="Listado de clases"/>
+                    android:fontFamily="@font/nunito_italic"
+                    android:text="Listado de clases" />
 
                 <ImageView
                     android:layout_width="35dp"
@@ -43,42 +42,53 @@
 
             </RelativeLayout>
 
-            <LinearLayout
-                android:id="@+id/lnrLayoutAgregarClase"
-                android:layout_marginTop="10dp"
-                android:layout_width="280dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/background_lightergreen"
-                android:paddingVertical="10dp"
-                android:orientation="horizontal"
-                android:layout_gravity="center"
-                android:gravity="center_horizontal">
 
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/more"
-                    android:layout_gravity="center_horizontal"/>
 
-                <TextView
-                    style="@style/styleTxtViewBotonesCurso"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Agregar clase"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="65dp">
 
-            </LinearLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rcyViewListadoClases"
-                android:layout_width="match_parent"
-                android:layout_height="580dp"
-                android:layout_marginHorizontal="15dp"
-                android:layout_marginVertical="10dp"
-                android:paddingTop="10dp"
-                android:background="@drawable/background_lightblue">
+                    <LinearLayout
+                        android:id="@+id/lnrLayoutAgregarClase"
+                        android:layout_width="280dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/background_lightergreen"
+                        android:gravity="center_horizontal"
+                        android:orientation="horizontal"
+                        android:paddingVertical="10dp"
+                        android:visibility="gone">
 
-            </androidx.recyclerview.widget.RecyclerView>
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center_horizontal"
+                            android:src="@drawable/more" />
 
+                        <TextView
+                            style="@style/styleTxtViewBotonesCurso"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Agregar clase" />
+
+                    </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rcyViewListadoClases"
+                        android:layout_width="match_parent"
+                        android:layout_height="580dp"
+                        android:layout_marginHorizontal="15dp"
+                        android:layout_marginVertical="10dp"
+                        android:background="@drawable/background_lightblue"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp">
+
+                    </androidx.recyclerview.widget.RecyclerView>
+                </LinearLayout>
         </LinearLayout>
 
     </FrameLayout>

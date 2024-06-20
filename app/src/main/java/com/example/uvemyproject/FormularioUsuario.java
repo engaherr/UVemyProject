@@ -1,15 +1,23 @@
 package com.example.uvemyproject;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
@@ -21,15 +29,84 @@ import com.example.uvemyproject.utils.SingletonUsuario;
 import com.example.uvemyproject.utils.StatusRequest;
 import com.example.uvemyproject.viewmodels.FormularioUsuarioViewModel;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class FormularioUsuario extends Fragment {
+
+    private static final int TAMANO_MAXIMO_MB = 1024 * 1024;
 
     private FragmentFormularioUsuarioBinding binding;
     private FormularioUsuarioViewModel viewModel;
     boolean esActualizacion;
     boolean esContrasenaVisible;
     boolean esContrasenaRepetidaVisible;
+
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    abrirGaleria();
+                } else {
+                    Toast.makeText(getActivity(), "Permiso denegado para acceder a la galeria",
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+
+    private final ActivityResultLauncher<Intent> galeriaLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result ->{
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    Uri imagenSeleccionadaUri = result.getData().getData();
+                    try {
+                        File file = getFileFromUri(imagenSeleccionadaUri);
+
+                        if (file.length() > TAMANO_MAXIMO_MB) {
+                            Toast.makeText(getActivity(), "Imagen demasiado grande. Debe ser menor a 1MB",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            viewModel.subirImagenPerfil(file);
+                        }
+                    } catch (FileNotFoundException e) {
+                        Log.e("FormularioUsuario", "Error al cargar la imagen", e);
+                        Toast.makeText(getContext(), "Imagen no encontrada. Intente de nuevo",
+                                Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        Log.e("FormularioUsuario", "Error al cargar la imagen", e);
+                        Toast.makeText(getContext(), "Error al cargar la imagen. Intente de nuevo",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+    private File getFileFromUri(Uri imagenSeleccionadaUri) throws IOException {
+        File file = new File(getContext().getCacheDir(), "foto_perfil.png");
+
+        try (InputStream inputStream = getActivity().getContentResolver().openInputStream(imagenSeleccionadaUri);
+             OutputStream outputStream = Files.newOutputStream(file.toPath())) {
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+
+            if (inputStream != null) {
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+            }
+        }
+
+        return file;
+    }
+
+    private void abrirGaleria() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,"image/png");
+        galeriaLauncher.launch(intent);
+    }
 
     public FormularioUsuario() {
     }
@@ -60,6 +137,7 @@ public class FormularioUsuario extends Fragment {
             observarImagenPerfil();
             observarStatusGetFotoPerfil();
             observarStatusActualizarDatos();
+            observarStatusSubirFoto();
         }
 
         setEditTextNombreListener();
@@ -108,6 +186,27 @@ public class FormularioUsuario extends Fragment {
         });
 
         return binding.getRoot();
+    }
+
+    private void observarStatusSubirFoto() {
+        viewModel.getstatusSubirFoto().observe(getViewLifecycleOwner(), status ->{
+            switch (status) {
+                case DONE:
+                    Toast.makeText(getActivity(), "Imagen subida correctamente",
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                case ERROR:
+                    Toast.makeText(getActivity(), "Error al subir la imagen. Intente de nuevo" +
+                                    " o intentélo más tarde",
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                case ERROR_CONEXION:
+                    Toast.makeText(getActivity(), "No hay conexion al servidor. " +
+                                    "Intentelo de nuevo más tarde",
+                            Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        });
     }
 
     private void observarStatusActualizarDatos() {
@@ -164,6 +263,10 @@ public class FormularioUsuario extends Fragment {
         binding.txtViewYaTienesCuenta.setVisibility(View.GONE);
         binding.txtViewIniciarSesion.setVisibility(View.GONE);
         binding.btnModificar.setVisibility(View.VISIBLE);
+        binding.imgViewRegresar.setVisibility(View.GONE);
+        binding.imgViewCerrarSesion.setVisibility(View.VISIBLE);
+
+        binding.imgViewCerrarSesion.setOnClickListener(c -> cerrarSesion());
 
         binding.edtTextNombre.setEnabled(false);
         binding.edtTextApellidos.setEnabled(false);
@@ -174,6 +277,23 @@ public class FormularioUsuario extends Fragment {
         binding.edtTextCorreoElectronico.setText(SingletonUsuario.getCorreoElectronico());
 
         binding.btnModificar.setOnClickListener(c -> setUIModificar());
+    }
+
+    private void cerrarSesion() {
+        SingletonUsuario.setNombres("");
+        SingletonUsuario.setApellidos("");
+        SingletonUsuario.setCorreoElectronico("");
+        SingletonUsuario.setIdsEtiqueta(new int[0]);
+        SingletonUsuario.setIdUsuario(0);
+        SingletonUsuario.setJwt("");
+
+        Intent intent = new Intent(getActivity(), InicioSesion.class);
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        startActivity(intent);
+
+        getActivity().finish();
     }
 
     private void setUIModificar() {
@@ -202,7 +322,11 @@ public class FormularioUsuario extends Fragment {
     }
 
     private void clickSubirImagen() {
-        //TODO: Abrir la galeria
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES);
+        } else {
+            requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
     }
 
     private void clickActualizar() {

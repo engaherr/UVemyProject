@@ -11,6 +11,7 @@ import com.example.uvemyproject.dto.ClaseDTO;
 import com.example.uvemyproject.dto.CursoDTO;
 import com.example.uvemyproject.dto.EtiquetaDTO;
 import com.example.uvemyproject.dto.TipoCursoDTO;
+import com.example.uvemyproject.utils.SingletonUsuario;
 import com.example.uvemyproject.utils.StatusRequest;
 
 import java.util.ArrayList;
@@ -43,7 +44,9 @@ public class BuscarCursosViewModel extends ViewModel {
     }
     public void obtenerEtiquetas() {
         EtiquetaServices service = ApiClient.getInstance().getEtiquetaServices();
-        service.getEtiquetas().enqueue(new Callback<List<EtiquetaDTO>>() {
+        String auth = "Bearer " + SingletonUsuario.getJwt();
+
+        service.getEtiquetas(auth).enqueue(new Callback<List<EtiquetaDTO>>() {
             @Override
             public void onResponse(Call<List<EtiquetaDTO>> call, Response<List<EtiquetaDTO>> response) {
                 if(response.isSuccessful()) {

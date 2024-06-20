@@ -1,10 +1,12 @@
 package com.example.uvemyproject;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -19,6 +21,8 @@ import com.example.uvemyproject.viewmodels.InicioSesionViewModel;
 
 public class InicioSesion extends AppCompatActivity {
 
+    private static Context contexto;
+
     private ActivityInicioSesionBinding binding;
     private InicioSesionViewModel viewModel;
 
@@ -27,6 +31,7 @@ public class InicioSesion extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        contexto = this;
         binding = ActivityInicioSesionBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -103,6 +108,7 @@ public class InicioSesion extends AppCompatActivity {
                 SingletonUsuario.setCorreoElectronico(usuario.getCorreoElectronico());
                 SingletonUsuario.setIdsEtiqueta(usuario.getIdsEtiqueta());
                 SingletonUsuario.setJwt(usuario.getJwt());
+                SingletonUsuario.setEsAdministrador(usuario.getEsAdministrador());
                 redireccionarMenuPrincipal();
             }
         });
@@ -123,7 +129,12 @@ public class InicioSesion extends AppCompatActivity {
     }
 
     private void redireccionarMenuPrincipal() {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent;
+        if (SingletonUsuario.getEsAdministrador() == 1) {
+            intent = new Intent(this, AdminMainActivity.class);
+        } else {
+            intent = new Intent(this, MainActivity.class);
+        }
         startActivity(intent);
         finish();
     }
@@ -177,5 +188,16 @@ public class InicioSesion extends AppCompatActivity {
         binding.cnsLayoutInicioSesion.setVisibility(View.GONE);
         getSupportFragmentManager().beginTransaction().replace(
                 R.id.frmLayoutInicioSesion, fragmentoMostrar).addToBackStack(null).commit();
+    }
+
+    public static Context obtenerContexto(){
+        return contexto;
+    }
+    
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(binding.cnsLayoutInicioSesion.getVisibility() == View.GONE)
+            redireccionarRegistroUsuario();
     }
 }

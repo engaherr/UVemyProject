@@ -65,8 +65,9 @@ public class SeleccionEtiquetasViewModel extends ViewModel {
 
     public void obtenerEtiquetas() {
         EtiquetaServices service = ApiClient.getInstance().getEtiquetaServices();
+        String auth = "Bearer " + SingletonUsuario.getJwt();
 
-        service.getEtiquetas().enqueue(new Callback<List<EtiquetaDTO>>() {
+        service.getEtiquetas(auth).enqueue(new Callback<List<EtiquetaDTO>>() {
             @Override
             public void onResponse(Call<List<EtiquetaDTO>> call, Response<List<EtiquetaDTO>> response) {
                 if(response.isSuccessful()) {

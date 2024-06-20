@@ -10,6 +10,7 @@ public class SingletonUsuario {
     private static String apellidos;
     private static String correoElectronico;
     private static int[] idsEtiqueta;
+    private static int esAdministrador;
 
     public static String getJwt() {
         return jwt;
@@ -57,5 +58,13 @@ public class SingletonUsuario {
 
     public static void setIdsEtiqueta(int[] idsEtiqueta) {
         SingletonUsuario.idsEtiqueta = idsEtiqueta;
+    }
+
+    public static int getEsAdministrador(){
+        return esAdministrador;
+    }
+
+    public static void setEsAdministrador(int esAdministrador){
+        SingletonUsuario.esAdministrador = esAdministrador;
     }
 }

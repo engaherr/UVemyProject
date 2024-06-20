@@ -52,9 +52,6 @@ public class CursoDetallesPrincipalViewModel extends ViewModel {
     }
 
     public void obtenerCurso(CursoDTO cursoN){
-        //ArrayList<ClaseDTO> clases = new ArrayList<ClaseDTO>();
-        //clases.add(new ClaseDTO(1, "Es una clase donde ponemos ciertas cosas", "Figuras como hacer figuras"));
-        //clases.add(new ClaseDTO(2, "Es una clase", "Fromas para mejorar objetcos"));
         CursoServices services = ApiClient.getInstance().getCursoServices();
         String auth = "Bearer " + SingletonUsuario.getJwt();
         services.recuperarCurso(auth, cursoN.getIdCurso()).enqueue(new Callback<CursoDTO>() {

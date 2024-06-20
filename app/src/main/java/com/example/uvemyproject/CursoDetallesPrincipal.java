@@ -23,8 +23,10 @@ import com.example.uvemyproject.dto.CursoDTO;
 import com.example.uvemyproject.dto.EtiquetaDTO;
 import com.example.uvemyproject.interfaces.INotificacionFragmentoClase;
 import com.example.uvemyproject.utils.SingletonUsuario;
+import com.example.uvemyproject.viewmodels.CursoClaseDetallesViewModel;
 import com.example.uvemyproject.viewmodels.CursoDetallesPrincipalViewModel;
 import com.example.uvemyproject.viewmodels.FormularioClaseViewModel;
+import com.example.uvemyproject.viewmodels.FormularioDetallesClaseViewModel;
 
 import org.checkerframework.checker.units.qual.C;
 
@@ -33,6 +35,7 @@ import java.util.List;
 
 public class CursoDetallesPrincipal extends Fragment implements INotificacionFragmentoClase {
 
+    private CursoClaseDetallesViewModel viewModelCompartido;
     private CursoDetallesPrincipalViewModel viewModel;
     private FragmentCursoDetallesPrincipalBinding binding;
     private ListadoClases listadoClases;
@@ -50,6 +53,8 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentCursoDetallesPrincipalBinding.inflate(inflater, container, false);
+
+        viewModelCompartido = new ViewModelProvider(requireActivity()).get(CursoClaseDetallesViewModel.class);
         viewModel = new ViewModelProvider(this).get(CursoDetallesPrincipalViewModel.class);
         if (getArguments() != null) {
             CursoDTO curso = getArguments().getParcelable("clave_curso");
@@ -76,6 +81,8 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
                 FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
                 transaction.replace(binding.frgDetalles.getId(), detallesCurso).commit();
                 fragmento = 2;
+
+                viewModelCompartido.setCurso(curso);
             }
         });
     }
@@ -229,7 +236,7 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
                     Log.d("Log","Curso2: "+viewModel.getCursoActual().getValue().getIdCurso());
                     Log.d("Log","tamaño: "+viewModel.getClases().getValue().size());
                     bundle.putParcelableArrayList("clave_clases", clases);
-                    bundle.putParcelable("clave_curso", viewModel.getCursoActual().getValue());
+                    bundle.putString("clave_rol", viewModel.getCursoActual().getValue().getRol());
                     listadoClases.setArguments(bundle);
                 }
                 binding.txtViewNombreBtnInformacion.setText("Información del curso");
@@ -245,14 +252,15 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
         Bundle bundle = new Bundle();
         int esEstudiante = viewModel.getCursoActual().getValue().getRol().equals("Estudiante") ? 1 : 0;
         bundle.putInt("es_estudiante",esEstudiante);
-        bundle.putInt("id_clase", 127);
+        bundle.putInt("id_clase", clase.getIdClase());
+
         claseDetalles.setArguments(bundle);
         ((MainActivity) getActivity()).cambiarFragmentoPrincipal(claseDetalles);
     }
 
     @Override
     public void cambiarFormularioClase() {
-        FormularioClase formularioClase = new FormularioClase();
+        FormularioClase formularioClase = new FormularioClase(false);
         ((MainActivity) getActivity()).cambiarFragmentoPrincipal(formularioClase);
     }
 

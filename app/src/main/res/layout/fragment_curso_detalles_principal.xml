@@ -61,8 +61,7 @@
                         android:id="@+id/txtViewTitulo"
                         style="@style/styleTxtViewTituloCurso"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Curso de C# .NET desde cero hasta lo mas avanzado full stack" />
+                        android:layout_height="wrap_content"/>
 
 
                 </androidx.cardview.widget.CardView>
