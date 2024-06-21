@@ -32,6 +32,12 @@ public class CursoDetallesPrincipalViewModel extends ViewModel {
     private final MutableLiveData<CursoDTO> cursoActual = new MutableLiveData<>();
     private MutableLiveData<List<ClaseDTO>> clases = new MutableLiveData<>(new ArrayList<>());
 
+    public MutableLiveData<Integer> getInscripcion() {
+        return inscripcion;
+    }
+
+    private MutableLiveData<Integer> inscripcion = new MutableLiveData<Integer>();
+
     public MutableLiveData<StatusRequest> getStatus() {
         return status;
     }
@@ -75,9 +81,7 @@ public class CursoDetallesPrincipalViewModel extends ViewModel {
                     setCursoActual(curso);
                     cursoActual.setValue(curso);
                     status.setValue(StatusRequest.DONE);
-                    Log.d("Log", "Respuesta exitosa: " +response.body().getRol());
                 }else{
-                    Log.d("Log", "responde: "+response.message()+" Codigo: "+response.code()+" Cuerpo: "+response.body());
                     status.setValue(StatusRequest.ERROR);
                 }
             }
@@ -100,15 +104,14 @@ public class CursoDetallesPrincipalViewModel extends ViewModel {
                 if (response.isSuccessful()) {
                     List<ClaseDTO> clases = response.body();
                     if (clases != null && !clases.isEmpty()) {
-                        for (ClaseDTO clase : clases) {
-                            Log.d("Log", "ID Clase: " + clase.getIdClase() + ", Nombre: " + clase.getNombre());
-                        }
+                        List<ClaseDTO> clasesN = response.body();
                     } else {
-                        Log.d("Log", "No se encontraron clases");
                         clases = new ArrayList<>();
                     }
                     setClases(clases);
                 } else {
+                    List<ClaseDTO> clases = new ArrayList<>();
+                    setClases(clases);
                     Log.d("Log", "Error en la solicitud: " + response.code());
                 }
             }
@@ -129,15 +132,18 @@ public class CursoDetallesPrincipalViewModel extends ViewModel {
             public void onResponse(Call<UsuarioCursoDTO> call, Response<UsuarioCursoDTO> response) {
                 if(!response.isSuccessful()){
                     status.setValue(StatusRequest.ERROR);
+                    inscripcion.setValue(0);
                 }else{
                     CursoDTO curso = cursoActual.getValue();
                     curso.setRol("Estudiante");
                     cursoActual.setValue(curso);
+                    inscripcion.setValue(1);
                 }
             }
             @Override
             public void onFailure(Call<UsuarioCursoDTO> call, Throwable t) {
                 status.setValue(StatusRequest.ERROR_CONEXION);
+                inscripcion.setValue(0);
             }
         });
 

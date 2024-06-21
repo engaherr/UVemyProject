@@ -44,17 +44,13 @@ public class ListadoCursosAdapter extends RecyclerView.Adapter<ListadoCursosAdap
     @Override
     public void onBindViewHolder(CursoViewHolder holder, int position) {
         ListaCursoDTO curso = cursos.get(position);
-        Log.d("log", "Posición: " + position + ", Título: " + curso.getTitulo());
-        Log.d("Log","Listado Cursos");
         ListaDocumentoDTO documento = curso.getDocumentos().get(0);
         if (documento != null && documento.getArchivo() != null && documento.getArchivo().getData() != null) {
-            Log.d("Log","Listado Cursos IF");
             Bitmap bitmap = BitmapFactory.decodeByteArray(documento.getArchivo().getData(), 0, documento.getArchivo().getData().length);
 
             holder.binding.txtViewTitulo.setText(curso.getTitulo());
             holder.binding.imgViewMiniatura.setImageBitmap(bitmap);
         } else {
-            Log.d("Log","Listado Cursos Else");
             holder.binding.imgViewMiniatura.setImageResource(R.drawable.delete);
         }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -69,7 +65,6 @@ public class ListadoCursosAdapter extends RecyclerView.Adapter<ListadoCursosAdap
 
     @Override
     public int getItemCount() {
-        Log.d("log", "getItemCount: " + cursos.size());
         return cursos.size();
     }
 
@@ -80,9 +75,5 @@ public class ListadoCursosAdapter extends RecyclerView.Adapter<ListadoCursosAdap
         this.context = context;
         this.cursos = cursos;
         this.onCursoClickListener = listener;
-        Log.d("log", "Constructor: ");
     }
-
-
-
 }

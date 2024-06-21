@@ -133,7 +133,6 @@ public class EstadisticasCurso extends Fragment {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
         intent.addCategory(Intent.CATEGORY_DEFAULT);
         startActivityForResult(Intent.createChooser(intent, "Selecciona un directorio"), PICK_DIRECTORY_REQUEST_CODE);
-        Log.i("Descargando", "Reporte");
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

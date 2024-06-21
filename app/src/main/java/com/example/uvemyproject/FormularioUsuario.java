@@ -72,11 +72,9 @@ public class FormularioUsuario extends Fragment {
                             viewModel.subirImagenPerfil(file);
                         }
                     } catch (FileNotFoundException e) {
-                        Log.e("FormularioUsuario", "Error al cargar la imagen", e);
                         Toast.makeText(getContext(), "Imagen no encontrada. Intente de nuevo",
                                 Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
-                        Log.e("FormularioUsuario", "Error al cargar la imagen", e);
                         Toast.makeText(getContext(), "Error al cargar la imagen. Intente de nuevo",
                                 Toast.LENGTH_SHORT).show();
                     }

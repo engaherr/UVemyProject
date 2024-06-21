@@ -76,10 +76,6 @@ public class ListadoClases extends Fragment {
             String rol = args.getString("clave_rol");
             viewModel.setClasesDelCurso(clases);
             viewModel.setRol(rol);
-            Log.d("Log", "Tamaño: " + clases.size());
-            for (ClaseDTO clase : clases) {
-                Log.d("Log", "ID Clase2: " + clase.getIdClase() + ", Nombre: " + clase.getNombre());
-            }
             cargarClases();
             if(rol != null && rol.equals("Profesor")){
                 binding.lnrLayoutAgregarClase.setVisibility(View.VISIBLE);
