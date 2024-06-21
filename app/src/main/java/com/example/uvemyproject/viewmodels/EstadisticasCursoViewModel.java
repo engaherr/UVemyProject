@@ -28,6 +28,7 @@ public class EstadisticasCursoViewModel extends ViewModel {
     private String nombreReporte = "";
     private final MutableLiveData<byte[]> reportePdf = new MutableLiveData<>();
     private final MutableLiveData<StatusRequest> status = new MutableLiveData<>();
+    private int idCurso;
 
     private final MutableLiveData<EstadisticasCursoDTO> estadisticasCurso = new MutableLiveData<>();
     public LiveData<byte[]> getReporte(){
@@ -40,6 +41,7 @@ public class EstadisticasCursoViewModel extends ViewModel {
         return estadisticasCurso;
     }
     public void recuperarEstadisticasCurso(int idCurso){
+        this.idCurso = idCurso;
         EstadisticaServices service = ApiClient.getInstance().getEstadisticaServices();
         String auth = "Bearer " + SingletonUsuario.getJwt();
         service.obtenerEstadisticasCurso(idCurso, auth).enqueue(new Callback<EstadisticasCursoDTO>() {
@@ -65,7 +67,7 @@ public class EstadisticasCursoViewModel extends ViewModel {
         EstadisticaServices service = ApiClient.getInstance().getEstadisticaServices();
         String auth = "Bearer " + SingletonUsuario.getJwt();
 
-        service.obtenerReporteCurso(1, auth).enqueue(new Callback<ResponseBody>() {
+        service.obtenerReporteCurso(idCurso, auth).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful() && response.body() != null) {

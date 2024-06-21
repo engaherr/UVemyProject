@@ -98,9 +98,9 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
     private void observarCurso(){
         viewModel.getCursoActual().observe(getViewLifecycleOwner(), curso ->{
             if(curso != null && curso.getRol()!=null){
+                viewModel.recuperarClases(viewModel.getCursoActual().getValue().getIdCurso());
                 mostrarOpcionesSegunRol(curso.getRol());
                 cargarCurso();
-                viewModel.recuperarClases(viewModel.getCursoActual().getValue().getIdCurso());
                 detallesCurso = new CursoDetallesInformacion();
                 Bundle bundle1 = new Bundle();
                 bundle1.putParcelable("clave_curso", curso);

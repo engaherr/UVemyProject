@@ -333,8 +333,8 @@ public class FormularioCurso extends Fragment {
                                     InputStream inputStream = getActivity().getContentResolver().openInputStream(selectedImageUri);
                                     int fileSize = inputStream.available();
                                     inputStream.close();
-                                    if (fileSize > 400 * 1024) {
-                                        Toast.makeText(getContext(), "La imagen seleccionada es demasiado grande (máximo 0.5MB)", Toast.LENGTH_SHORT).show();
+                                    if (fileSize > (400 * 1024)/2) {
+                                        Toast.makeText(getContext(), "La imagen seleccionada es demasiado grande (máximo 200 KB)", Toast.LENGTH_SHORT).show();
                                     } else {
                                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImageUri);
                                         binding.imgView.setImageBitmap(bitmap);
