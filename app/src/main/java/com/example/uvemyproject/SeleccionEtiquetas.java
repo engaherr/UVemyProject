@@ -116,7 +116,7 @@ public class SeleccionEtiquetas extends Fragment {
             if(_esFormularioCurso){
                 regresarFormularioCurso();
             } else {
-                //TODO Regresar para actualizar y crear
+                getActivity().onBackPressed();
             }
         });
         return binding.getRoot();
