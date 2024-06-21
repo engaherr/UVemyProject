@@ -48,7 +48,6 @@ public class TipoCursoAdapter extends RecyclerView.Adapter<TipoCursoAdapter.Tipo
     @Override
     public void onBindViewHolder(@NonNull TipoCursoAdapter.TipoCursoViewHolder holder, int position) {
         TipoCursoDTO curso = tiposCursos.get(position);
-        Log.d("Log","Nombre: "+curso.getNombre());
         if (curso != null) {
             holder.binding.txtViewTitulo.setText(curso.getNombre());
         }

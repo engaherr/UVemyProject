@@ -61,7 +61,6 @@ public class FormularioCursoViewModel extends ViewModel {
             curso.setArchivo(arrayBites);
             cursoActual.setValue(curso);
         } else {
-            Log.d("Log","SetArray");
             cursoActual.getValue().setArchivo(arrayBites);
         }
     }
@@ -76,9 +75,6 @@ public class FormularioCursoViewModel extends ViewModel {
 
     private MultipartBody.Part crearFilePeticion() {
         byte[] fileBytes = cursoActual.getValue().getArchivo();
-        if(fileBytes != null){
-            Log.d("Log","Array"+fileBytes.length);
-        }
         RequestBody requestFile = RequestBody.create(MediaType.parse("application/octet-stream"), fileBytes);
         return MultipartBody.Part.createFormData("file", "archivo.png", requestFile);
     }
@@ -96,9 +92,7 @@ public class FormularioCursoViewModel extends ViewModel {
             public void onResponse(Call<CrearCursoDTO> call, Response<CrearCursoDTO> response) {
                 if (response.isSuccessful()) {
                     status.setValue(StatusRequest.DONE);
-                    Log.d("Log", response.message()+" "+response.code()+" "+response.body());
                 }else{
-                    Log.d("Log", response.message()+" "+response.code()+" "+response.body());
                     status.setValue(StatusRequest.ERROR);
                 }
             }
@@ -111,7 +105,6 @@ public class FormularioCursoViewModel extends ViewModel {
     }
 
     public void modificarCurso(CrearCursoDTO curso){
-        Log.d("Log", "Modificar "+curso.getIdCurso()+" idCurso");
         CursoServices service = ApiClient.getInstance().getCursoServices();
         String auth = "Bearer " + SingletonUsuario.getJwt();
         RequestBody idCursoPart = createPartFromString(String.valueOf(curso.getIdCurso()));
@@ -126,13 +119,10 @@ public class FormularioCursoViewModel extends ViewModel {
         public void onResponse(Call<CrearCursoDTO> call, Response<CrearCursoDTO> response) {
             if (response.isSuccessful()) {
                 status.setValue(StatusRequest.DONE);
-                Log.d("Log1", response.message()+" "+response.code()+" "+response.body());
             } else if(response.code()==404){
                 status.setValue(StatusRequest.DONE);
-                Log.d("Log3", response.message()+" "+response.code()+" "+response.body());
             }
             else{
-                Log.d("Log2", response.message()+" "+response.code()+" "+response.body());
                 status.setValue(StatusRequest.ERROR);
             }
         }
@@ -145,20 +135,16 @@ public class FormularioCursoViewModel extends ViewModel {
     }
 
     public void eliminarCurso(){
-        Log.d("Log", "Guardar");
         CursoServices service = ApiClient.getInstance().getCursoServices();
         String auth = "Bearer " + SingletonUsuario.getJwt();
         service.eliminarCurso(auth, cursoActual.getValue().getIdCurso()).enqueue(new retrofit2.Callback<CrearCursoDTO>(){@Override
         public void onResponse(Call<CrearCursoDTO> call, Response<CrearCursoDTO> response) {
             if (response.isSuccessful()) {
                 status.setValue(StatusRequest.DONE);
-                Log.d("Log1", response.message()+" "+response.code()+" "+response.body());
             }else if(response.code()==404){
                 status.setValue(StatusRequest.DONE);
-                Log.d("Log3", response.message()+" "+response.code()+" "+response.body());
             }
             else{
-                Log.d("Log2", response.message()+" "+response.code()+" "+response.body());
                 status.setValue(StatusRequest.ERROR);
             }
         }

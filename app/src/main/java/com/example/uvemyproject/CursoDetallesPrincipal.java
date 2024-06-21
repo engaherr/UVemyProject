@@ -64,12 +64,26 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
             observarCurso();
             observarStatus();
             observarClases();
+            observarInscripcion();
             obtenerIdCurso(curso);
         }
         binding.imgViewRegresar.setOnClickListener(v -> {
             regresar();
         });
         return binding.getRoot();
+    }
+
+    private void observarInscripcion(){
+        viewModel.getInscripcion().observe(getViewLifecycleOwner(), inscripcion ->{
+            if(inscripcion!=null || inscripcion > 0){
+                CursoDetallesPrincipal cursoDetallesPrincipal = new CursoDetallesPrincipal();
+                Bundle bundle = new Bundle();
+                CursoDTO curso = viewModel.getCursoActual().getValue();
+                bundle.putParcelable("clave_curso", curso);
+                cursoDetallesPrincipal.setArguments(bundle);
+                cambiarFragmentoPrincipal(cursoDetallesPrincipal);
+            }
+        });
     }
 
     private void regresar(){
@@ -90,7 +104,6 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
                 detallesCurso = new CursoDetallesInformacion();
                 Bundle bundle1 = new Bundle();
                 bundle1.putParcelable("clave_curso", curso);
-                Log.d("Log", "Objetivos0"+curso.getObjetivos());
                 detallesCurso.setArguments(bundle1);
                 FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
                 transaction.replace(binding.frgDetalles.getId(), detallesCurso).commit();
@@ -103,7 +116,6 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
     }
 
     private void cargarCurso(){
-        Log.d("Log","Titulo: "+viewModel.getCursoActual().getValue().getTitulo());
         binding.txtViewTitulo.setText(viewModel.getCursoActual().getValue().getTitulo());
         byte[] miniatura = viewModel.getCursoActual().getValue().getArchivo();
         Bitmap bitmap = BitmapFactory.decodeByteArray(miniatura, 0, miniatura.length);
@@ -241,16 +253,11 @@ public class CursoDetallesPrincipal extends Fragment implements INotificacionFra
                     listadoClases = new ListadoClases(this);
                     Bundle bundle = new Bundle();
                     ArrayList<ClaseDTO> clases = new ArrayList<ClaseDTO>();
-                    Log.d("Log","TAAMAANO"+viewModel.getClases().getValue().size());
                     if(viewModel.getClases().getValue().size() == 0){
                         clases = new ArrayList<>();
-                        Log.d("Log","No Agregar");
                     } else{
                         clases = new ArrayList<>(viewModel.getClases().getValue());
-                        Log.d("Log","Agregar");
                     }
-                    Log.d("Log","Curso2: "+viewModel.getCursoActual().getValue().getIdCurso());
-                    Log.d("Log","tamaño: "+viewModel.getClases().getValue().size());
                     bundle.putParcelableArrayList("clave_clases", clases);
                     bundle.putString("clave_rol", viewModel.getCursoActual().getValue().getRol());
                     listadoClases.setArguments(bundle);

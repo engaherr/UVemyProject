@@ -65,19 +65,15 @@ public class ClaseAdapter extends ListAdapter<ClaseDTO, ClaseAdapter.ClaseViewHo
             switch (rolCurso){
                 case "Profesor":
                     binding.btnVerMas.setVisibility(View.VISIBLE);
-                    Log.d("Log","Profesor");
                     break;
                 case "Estudiante":
                     binding.btnVerMas.setVisibility(View.VISIBLE);
-                    Log.d("Log","Estudiante");
                     break;
                 case "Usuario":
                     binding.btnVerMas.setVisibility(View.INVISIBLE);
-                    Log.d("Log","Usuario");
                     break;
                 default:
                     binding.btnVerMas.setVisibility(View.GONE);
-                    Log.d("Log","default");
                     break;
             }
             binding.btnVerMas.setOnClickListener( v ->{

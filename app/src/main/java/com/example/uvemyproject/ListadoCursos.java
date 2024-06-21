@@ -48,6 +48,8 @@ public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCu
         _idTipoCurso = 0;
         _idEtiqueta = 0;
         if (getArguments() != null) {
+            _paginaActual = 0;
+            _paginaAnterior = 0;
             _idEtiqueta = getArguments().getInt("clave_idEtiqueta");
             _idTipoCurso = getArguments().getInt("clave_idTipoCurso");
             _nombreEtiqueta =getArguments().getString("clave_nombreEtiqueta");
@@ -75,6 +77,7 @@ public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCu
                 switch (status) {
                     case DONE:
                         Toast.makeText(requireContext(), "Solicitud exitosa", Toast.LENGTH_LONG).show();
+                        binding.txtViewPagina.setText("Pagina "+(_paginaActual+1));
                         quitarEspera();
                         break;
                     case ERROR:
@@ -89,9 +92,9 @@ public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCu
                         break;
                     case NOT_FOUND:
                         Toast.makeText(requireContext(), "No existen cursos", Toast.LENGTH_LONG).show();
-                        /*if(_paginaActual > 0){
-                            anteriorPagina();
-                        }*/
+                        if(_paginaActual < 0){
+                            _paginaActual = 0;
+                        }
                         binding.txtViewPagina.setText("Pagina "+(_paginaActual+1));
                         quitarEspera();
                         break;
@@ -121,7 +124,6 @@ public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCu
 
     private void recuperarCursos(int pagina, String tituloCurso, int calificacionCurso, int idTipoCurso, int idEtiqueta){
         viewModel.recuperarCursos(pagina, tituloCurso, calificacionCurso, idTipoCurso, idEtiqueta);
-        Log.d("Log","pagina"+pagina+" tituloCurso"+tituloCurso+" calificacion"+calificacionCurso+" idTipoCurso"+idTipoCurso+" idEtiqueta"+idEtiqueta );
         if(tituloCurso != null && !tituloCurso.isEmpty()){
             binding.txtViewCurso.setText("Cursos con titulo "+tituloCurso);
         } else if(calificacionCurso != 0){
@@ -136,7 +138,7 @@ public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCu
     }
     private void anteriorPagina()
     {
-        if (_paginaActual <= 0)
+        if (_paginaActual < 0)
         {
             _paginaActual = 0;
         }
@@ -149,13 +151,11 @@ public class ListadoCursos extends Fragment implements ListadoCursosAdapter.OnCu
     }
 
     private void cargarCursos(){
-        Log.d("Log","Tamaño: "+viewModel.getCursos().getValue().size());
         ListadoCursosAdapter cursoAdapter = new ListadoCursosAdapter(getContext(), viewModel.getCursos().getValue(),this);
         binding.rcyViewListadoCursos.setAdapter(cursoAdapter);
         cursoAdapter.notifyDataSetChanged();
 
         RecyclerView.Adapter adapter2 = binding.rcyViewListadoCursos.getAdapter();
-        Log.d("Log", "Número de elementos en rcyViewListadoCursos2: " + adapter2.getItemCount());
         cursoAdapter.notifyDataSetChanged();
 
         quitarEspera();

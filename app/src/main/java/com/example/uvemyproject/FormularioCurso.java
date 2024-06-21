@@ -67,8 +67,6 @@ public class FormularioCurso extends Fragment {
         if (getArguments() != null) {
             _esCrearCurso = getArguments().getBoolean("clave_esCrearCurso", true);
             CrearCursoDTO _curso = getArguments().getParcelable("clave_curso");
-            Log.d("Log", "Objetivos1"+_curso.getObjetivos());
-
             ArrayList<Integer> listaEtiquetas = getArguments().getIntegerArrayList("clave_listaEtiquetas");
             ArrayList<String> listaEtiquetasNombre = getArguments().getStringArrayList("clave_listaEtiquetasNombre");
             if (listaEtiquetas != null) {
@@ -226,7 +224,6 @@ public class FormularioCurso extends Fragment {
 
     private void guardarCurso(){
         ponerEspera();
-        Log.d("Log","ID Etiqueta "+viewModel.getCursoActual().getValue().getEtiquetas().get(0));
         viewModel.guardarCurso(viewModel.getCursoActual().getValue());
     }
 
@@ -247,11 +244,6 @@ public class FormularioCurso extends Fragment {
         curso.setRequisitos(requisitosCurso);
         curso.setObjetivos(objetivosCurso);
         curso.setEtiquetas(viewModel.getCursoActual().getValue().getEtiquetas());
-        if(curso.getEtiquetas()!=null){
-            for (int idEtiqueta : curso.getEtiquetas()) {
-                Log.d("Log","Etiquetas: "+idEtiqueta);
-            }
-        }
         curso.setNombreEtiquetas(viewModel.getCursoActual().getValue().getNombreEtiquetas());
         curso.setArchivo(viewModel.getCursoActual().getValue().getArchivo());
         viewModel.setCursoActual(curso);
@@ -297,11 +289,6 @@ public class FormularioCurso extends Fragment {
             sonEtiquetasValidas = false;
             binding.lstView.setBackgroundColor(Color.parseColor("#8A1818"));
         }
-        else {
-        for (int idEtiqueta : curso.getEtiquetas()) {
-            Log.d("Log","2Etiquetas: "+idEtiqueta);
-        }
-        }
         if(!sonCamposValidos){
             if (!sonEtiquetasValidas)
             {
@@ -346,7 +333,7 @@ public class FormularioCurso extends Fragment {
                                     InputStream inputStream = getActivity().getContentResolver().openInputStream(selectedImageUri);
                                     int fileSize = inputStream.available();
                                     inputStream.close();
-                                    if (fileSize > (1024 * 1024)/2) {
+                                    if (fileSize > 400 * 1024) {
                                         Toast.makeText(getContext(), "La imagen seleccionada es demasiado grande (máximo 0.5MB)", Toast.LENGTH_SHORT).show();
                                     } else {
                                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImageUri);

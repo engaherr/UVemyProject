@@ -91,7 +91,7 @@ public class SeleccionEtiquetas extends Fragment {
                     bundle.putBoolean("clave_esCrearCurso", _esCrearCurso);
                     bundle.putIntegerArrayList("clave_listaEtiquetas", (ArrayList<Integer>) idEtiquetasSeleccionadas);
                     bundle.putStringArrayList("clave_listaEtiquetasNombre", (ArrayList<String>) nombreEtiquetasSeleccionadas);
-                    bundle.putParcelable("clave_curso", _curso);
+                    bundle.putParcelable("clave_curso", viewModel.getCurso().getValue());
                     formularioCurso.setArguments(bundle);
                     cambiarFragmentoPrincipal(formularioCurso);
                 }
@@ -114,18 +114,22 @@ public class SeleccionEtiquetas extends Fragment {
         });
         binding.imgViewRegresar.setOnClickListener(v -> {
             if(_esFormularioCurso){
-                FormularioCurso formularioCurso = new FormularioCurso();
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("clave_curso", viewModel.getCurso().getValue());
-                formularioCurso.setArguments(bundle);
-                cambiarFragmentoPrincipal(formularioCurso);
+                regresarFormularioCurso();
             } else {
-                //TODO Regresar para
+                //TODO Regresar para actualizar y crear
             }
         });
         return binding.getRoot();
     }
 
+    private void regresarFormularioCurso(){
+        FormularioCurso formularioCurso = new FormularioCurso();
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("clave_esCrearCurso", _esCrearCurso);
+        bundle.putParcelable("clave_curso", viewModel.getCurso().getValue());
+        formularioCurso.setArguments(bundle);
+        cambiarFragmentoPrincipal(formularioCurso);
+    }
     private void cambiarFragmentoPrincipal(Fragment fragmento){
         ((MainActivity) getActivity()).cambiarFragmentoPrincipal(fragmento);
     }

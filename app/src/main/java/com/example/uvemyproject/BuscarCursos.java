@@ -74,7 +74,6 @@ public class BuscarCursos extends Fragment implements TipoCursoAdapter.OntipoCur
         TipoCursoDTO tipoCurso2 = new TipoCursoDTO(2,"Cursos inscritos");
         tiposCursos.add(tipoCurso1);
         tiposCursos.add(tipoCurso2);
-        Log.d("Log","1");
         viewModel.setTiposCursos(tiposCursos);
         TipoCursoDTO[] tipoCalificaciones = new TipoCursoDTO[] {
                 new TipoCursoDTO(0, "Buscar por calificaciones"),
@@ -112,24 +111,19 @@ public class BuscarCursos extends Fragment implements TipoCursoAdapter.OntipoCur
     }
 
     private void cargarTiposCursos(){
-        Log.d("Log","Tamaño: "+viewModel.getTiposCursos().getValue().size());
-
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(getContext());
         binding.rcyViewListaTiposCursos.setLayoutManager(layoutManager2);
         TipoCursoAdapter tipoCursosAdapter = new TipoCursoAdapter(getContext(), viewModel.getTiposCursos().getValue(),this);
         binding.rcyViewListaTiposCursos.setAdapter(tipoCursosAdapter);
         tipoCursosAdapter.notifyDataSetChanged();
-        Log.d("Log","Tamaño: "+tipoCursosAdapter.getItemCount());
     }
 
     private void cargarEtiquetas(){
-        Log.d("Log","Tamaño Etiquetas: "+viewModel.getEtiquetas().getValue().size());
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         binding.rcyViewListaEtiquetas.setLayoutManager(layoutManager);
         EtiquetaAdapter etiquetaAdapter = new EtiquetaAdapter(getContext(), viewModel.getEtiquetas().getValue(),this);
         binding.rcyViewListaEtiquetas.setAdapter(etiquetaAdapter);
         etiquetaAdapter.notifyDataSetChanged();
-        Log.d("Log","Tamaño: "+etiquetaAdapter.getItemCount());
     }
 
     private void observarEtiquetas(){
@@ -153,7 +147,6 @@ public class BuscarCursos extends Fragment implements TipoCursoAdapter.OntipoCur
 
     @Override
     public void OntipoCursoClickListener(int idTipoCurso, String nombreTipoCurso) {
-        Log.d("Log", "ClickTipoCurso: "+idTipoCurso);
         ListadoCursos listadoCursos = new ListadoCursos();
         Bundle bundle = new Bundle();
         bundle.putInt("clave_idTipoCurso", idTipoCurso);
@@ -163,7 +156,6 @@ public class BuscarCursos extends Fragment implements TipoCursoAdapter.OntipoCur
     }
     @Override
     public void OnEtiquetasClickListener(int idEtiqueta, String nombreEtiqueta) {
-        Log.d("Log", "ClickEtiquetas: "+idEtiqueta);
         ListadoCursos listadoCursos = new ListadoCursos();
         Bundle bundle = new Bundle();
         bundle.putInt("clave_idEtiqueta", idEtiqueta);
